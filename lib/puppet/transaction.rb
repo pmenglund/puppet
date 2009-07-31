@@ -3,6 +3,7 @@
 
 require 'puppet'
 require 'puppet/util/tagging'
+require 'puppet/application'
 
 module Puppet
 class Transaction
@@ -17,6 +18,11 @@ class Transaction
 
     include Puppet::Util
     include Puppet::Util::Tagging
+
+    # Wraps application run state check to flag need to interrupt processing
+    def stop_processing?
+        Puppet::Application.stop_requested?
+    end
 
     # Add some additional times for reporting
     def addtimes(hash)
