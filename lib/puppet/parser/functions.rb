@@ -126,6 +126,7 @@ module Functions
     Puppet::Util::Log.levels.each do |level|
         newfunction(level, :doc => "Log a message on the server at level
         #{level.to_s}.") do |vals|
+            p [:vals,vals]
             send(level, vals.join(" "))
         end
     end

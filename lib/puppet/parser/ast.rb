@@ -66,10 +66,11 @@ class Puppet::Parser::AST
     # it can enable you to catch the error where it happens, rather than
     # much higher up the stack.
     def safeevaluate(*options)
+        p [:evaluating,self]
         # We duplicate code here, rather than using exceptwrap, because this
         # is called so many times during parsing.
         begin
-            return self.evaluate(*options)
+            self.evaluate(*options)
         rescue Puppet::Error => detail
             raise adderrorcontext(detail)
         rescue => detail

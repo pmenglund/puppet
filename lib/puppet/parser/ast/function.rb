@@ -11,7 +11,7 @@ class Puppet::Parser::AST
         @settor = true
 
         def evaluate(scope)
-
+p [:function_eval,@name]
             # Make sure it's a defined function
             unless @fname
                 raise Puppet::ParseError, "Unknown function %s" % @name

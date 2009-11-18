@@ -40,7 +40,9 @@ end
 
 class Hash
     def collect! (&block)
-        replace Hash[*collect(&block).flatten]
+        x = collect(&block).flatten
+        p [:x_length,x.length]
+        replace Hash[*x]
     end
 
     def flatten
