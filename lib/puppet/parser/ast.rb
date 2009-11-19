@@ -89,6 +89,7 @@ class Puppet::Parser::AST
  
     def self.instantiate(context,args)
         args = args.dup
+        p args.keys
         context = adjust_context(context) unless context.is_a? Puppet::Parser::Scope
         args.delete(:class)
         args.keys.each { |k| args[k] = instantiate_child(context,args[k]) }
