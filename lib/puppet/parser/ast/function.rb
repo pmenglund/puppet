@@ -8,8 +8,6 @@ class Puppet::Parser::AST
 
         attr_accessor :name, :arguments
 
-        @settor = true
-
         def evaluate(scope)
 p [:function_eval,@name]
             # Make sure it's a defined function
