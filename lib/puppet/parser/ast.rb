@@ -57,7 +57,6 @@ class Puppet::Parser::AST
     # it can enable you to catch the error where it happens, rather than
     # much higher up the stack.
     def safeevaluate(*options)
-        p [:evaluating,self]
         # We duplicate code here, rather than using exceptwrap, because this
         # is called so many times during parsing.
         begin
@@ -78,6 +77,26 @@ class Puppet::Parser::AST
     # likely be changed at some point.
     def initialize(args)
         set_options(args)
+    end
+
+    def self.instantiate_child(context,x)
+        case x
+        when Puppet::Parser::Parser::Real_AST_node then x.instantiate(context)
+        when Array                                 then x.collect { |i| instantiate_child(context,i) }
+        else x
+        end
+    end
+ 
+    def self.instantiate(context,args)
+        args = args.dup
+        context = adjust_context(context) unless context.is_a? Puppet::Parser::Scope
+        args.delete(:class)
+        args.keys.each { |k| args[k] = instantiate_child(context,args[k]) }
+        new({:scope => context}.update(args))
+    end
+
+    def self.adjust_context(context)
+        context
     end
 end
 

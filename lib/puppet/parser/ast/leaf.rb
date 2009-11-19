@@ -125,13 +125,13 @@ class Puppet::Parser::AST
     class Variable < Name
         # Looks up the value of the object in the scope tree (does
         # not include syntactical constructs, like '$' and '{}').
+        def initialize(args)
+            super
+            @future = scope.future_for(@value)
+        end
+
         def evaluate(scope)
-            parsewrap do
-                if (var = scope.lookupvar(@value, false)) == :undefined
-                    var = :undef
-                end
-                var
-            end
+            ((var = @future.value) == :undefined) ? :undef : var
         end
 
         def to_s

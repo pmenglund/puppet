@@ -8,21 +8,28 @@ class Puppet::Parser::AST
 
         attr_accessor :name, :value, :append
 
+        def initialize(args)
+            super
+            n = name.safeevaluate(scope)
+            # MQR: to do
+            #
+            #if n.is_a?(HashOrArrayAccess)
+            #    n.assign(scope, value)
+            #end
+            p [:initializing,:vardef,n]
+            @future = scope.future_for(n)
+            @future.source = self
+        end
+
         # Look up our name and value, and store them appropriately.  The
         # lexer strips off the syntax stuff like '$'.
         def evaluate(scope)
-            p [:setting,@name]
-            name = @name.safeevaluate(scope)
+            #name = @name.safeevaluate(scope)
             value = @value.safeevaluate(scope)
-            if name.is_a?(HashOrArrayAccess)
-                name.assign(scope, value)
-            else
-                name = @name.safeevaluate(scope)
-
-                parsewrap do
-                    scope.setvar(name,value, :file => @file, :line => @line, :append => @append)
-                end
-            end
+           
+            #parsewrap do
+            #    scope.setvar(name,value, :file => @file, :line => @line, :append => @append)
+            #end
         end
 
         def each

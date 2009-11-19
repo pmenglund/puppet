@@ -58,6 +58,26 @@ class Puppet::Parser::Parser
         result
     end
 
+    class Real_AST_node
+        #instance_methods.each { |m| undef_method m unless m =~ /(^__|^send$|^object_id$)/ }
+        define_opposite_accessors :not_instantiating? => :instantiating?
+        def initialize(details)
+            @details = details
+        end
+        def instantiate(context)
+            p [:instantiating,context.class]
+            fail "circular! #{self}" if instantiating?
+            @value ||= begin instantiating!
+                @details[:class].instantiate(context,@details)
+                ensure not_instantiating!
+                end
+        end
+        #def method_missing(*args,&block)
+        #    p [:calling,args[0],args[1..-1].collect { |x| x.class }]
+        #    instantiate.send(*args,&block)
+        #end
+    end
+
     # The fully qualifed name, with the full namespace.
     def classname(name)
         [@lexer.namespace, name].join("::").sub(/^::/, '')

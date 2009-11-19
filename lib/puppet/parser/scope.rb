@@ -122,6 +122,8 @@ class Puppet::Parser::Scope
         # The symbol table for this scope.  This is where we store variables.
         @symtable = {}
 
+        @futures = {}
+
         # the ephemeral symbol tables
         # those should not persist long, and are used for the moment only
         # for $0..$xy capture variables of regexes
@@ -163,6 +165,45 @@ class Puppet::Parser::Scope
         @class_scopes[k] || (parent && parent.class_scope(k))
     end
 
+    class Future
+        define_accessors :source,:resolved?,:scope,:name
+        def initialize(scope,name)
+            @scope,@name = scope,name
+        end
+        def value
+            if    resolved?    then p [name,:resolved,@value]; @value 
+            elsif source       then p [name,:from_source];resolved!; @value = source.evaluate(scope) 
+            elsif scope.parent then p [name,:from_parent]; scope.parent.future_for(name).value
+            else                    p [name,:undef]; :undef
+            end
+        end
+    end
+
+    class No_future < Future
+        def initialize(scope,name,message)
+            super(scope,name)
+            warning message
+        end
+        def value
+            :undefined
+        end
+    end
+
+    def future_for(name)
+        if name =~ /(.*)::([^:]+)/
+            klassname,varname = $1,$2
+            if not (klass = find_hostclass(klassname))
+                No_future.new(self,name,"Could not look up qualified variable '#{name}'; class #{klassname} could not be found")
+            elsif not (kscope = compiler.class_scope(klass))
+                No_future.new(self,name,"Could not look up qualified variable '#{name}'; class #{klassname} has not been evaluated")
+            else
+                kscope.future_for(varname)
+            end
+        else
+            @futures[name] ||= Future.new(self,name)
+        end
+    end
+
     # Collect all of the defaults set at any higher scopes.
     # This is a different type of lookup because it's additive --
     # it collects all of the defaults, with defaults in closer scopes
@@ -195,45 +236,33 @@ class Puppet::Parser::Scope
         find_definition(name) || find_hostclass(name)
     end
 
-    def lookup_qualified_var(name, usestring)
-        parts = name.split(/::/)
-        shortname = parts.pop
-        klassname = parts.join("::")
-        klass = find_hostclass(klassname)
-        unless klass
-            warning "Could not look up qualified variable '%s'; class %s could not be found" % [name, klassname]
-            return usestring ? "" : :undefined
-        end
-        unless kscope = class_scope(klass)
-            warning "Could not look up qualified variable '%s'; class %s has not been evaluated" % [name, klassname]
-            return usestring ? "" : :undefined
-        end
-        return kscope.lookupvar(shortname, usestring)
-    end
-
-    private :lookup_qualified_var
-
     # Look up a variable.  The simplest value search we do.  Default to returning
     # an empty string for missing values, but support returning a constant.
     def lookupvar(name, usestring = true)
-        table = ephemeral?(name) ? @ephemeral : @symtable
         # If the variable is qualified, then find the specified scope and look the variable up there instead.
         if name =~ /::/
-            return lookup_qualified_var(name, usestring)
+            parts = name.split(/::/)
+            shortname = parts.pop
+            klassname = parts.join("::")
+            klass = find_hostclass(klassname)
+            unless klass
+                warning "Could not look up qualified variable '%s'; class %s could not be found" % [name, klassname]
+                return usestring ? "" : :undefined
+            end
+            unless kscope = compiler.class_scope(klass)
+                warning "Could not look up qualified variable '%s'; class %s has not been evaluated" % [name, klassname]
+                return usestring ? "" : :undefined
+            end
+            return kscope.lookupvar(shortname, usestring)
         end
+        table = ephemeral?(name) ? @ephemeral : @symtable
         # We can't use "if table[name]" here because the value might be false
         if table.include?(name)
-            if usestring and table[name] == :undef
-                return ""
-            else
-                return table[name]
-            end
-        elsif self.parent
-            return parent.lookupvar(name, usestring)
-        elsif usestring
-            return ""
+            (usestring and table[name] == :undef) ? "" : table[name]
+        elsif parent
+            parent.lookupvar(name, usestring)
         else
-            return :undefined
+            usestring ? "" : :undefined
         end
     end
 
@@ -358,7 +387,8 @@ class Puppet::Parser::Scope
                     if var and var =~ /^[0-9]+$/ and not ephemeral?(var)
                         next
                     end
-                    out << lookupvar(var).to_s || ""
+                    #out << lookupvar(var).to_s || ""
+                    out << future_for(var).value.to_s
                 end
             elsif ss.scan(/^\\(.)/)
                 # Puppet.debug("Got escape: pos:%d; m:%s" % [ss.pos, ss.matched])
