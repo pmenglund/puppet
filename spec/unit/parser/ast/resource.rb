@@ -79,7 +79,7 @@ describe Puppet::Parser::AST::Resource do
     it "should generate virtual and exported resources if it is exported" do
         @resource.exported = true
 
-        result = @resource.evaluate(@scope)
+        result = @resource.evaluate
         result[0].should be_virtual
         result[0].should be_exported
     end

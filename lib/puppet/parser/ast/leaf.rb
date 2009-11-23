@@ -51,7 +51,7 @@ class Puppet::Parser::AST
 
     # The base string class.
     class String < AST::Leaf
-        def evaluate(scope)
+        def evaluate
             @value
         end
 
@@ -72,8 +72,8 @@ class Puppet::Parser::AST
     end
 
     class Concat < AST::Leaf
-        def evaluate(scope)
-            @value.collect { |x| x.evaluate(scope) }.join
+        def evaluate
+            @value.collect { |x| x.evaluate }.join
         end
 
         def to_s
