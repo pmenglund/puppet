@@ -356,7 +356,7 @@ class Puppet::Parser::Compiler
     # Initialize the top-level scope, class, and resource.
     def init_main
         # Create our initial scope and a resource that will evaluate main.
-        @topscope = Puppet::Parser::Scope.new(:compiler => self, :parser => self.parser)
+        @topscope = Puppet::Parser::Scope.new(:compiler => self)
     end
 
     # Set up all of our internal variables.
