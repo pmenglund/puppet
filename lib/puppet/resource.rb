@@ -1,16 +1,20 @@
 require 'puppet'
 require 'puppet/util/tagging'
-require 'puppet/resource/reference'
 require 'puppet/util/pson'
 
 # The simplest resource class.  Eventually it will function as the
 # base class for all resource-like behaviour.
 class Puppet::Resource
+    require 'puppet/resource/reference'
     include Puppet::Util::Tagging
+
+    require 'puppet/resource/type_collection_helper'
+    include Puppet::Resource::TypeCollectionHelper
+
     extend Puppet::Util::Pson
     include Enumerable
-    attr_accessor :file, :line, :catalog, :exported, :virtual
-    attr_writer :type, :title
+    attr_accessor :file, :line, :catalog, :exported, :virtual, :namespace, :validate_parameters
+    attr_writer :type, :title, :environment
 
     ATTRIBUTES = [:file, :line, :exported]
 
@@ -77,6 +81,7 @@ class Puppet::Resource
     # Set a given parameter.  Converts all passed names
     # to lower-case symbols.
     def []=(param, value)
+        validate_parameter(param) if validate_parameters
         @parameters[parameter_name(param)] = value
     end
 
@@ -109,7 +114,13 @@ class Puppet::Resource
 
     # Create our resource.
     def initialize(type, title, attributes = {})
+        # Doing this, instead of including it in the class,
+        # is the only way I could get the load order to work
+        # here.
+        extend Puppet::Node::Environment::Helper
+
         @parameters = {}
+        @namespace = ""
 
         (attributes[:parameters] || {}).each do |param, value|
             self[param] = value
@@ -129,6 +140,15 @@ class Puppet::Resource
     # Provide a reference to our resource in the canonical form.
     def ref
         @reference.to_s
+    end
+
+    def resource_type
+        case type.to_s.downcase
+        when "class"; find_hostclass
+        when "node"; find_node
+        else
+            find_builtin_resource_type || find_defined_resource_type
+        end
     end
 
     # Get our title information from the reference, since it will canonize it for us.
@@ -227,7 +247,32 @@ class Puppet::Resource
         return result
     end
 
+    def valid_parameter?(name)
+        resource_type.valid_parameter?(name)
+    end
+
+    def validate_parameter(name)
+        raise ArgumentError, "Invalid parameter #{name}" unless valid_parameter?(name)
+    end
+
     private
+
+    def find_node
+        known_resource_types.node(title)
+    end
+
+    def find_hostclass
+        name = title == :main ? "" : title
+        known_resource_types.find_hostclass(namespace, name)
+    end
+
+    def find_builtin_resource_type
+        Puppet::Type.type(type.to_s.downcase.to_sym)
+    end
+
+    def find_defined_resource_type
+        known_resource_types.find_definition(namespace, type.to_s.downcase)
+    end
 
     # Produce a canonical method name.
     def parameter_name(param)
@@ -246,11 +291,6 @@ class Puppet::Resource
         else
             :name
         end
-    end
-
-    # Retrieve the resource type.
-    def resource_type
-        Puppet::Type.type(type)
     end
 
     # Create an old-style TransBucket instance, for non-builtin resource types.
