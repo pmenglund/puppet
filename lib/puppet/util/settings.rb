@@ -1,8 +1,6 @@
 require 'puppet'
 require 'sync'
-require 'puppet/transportable'
 require 'getoptlong'
-
 require 'puppet/external/event-loop'
 require 'puppet/util/cacher'
 require 'puppet/util/loadedfile'
@@ -567,8 +565,6 @@ class Puppet::Util::Settings
     end
 
     # Convert the settings we manage into a catalog full of resources that model those settings.
-    # We currently have to go through Trans{Object,Bucket} instances,
-    # because this hasn't been ported yet.
     def to_catalog(*sections)
         sections = nil if sections.empty?
 
