@@ -67,6 +67,7 @@ class TestResources < Test::Unit::TestCase
         assert_nothing_raised do
             purger = @type.new :name => "purgetest", :noop => true, :loglevel => :warning
         end
+        purger.catalog = Puppet::Resource::Catalog.new
         assert(purger, "did not get purger manager")
         add_purge_lister()
 
@@ -171,21 +172,6 @@ class TestResources < Test::Unit::TestCase
             res[:unless_system_user] = 50
             assert(res.check(@user.create(:name => high)), "high user %s failed check" % high)
         end
-    end
-
-    # The other half of #408.
-    def test_check_is_called
-        res = Puppet::Type.type(:resources).new :name => :user, :purge => true
-
-        list = nil
-        assert_nothing_raised { list = res.generate }
-
-        assert(! list.empty?, "did not get any users")
-
-        bad = list.find_all { |u|
-                %w{root bin nobody}.include?(u[:name]) or (cv = u.retrieve and cv[u.property(:uid)] < 500)
-            }
-        assert(bad.empty?, "incorrectly passed users %s" % bad.collect { |u| u[:name]}.join(", "))
     end
 end
 
