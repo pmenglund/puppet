@@ -56,11 +56,11 @@ class Puppet::Parser::AST
     # correctly handles errors.  It is critical to use this method because
     # it can enable you to catch the error where it happens, rather than
     # much higher up the stack.
-    def safeevaluate(*options)
+    def safeevaluate
         # We duplicate code here, rather than using exceptwrap, because this
         # is called so many times during parsing.
         begin
-            self.evaluate(*options)
+            evaluate(scope)
         rescue Puppet::Error => detail
             raise adderrorcontext(detail)
         rescue => detail
@@ -89,7 +89,6 @@ class Puppet::Parser::AST
  
     def self.instantiate(context,args)
         args = args.dup
-        p args.keys
         context = adjust_context(context) unless context.is_a? Puppet::Parser::Scope
         args.delete(:class)
         args.keys.each { |k| args[k] = instantiate_child(context,args[k]) }

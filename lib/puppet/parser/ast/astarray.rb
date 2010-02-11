@@ -31,10 +31,7 @@ class Puppet::Parser::AST
                 end
             }
 
-            rets = items.flatten.collect { |child|
-                child.safeevaluate(scope)
-            }
-            return rets.reject { |o| o.nil? }
+            items.flatten.collect { |child| child.safeevaluate }.compact
         end
 
         def push(*ary)

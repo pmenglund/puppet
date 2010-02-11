@@ -11,18 +11,18 @@ describe Puppet::Parser::AST::Selector do
 
         before :each do
             @param = stub 'param'
-            @param.stubs(:safeevaluate).with(@scope).returns("value")
+            @param.stubs(:safeevaluate).returns("value")
 
             @value1 = stub 'value1'
             @param1 = stub_everything 'param1'
-            @param1.stubs(:safeevaluate).with(@scope).returns(@param1)
+            @param1.stubs(:safeevaluate).returns(@param1)
             @param1.stubs(:respond_to?).with(:downcase).returns(false)
             @value1.stubs(:param).returns(@param1)
             @value1.stubs(:value).returns(@value1)
 
             @value2 = stub 'value2'
             @param2 = stub_everything 'param2'
-            @param2.stubs(:safeevaluate).with(@scope).returns(@param2)
+            @param2.stubs(:safeevaluate).returns(@param2)
             @param2.stubs(:respond_to?).with(:downcase).returns(false)
             @value2.stubs(:param).returns(@param2)
             @value2.stubs(:value).returns(@value2)
@@ -35,7 +35,7 @@ describe Puppet::Parser::AST::Selector do
         end
 
         it "should evaluate param" do
-            @param.expects(:safeevaluate).with(@scope)
+            @param.expects(:safeevaluate)
 
             @selector.evaluate(@scope)
         end
@@ -43,7 +43,7 @@ describe Puppet::Parser::AST::Selector do
         it "should downcase the evaluated param value if allowed" do
             Puppet.stubs(:[]).with(:casesensitive).returns(false)
             value = stub 'param'
-            @param.stubs(:safeevaluate).with(@scope).returns(value)
+            @param.stubs(:safeevaluate).returns(value)
 
             value.expects(:downcase)
 
@@ -59,21 +59,21 @@ describe Puppet::Parser::AST::Selector do
         describe "when scanning values" do
             it "should evaluate first matching option" do
                 @param2.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
-                @value2.expects(:safeevaluate).with(@scope)
+                @value2.expects(:safeevaluate)
 
                 @selector.evaluate(@scope)
             end
 
             it "should return the first matching evaluated option" do
                 @param2.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
-                @value2.stubs(:safeevaluate).with(@scope).returns(:result)
+                @value2.stubs(:safeevaluate).returns(:result)
 
                 @selector.evaluate(@scope).should == :result
             end
 
             it "should evaluate the default option if none matched" do
                 @param1.stubs(:is_a?).with(Puppet::Parser::AST::Default).returns(true)
-                @value1.expects(:safeevaluate).with(@scope).returns(@param1)
+                @value1.expects(:safeevaluate).returns(@param1)
 
                 @selector.evaluate(@scope)
             end
@@ -115,21 +115,21 @@ describe Puppet::Parser::AST::Selector do
             it "should evaluate the matching param" do
                 @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
 
-                @value1.expects(:safeevaluate).with(@scope)
+                @value1.expects(:safeevaluate)
 
                 @selector.evaluate(@scope)
             end
 
             it "should return this evaluated option if it matches" do
                 @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
-                @value1.stubs(:safeevaluate).with(@scope).returns(:result)
+                @value1.stubs(:safeevaluate).returns(:result)
 
                 @selector.evaluate(@scope).should == :result
             end
 
             it "should unset scope ephemeral variables after option evaluation" do
                 @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
-                @value1.stubs(:safeevaluate).with(@scope).returns(:result)
+                @value1.stubs(:safeevaluate).returns(:result)
 
                 @scope.expects(:unset_ephemeral_var)
 
@@ -138,7 +138,7 @@ describe Puppet::Parser::AST::Selector do
 
             it "should not leak ephemeral variables even if evaluation fails" do
                 @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
-                @value1.stubs(:safeevaluate).with(@scope).raises
+                @value1.stubs(:safeevaluate).raises
 
                 @scope.expects(:unset_ephemeral_var)
 

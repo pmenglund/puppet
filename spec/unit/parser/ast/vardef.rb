@@ -13,8 +13,8 @@ describe Puppet::Parser::AST::VarDef do
             name = mock 'name'
             value = mock 'value'
 
-            name.expects(:safeevaluate).with(@scope)
-            value.expects(:safeevaluate).with(@scope)
+            name.expects(:safeevaluate)
+            value.expects(:safeevaluate)
 
             vardef = Puppet::Parser::AST::VarDef.new :name => name, :value => value, :file => nil,
                                                      :line => nil

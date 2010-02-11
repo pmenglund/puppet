@@ -171,10 +171,10 @@ class Puppet::Parser::Scope
             @scope,@name = scope,name
         end
         def value
-            if    resolved?    then p [name,:resolved,@value]; @value 
-            elsif source       then p [name,:from_source];resolved!; @value = source.evaluate(scope) 
-            elsif scope.parent then p [name,:from_parent]; scope.parent.future_for(name).value
-            else                    p [name,:undef]; :undef
+            if    resolved?    then @value 
+            elsif source       then resolved!; @value = source.evaluate(scope) 
+            elsif scope.parent then scope.parent.future_for(name).value
+            else                    :undef
             end
         end
     end

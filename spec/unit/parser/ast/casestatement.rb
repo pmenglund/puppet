@@ -11,7 +11,7 @@ describe Puppet::Parser::AST::CaseStatement do
 
         before :each do
             @test = stub 'test'
-            @test.stubs(:safeevaluate).with(@scope).returns("value")
+            @test.stubs(:safeevaluate).returns("value")
 
             @option1 = stub 'option1', :eachopt => nil, :default? => false
             @option2 = stub 'option2', :eachopt => nil, :default? => false
@@ -23,7 +23,7 @@ describe Puppet::Parser::AST::CaseStatement do
         end
 
         it "should evaluate test" do
-            @test.expects(:safeevaluate).with(@scope)
+            @test.expects(:safeevaluate)
 
             @casestmt.evaluate(@scope)
         end
@@ -31,7 +31,7 @@ describe Puppet::Parser::AST::CaseStatement do
         it "should downcase the evaluated test value if allowed" do
             Puppet.stubs(:[]).with(:casesensitive).returns(false)
             value = stub 'test'
-            @test.stubs(:safeevaluate).with(@scope).returns(value)
+            @test.stubs(:safeevaluate).returns(value)
 
             value.expects(:downcase)
 
@@ -62,7 +62,7 @@ describe Puppet::Parser::AST::CaseStatement do
 
             it "should evaluate first matching option" do
                 @opval2.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
-                @option2.expects(:safeevaluate).with(@scope)
+                @option2.expects(:safeevaluate)
 
                 @casestmt.evaluate(@scope)
             end
@@ -76,21 +76,21 @@ describe Puppet::Parser::AST::CaseStatement do
 
             it "should return the first matching evaluated option" do
                 @opval2.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
-                @option2.stubs(:safeevaluate).with(@scope).returns(:result)
+                @option2.stubs(:safeevaluate).returns(:result)
 
                 @casestmt.evaluate(@scope).should == :result
             end
 
             it "should evaluate the default option if none matched" do
                 @option1.stubs(:default?).returns(true)
-                @option1.expects(:safeevaluate).with(@scope)
+                @option1.expects(:safeevaluate)
 
                 @casestmt.evaluate(@scope)
             end
 
             it "should return the default evaluated option if none matched" do
                 @option1.stubs(:default?).returns(true)
-                @option1.stubs(:safeevaluate).with(@scope).returns(:result)
+                @option1.stubs(:safeevaluate).returns(:result)
 
                 @casestmt.evaluate(@scope).should == :result
             end
@@ -108,21 +108,21 @@ describe Puppet::Parser::AST::CaseStatement do
             it "should evaluate this regex option if it matches" do
                 @opval1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
 
-                @option1.expects(:safeevaluate).with(@scope)
+                @option1.expects(:safeevaluate)
 
                 @casestmt.evaluate(@scope)
             end
 
             it "should return this evaluated regex option if it matches" do
                 @opval1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
-                @option1.stubs(:safeevaluate).with(@scope).returns(:result)
+                @option1.stubs(:safeevaluate).returns(:result)
 
                 @casestmt.evaluate(@scope).should == :result
             end
 
             it "should unset scope ephemeral variables after option evaluation" do
                 @opval1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
-                @option1.stubs(:safeevaluate).with(@scope).returns(:result)
+                @option1.stubs(:safeevaluate).returns(:result)
 
                 @scope.expects(:unset_ephemeral_var)
 
@@ -131,7 +131,7 @@ describe Puppet::Parser::AST::CaseStatement do
 
             it "should not leak ephemeral variables even if evaluation fails" do
                 @opval1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" and arg[1] == @scope }.returns(true)
-                @option1.stubs(:safeevaluate).with(@scope).raises
+                @option1.stubs(:safeevaluate).raises
 
                 @scope.expects(:unset_ephemeral_var)
 

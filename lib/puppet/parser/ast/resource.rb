@@ -14,11 +14,9 @@ class Resource < AST::ResourceReference
     # in the current scope.
     def evaluate(scope)
         # Evaluate all of the specified params.
-        paramobjects = parameters.collect { |param|
-            param.safeevaluate(scope)
-        }
+        paramobjects = parameters.collect { |param| param.safeevaluate }
 
-        resource_titles = @title.safeevaluate(scope)
+        resource_titles = @title.safeevaluate
 
         # it's easier to always use an array, even for only one name
         unless resource_titles.is_a?(Array)

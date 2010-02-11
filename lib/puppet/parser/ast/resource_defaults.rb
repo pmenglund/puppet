@@ -14,7 +14,7 @@ class Puppet::Parser::AST
             # Use a resource reference to canonize the type
             ref = Puppet::Resource.new(@type, "whatever")
             type = ref.type
-            params = @parameters.safeevaluate(scope)
+            params = @parameters.safeevaluate
 
             parsewrap do
                 scope.setdefaults(type, params)

@@ -16,7 +16,7 @@ describe Puppet::Parser::AST::Resource do
 
     it "should evaluate all its parameters" do
         param = stub 'param'
-        param.expects(:safeevaluate).with(@scope).returns Puppet::Parser::Resource::Param.new(:name => "myparam", :value => "myvalue", :source => stub("source"))
+        param.expects(:safeevaluate).returns Puppet::Parser::Resource::Param.new(:name => "myparam", :value => "myvalue", :source => stub("source"))
         @resource.stubs(:parameters).returns [param]
 
         @resource.evaluate(@scope)

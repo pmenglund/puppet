@@ -7,7 +7,7 @@ describe Puppet::Parser::AST::MatchOperator do
         @scope = Puppet::Parser::Scope.new()
 
         @lval = stub 'lval'
-        @lval.stubs(:safeevaluate).with(@scope).returns("this is a string")
+        @lval.stubs(:safeevaluate).returns("this is a string")
 
         @rval = stub 'rval'
         @rval.stubs(:evaluate_match)
@@ -16,7 +16,7 @@ describe Puppet::Parser::AST::MatchOperator do
     end
 
     it "should evaluate the left operand" do
-        @lval.expects(:safeevaluate).with(@scope)
+        @lval.expects(:safeevaluate)
 
         @operator.evaluate(@scope)
     end

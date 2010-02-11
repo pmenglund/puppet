@@ -17,7 +17,7 @@ describe Puppet::Parser::AST::Collection do
         query = mock 'query'
         collection = Puppet::Parser::AST::Collection.new :query => query, :form => :virtual
 
-        query.expects(:safeevaluate).with(@scope)
+        query.expects(:safeevaluate)
 
         collection.evaluate(@scope)
     end
@@ -44,7 +44,7 @@ describe Puppet::Parser::AST::Collection do
         collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test", :override => @overrides
         Puppet::Parser::Collector.stubs(:new).returns(collector)
 
-        @overrides.expects(:safeevaluate).with(@scope)
+        @overrides.expects(:safeevaluate)
 
         collection.evaluate(@scope)
     end

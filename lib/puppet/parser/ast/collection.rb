@@ -27,7 +27,7 @@ class Collection < AST::Branch
         # Evaluate all of the specified params.
         if @override
             params = @override.collect do |param|
-                param.safeevaluate(scope)
+                param.safeevaluate
             end
 
             newcoll.add_override(

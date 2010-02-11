@@ -15,8 +15,8 @@ class Puppet::Parser::AST
         # of lval and rval operands
         def evaluate(scope)
             # evaluate the operands, should return a boolean value
-            lval = @lval.safeevaluate(scope)
-            rval = @rval.safeevaluate(scope)
+            lval = @lval.safeevaluate
+            rval = @rval.safeevaluate
 
             # convert to number if operands are number
             lval = Puppet::Parser::Scope.number?(lval) || lval

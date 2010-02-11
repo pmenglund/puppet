@@ -39,7 +39,7 @@ class Puppet::Resource::Type
     end
 
     def evaluate_code
-        code && code.safeevaluate(code.scope)
+        code && code.safeevaluate
     end
 
     def initialize(type, name, options = {})
@@ -168,7 +168,8 @@ class Puppet::Resource::Type
             # Even if 'default' is a false value, it's an AST value, so this works fine
             fail Puppet::ParseError, "Must pass #{param} to #{resource.ref}" unless default
 
-            scope.setvar(param.to_s, default.safeevaluate(scope))
+            # MQR TODO: Forsooth, this won't work with futures methinks.
+            scope.setvar(param.to_s, default.safeevaluate)
         end
 
         scope.setvar("title", resource.title) unless set.include? :title

@@ -16,7 +16,7 @@ describe Puppet::Parser::AST::ResourceOverride do
     it "should evaluate the overriden object" do
         klass = stub 'klass', :title => "title", :type => "type"
         object = mock 'object'
-        object.expects(:safeevaluate).with(@scope).returns(klass)
+        object.expects(:safeevaluate).returns(klass)
         ast::ResourceOverride.new(:object => object, :parameters => @params ).evaluate(@scope)
     end
 

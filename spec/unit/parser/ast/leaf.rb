@@ -15,28 +15,28 @@ describe Puppet::Parser::AST::Leaf do
 
     describe "when evaluate_match is called" do
         it "should evaluate itself" do
-            @leaf.expects(:safeevaluate).with(@scope)
+            @leaf.expects(:safeevaluate)
 
             @leaf.evaluate_match("value", @scope)
         end
 
         it "should match values by equality" do
             @value.stubs(:==).returns(false)
-            @leaf.stubs(:safeevaluate).with(@scope).returns(@value)
+            @leaf.stubs(:safeevaluate).returns(@value)
             @value.expects(:==).with("value")
 
             @leaf.evaluate_match("value", @scope)
         end
 
         it "should downcase the evaluated value if wanted" do
-            @leaf.stubs(:safeevaluate).with(@scope).returns(@value)
+            @leaf.stubs(:safeevaluate).returns(@value)
             @value.expects(:downcase).returns("value")
 
             @leaf.evaluate_match("value", @scope, :insensitive => true)
         end
 
         it "should match undef if value is an empty string" do
-            @leaf.stubs(:safeevaluate).with(@scope).returns("")
+            @leaf.stubs(:safeevaluate).returns("")
 
             @leaf.evaluate_match(:undef, @scope).should be_true
         end
@@ -283,12 +283,12 @@ describe Puppet::Parser::AST::Variable do
 
     it "should lookup the variable in scope" do
         @scope.expects(:lookupvar).with("myvar", false).returns(:myvalue)
-        @var.safeevaluate(@scope).should == :myvalue
+        @var.safeevaluate.should == :myvalue
     end
 
     it "should return undef if the variable wasn't set" do
         @scope.expects(:lookupvar).with("myvar", false).returns(:undefined)
-        @var.safeevaluate(@scope).should == :undef
+        @var.safeevaluate.should == :undef
     end
 
     describe "when converting to string" do

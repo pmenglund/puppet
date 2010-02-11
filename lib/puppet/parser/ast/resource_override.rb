@@ -22,14 +22,12 @@ class Puppet::Parser::AST
         # in the current scope.
         def evaluate(scope)
             # Get our object reference.
-            resource = @object.safeevaluate(scope)
+            resource = @object.safeevaluate
 
             hash = {}
 
             # Evaluate all of the specified params.
-            params = @parameters.collect { |param|
-                param.safeevaluate(scope)
-            }
+            params = @parameters.collect { |param| param.safeevaluate }
 
             # Now we just create a normal resource, but we call a very different
             # method on the scope.

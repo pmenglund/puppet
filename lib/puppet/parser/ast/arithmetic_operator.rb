@@ -15,12 +15,12 @@ class Puppet::Parser::AST
         # of lval and rval operands
         def evaluate(scope)
             # evaluate the operands, should return a boolean value
-            lval = @lval.safeevaluate(scope)
+            lval = @lval.safeevaluate
             lval = Puppet::Parser::Scope.number?(lval)
             if lval == nil
                 raise ArgumentError, "left operand of %s is not a number" % @operator
             end
-            rval = @rval.safeevaluate(scope)
+            rval = @rval.safeevaluate
             rval = Puppet::Parser::Scope.number?(rval)
             if rval == nil
                 raise ArgumentError, "right operand of %s is not a number" % @operator

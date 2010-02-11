@@ -11,9 +11,9 @@ class Puppet::Parser::AST
 
         # Return the parameter and the value.
         def evaluate(scope)
-            return Puppet::Parser::Resource::Param.new(
+            Puppet::Parser::Resource::Param.new(
                 :name => @param,
-                :value => @value.safeevaluate(scope),
+                :value => @value.safeevaluate,
                 :source => scope.source, :line => self.line, :file => self.file,
                 :add => self.add
             )

@@ -13,9 +13,9 @@ describe Puppet::Parser::AST::CollExpr do
     describe "when evaluating with two operands" do
         before :each do
             @test1 = mock 'test1'
-            @test1.expects(:safeevaluate).with(@scope).returns("test1")
+            @test1.expects(:safeevaluate).returns("test1")
             @test2 = mock 'test2'
-            @test2.expects(:safeevaluate).with(@scope).returns("test2")
+            @test2.expects(:safeevaluate).returns("test2")
         end
 
         it "should evaluate both" do
@@ -99,7 +99,7 @@ describe Puppet::Parser::AST::CollExpr do
     it "should check for array member equality if resource parameter is an array for == in mode #{mode}" do
         array = mock 'array', :safeevaluate => "array"
         test1 = mock 'test1'
-        test1.expects(:safeevaluate).with(@scope).returns("test1")
+        test1.expects(:safeevaluate).returns("test1")
 
         resource = mock 'resource'
         resource.expects(:[]).with("array").at_least(1).returns(["test1","test2","test3"])

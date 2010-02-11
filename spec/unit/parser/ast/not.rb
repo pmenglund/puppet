@@ -11,7 +11,7 @@ describe Puppet::Parser::AST::Not do
 
     it "should evaluate its child expression" do
         val = stub "val"
-        val.expects(:safeevaluate).with(@scope)
+        val.expects(:safeevaluate)
 
         operator = Puppet::Parser::AST::Not.new :value => val
         operator.evaluate(@scope)

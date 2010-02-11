@@ -16,15 +16,15 @@ class Puppet::Parser::AST
         # else if there's an 'else' setting, evaluate it.
         # the first option that matches.
         def evaluate(scope)
-            value = @test.safeevaluate(scope)
+            value = @test.safeevaluate
 
             # let's emulate a new scope for each branches
             begin
                 if Puppet::Parser::Scope.true?(value)
-                    return @statements.safeevaluate(scope)
+                    return @statements.safeevaluate
                 else
                     if defined? @else
-                        return @else.safeevaluate(scope)
+                        return @else.safeevaluate
                     else
                         return nil
                     end

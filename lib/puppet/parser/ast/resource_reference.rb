@@ -8,11 +8,10 @@ class Puppet::Parser::AST::ResourceReference < Puppet::Parser::AST::Branch
     # Evaluate our object, but just return a simple array of the type
     # and name.
     def evaluate(scope)
-        titles = Array(title.safeevaluate(scope)).collect { |t| Puppet::Resource.new(type, t, :namespaces => scope.namespaces) }
+        titles = Array(title.safeevaluate).collect { |t| Puppet::Resource.new(type, t, :namespaces => scope.namespaces) }
         return titles.pop if titles.length == 1
         return titles
     end
-
     def to_s
         if title.is_a?(Puppet::Parser::AST::ASTArray)
             "#{type.to_s.capitalize}#{title}"

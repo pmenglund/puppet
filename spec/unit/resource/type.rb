@@ -363,7 +363,7 @@ describe Puppet::Resource::Type do
             code = stub 'code'
             @type.stubs(:code).returns code
             @type.stubs(:subscope).returns stub("subscope", :compiler => @compiler)
-            code.expects(:safeevaluate).with @type.subscope
+            code.expects(:safeevaluate)
 
             @type.evaluate_code(@resource)
         end

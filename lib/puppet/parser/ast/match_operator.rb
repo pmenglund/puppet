@@ -14,7 +14,7 @@ class Puppet::Parser::AST
         # Returns a boolean which is the result of the boolean operation
         # of lval and rval operands
         def evaluate(scope)
-            lval = @lval.safeevaluate(scope)
+            lval = @lval.safeevaluate
 
             return @operator == "=~" if rval.evaluate_match(lval, scope)
             return @operator == "!~"

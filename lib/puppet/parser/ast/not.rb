@@ -12,7 +12,7 @@ class Puppet::Parser::AST
         end
 
         def evaluate(scope)
-            val = @value.safeevaluate(scope)
+            val = @value.safeevaluate
             return ! Puppet::Parser::Scope.true?(val)
         end
     end

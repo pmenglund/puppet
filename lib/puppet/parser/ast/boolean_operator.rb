@@ -11,29 +11,13 @@ class Puppet::Parser::AST
             [@lval,@rval,@operator].each { |child| yield child }
         end
 
-        # Returns a boolean which is the result of the boolean operation
-        # of lval and rval operands
+        # Returns a boolean which is the result of the lazy boolean 
+        # operation of lval and rval operands
         def evaluate(scope)
-            # evaluate the first operand, should return a boolean value
-            lval = @lval.safeevaluate(scope)
-
-            # return result
-            # lazy evaluate right operand
+            s = Puppet::Parser::Scope
             case @operator
-            when "and"
-                if Puppet::Parser::Scope.true?(lval)
-                    rval = @rval.safeevaluate(scope)
-                    Puppet::Parser::Scope.true?(rval)
-                else # false and false == false
-                    false
-                end
-            when "or"
-                if Puppet::Parser::Scope.true?(lval)
-                    true
-                else
-                    rval = @rval.safeevaluate(scope)
-                    Puppet::Parser::Scope.true?(rval)
-                end
+            when "and"; s.true?(@lval.safeevaluate) and s.true?(@rval.safeevaluate)
+            when "or";  s.true?(@lval.safeevaluate) or  s.true?(@rval.safeevaluate)
             end
         end
 

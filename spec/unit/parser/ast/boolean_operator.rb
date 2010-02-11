@@ -14,7 +14,7 @@ describe Puppet::Parser::AST::BooleanOperator do
 
     it "should evaluate left operand inconditionally" do
         lval = stub "lval"
-        lval.expects(:safeevaluate).with(@scope).returns("true")
+        lval.expects(:safeevaluate).returns("true")
         rval = stub "rval", :safeevaluate => false
         rval.expects(:safeevaluate).never
 
@@ -25,7 +25,7 @@ describe Puppet::Parser::AST::BooleanOperator do
     it "should evaluate right 'and' operand only if left operand is true" do
         lval = stub "lval", :safeevaluate => true
         rval = stub "rval", :safeevaluate => false
-        rval.expects(:safeevaluate).with(@scope).returns(false)
+        rval.expects(:safeevaluate).returns(false)
         operator = ast::BooleanOperator.new :rval => rval, :operator => "and", :lval => lval
         operator.evaluate(@scope)
     end
@@ -33,7 +33,7 @@ describe Puppet::Parser::AST::BooleanOperator do
     it "should evaluate right 'or' operand only if left operand is false" do
         lval = stub "lval", :safeevaluate => false
         rval = stub "rval", :safeevaluate => false
-        rval.expects(:safeevaluate).with(@scope).returns(false)
+        rval.expects(:safeevaluate).returns(false)
         operator = ast::BooleanOperator.new :rval => rval, :operator => "or", :lval => lval
         operator.evaluate(@scope)
     end

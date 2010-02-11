@@ -11,7 +11,7 @@ class Puppet::Parser::AST
         # Short-curcuit evaluation.  Return the value of the statements for
         # the first option that matches.
         def evaluate(scope)
-            value = @test.safeevaluate(scope)
+            value = @test.safeevaluate
             sensitive = Puppet[:casesensitive]
             value = value.downcase if ! sensitive and value.respond_to?(:downcase)
 
@@ -22,14 +22,14 @@ class Puppet::Parser::AST
             default = nil
             @options.each do |option|
                 option.eachopt do |opt|
-                    return option.safeevaluate(scope) if opt.evaluate_match(value, scope, :file => file, :line => line, :sensitive => sensitive)
+                    return option.safeevaluate if opt.evaluate_match(value, scope, :file => file, :line => line, :sensitive => sensitive)
                 end
 
                 default = option if option.default?
             end
 
             # Unless we found something, look for the default.
-            return default.safeevaluate(scope) if default
+            return default.safeevaluate if default
 
             Puppet.debug "No true answers and no default"
             return nil

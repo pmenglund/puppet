@@ -11,9 +11,9 @@ describe Puppet::Parser::AST::ComparisonOperator do
 
     it "should evaluate both branches" do
         lval = stub "lval"
-        lval.expects(:safeevaluate).with(@scope)
+        lval.expects(:safeevaluate)
         rval = stub "rval"
-        rval.expects(:safeevaluate).with(@scope)
+        rval.expects(:safeevaluate)
 
         operator = Puppet::Parser::AST::ComparisonOperator.new :lval => lval, :operator => "==", :rval => rval
         operator.evaluate(@scope)

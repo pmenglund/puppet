@@ -14,9 +14,9 @@ describe Puppet::Parser::AST::ArithmeticOperator do
 
     it "should evaluate both branches" do
         lval = stub "lval"
-        lval.expects(:safeevaluate).with(@scope).returns(1)
+        lval.expects(:safeevaluate).returns(1)
         rval = stub "rval"
-        rval.expects(:safeevaluate).with(@scope).returns(2)
+        rval.expects(:safeevaluate).returns(2)
 
         operator = ast::ArithmeticOperator.new :rval => rval, :operator => "+", :lval => lval
         operator.evaluate(@scope)

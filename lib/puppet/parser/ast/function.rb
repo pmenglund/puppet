@@ -9,7 +9,6 @@ class Puppet::Parser::AST
         attr_accessor :name, :arguments
 
         def evaluate(scope)
-p [:function_eval,@name]
             # Make sure it's a defined function
             unless @fname
                 raise Puppet::ParseError, "Unknown function %s" % @name
@@ -35,7 +34,7 @@ p [:function_eval,@name]
 
 
             # We don't need to evaluate the name, because it's plaintext
-            args = @arguments.safeevaluate(scope)
+            args = @arguments.safeevaluate
 
             return scope.send("function_" + @name, args)
         end

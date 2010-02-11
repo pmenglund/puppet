@@ -12,7 +12,7 @@ class Puppet::Parser::AST
 
         # evaluate ourselves, and match
         def evaluate_match(value, scope, options = {})
-            obj = self.safeevaluate(scope)
+            obj = self.safeevaluate
             if ! options[:sensitive] && obj.respond_to?(:downcase)
                 obj = obj.downcase
             end
