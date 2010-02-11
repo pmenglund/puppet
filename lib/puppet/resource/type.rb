@@ -24,20 +24,22 @@ class Puppet::Resource::Type
     end
 
     # Now evaluate the code associated with this class or definition.
-    def evaluate_code(resource)
+    def adjust_context(resource)
         scope = resource.scope
 
         if tmp = evaluate_parent_type(resource)
             scope = tmp
         end
 
+        # Create a new scope.
         scope = subscope(scope, resource)
         scope.compiler.class_set(name, scope) unless type == :definition
-
         set_resource_parameters(resource, scope)
+        scope
+    end
 
-        return nil unless c = self.code
-        return c.safeevaluate(scope)
+    def evaluate_code
+        code && code.safeevaluate(code.scope)
     end
 
     def initialize(type, name, options = {})

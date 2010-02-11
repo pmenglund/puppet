@@ -70,7 +70,13 @@ class Puppet::Parser::Resource < Puppet::Resource
     def evaluate
         if klass = resource_type and ! builtin_type?
             finish()
-            return klass.instantiate(self).evaluate_code
+            #
+            # But this "fixes" it in place! -- not the right
+            # solution, but enought to restore functionality 
+            # when applied on top of Luke's patches.
+            #
+            klass.code = klass.code.instantiate(klass.adjust_context(self)) if klass.code.respond_to? :instantiate
+            return klass.evaluate_code
         elsif builtin?
             devfail "Cannot evaluate a builtin type (#{type})"
         else
