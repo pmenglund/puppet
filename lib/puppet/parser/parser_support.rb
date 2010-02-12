@@ -59,6 +59,7 @@ class Puppet::Parser::Parser
     end
 
     class Real_AST_node
+        attr_accessor :details
         define_opposite_accessors :not_instantiating? => :instantiating?
         def initialize(details)
             @details = details
@@ -69,6 +70,29 @@ class Puppet::Parser::Parser
                 @details[:class].instantiate(context,@details)
                 ensure not_instantiating!
                 end
+        end
+        #def each
+        #    @details[:children].each { |child| yield child }
+        #end
+        def line=(x)
+            @details[:line] = x
+        end
+        def file=(x)
+            @details[:file] = x
+        end
+        def method_missing(*args)
+            p args
+            puts caller
+        end
+        def children
+            details[:children] ||= []
+        end
+        def [](x)
+            children[x]
+        end
+        def push(*a)
+            children.push *a
+            self
         end
     end
 

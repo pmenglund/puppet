@@ -139,15 +139,15 @@ namestring:       name
 resource:       classname LBRACE resourceinstances endsemi RBRACE {
     @lexer.commentpop
     array = val[2]
-    if array.instance_of?(AST::ResourceInstance)
+    if array.details[:class] <= AST::ResourceInstance
         array = [array]
     end
     result = ast AST::ASTArray
 
     # this iterates across each specified resourceinstance
     array.each { |instance|
-        unless instance.instance_of?(AST::ResourceInstance)
-            raise Puppet::Dev, "Got something that isn't an instance"
+        unless instance.details[:class] <= AST::ResourceInstance
+            raise Puppet::DevError, "Got something that isn't an instance"
         end
         # now, i need to somehow differentiate between those things with
         # arrays in their names, and normal things
