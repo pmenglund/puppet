@@ -15,13 +15,13 @@ describe Puppet::Parser::AST::Collection do
 
     it "should evaluate its query" do
         query = mock 'query'
-        collection = Puppet::Parser::AST::Collection.new :query => query, :form => :virtual
+        collection = Puppet::Parser::AST::Collection.new :query => query, :form => :virtual, :scope => @scope
         query.expects(:safeevaluate)
         collection.evaluate
     end
 
     it "should instantiate a Collector for this type" do
-        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test"
+        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test", :scope => @scope
 
         Puppet::Parser::Collector.expects(:new).with(@scope, "test", nil, nil, :virtual)
 
@@ -29,7 +29,7 @@ describe Puppet::Parser::AST::Collection do
     end
 
     it "should tell the compiler about this collector" do
-        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test"
+        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test", :scope => @scope
         Puppet::Parser::Collector.stubs(:new).returns("whatever")
 
         @compiler.expects(:add_collection).with("whatever")
@@ -39,7 +39,7 @@ describe Puppet::Parser::AST::Collection do
 
     it "should evaluate overriden paramaters" do
         collector = stub_everything 'collector'
-        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test", :override => @overrides
+        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test", :override => @overrides, :scope => @scope
         Puppet::Parser::Collector.stubs(:new).returns(collector)
 
         @overrides.expects(:safeevaluate)
@@ -49,7 +49,7 @@ describe Puppet::Parser::AST::Collection do
 
     it "should tell the collector about overrides" do
         collector = mock 'collector'
-        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test", :override => @overrides
+        collection = Puppet::Parser::AST::Collection.new :form => :virtual, :type => "test", :override => @overrides, :scope => @scope
         Puppet::Parser::Collector.stubs(:new).returns(collector)
 
         collector.expects(:add_override)

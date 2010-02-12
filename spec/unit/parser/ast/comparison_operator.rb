@@ -68,13 +68,12 @@ describe Puppet::Parser::AST::ComparisonOperator do
     end
 
     it "should work for variables too" do
-        one = Puppet::Parser::AST::Variable.new( :value => "one" )
-        two = Puppet::Parser::AST::Variable.new( :value => "two" )
-
-        @scope.expects(:lookupvar).with("one", false).returns(1)
-        @scope.expects(:lookupvar).with("two", false).returns(2)
-
-        operator = Puppet::Parser::AST::ComparisonOperator.new :lval => one, :operator => "<", :rval => two
+        @scope.expects(:future_for).with("one").returns(stub('future_one', :value => 1))
+        @scope.expects(:future_for).with("two").returns(stub('future_two', :value => 2))
+        one = Puppet::Parser::AST::Variable.new( :value => "one", :scope => @scope )
+        two = Puppet::Parser::AST::Variable.new( :value => "two", :scope => @scope )
+ 
+        operator = Puppet::Parser::AST::ComparisonOperator.new :lval => one, :operator => "<", :rval => two, :scope => @scope 
         operator.evaluate.should == true
     end
 

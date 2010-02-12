@@ -61,10 +61,10 @@ describe Puppet::Parser::AST::ArithmeticOperator do
     end
 
     it "should work for variables too" do
-        @scope.expects(:lookupvar).with("one", false).returns(1)
-        @scope.expects(:lookupvar).with("two", false).returns(2)
-        one = ast::Variable.new( :value => "one" )
-        two = ast::Variable.new( :value => "two" )
+        @scope.expects(:future_for).with("one").returns(stub('future_one', :value => 1))
+        @scope.expects(:future_for).with("two").returns(stub('future_two', :value => 2))
+        one = ast::Variable.new( :value => "one", :scope => @scope )
+        two = ast::Variable.new( :value => "two", :scope => @scope )
 
         operator = ast::ArithmeticOperator.new :lval => one, :operator => "+", :rval => two
         operator.evaluate.should == 3

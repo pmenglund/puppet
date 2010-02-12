@@ -230,7 +230,7 @@ describe Puppet::Parser::AST::Regex do
             @value = stub 'regex'
             @value.stubs(:match).with("value").returns(true)
             Regexp.stubs(:new).returns(@value)
-            @regex = Puppet::Parser::AST::Regex.new :value => "/ab/"
+            @regex = Puppet::Parser::AST::Regex.new :value => "/ab/", :scope => @scope
         end
 
         it "should issue the regexp match" do
@@ -276,24 +276,25 @@ end
 
 describe Puppet::Parser::AST::Variable do
     before :each do
-        @scope = stub 'scope'
-        @var = Puppet::Parser::AST::Variable.new(:value => "myvar")
+        @scope     = stub 'scope'
+        @my_future = stub 'future'
+        @scope.expects(:future_for).with("myvar").returns(@my_future)
+        @var = Puppet::Parser::AST::Variable.new(:value => "myvar", :scope => @scope)
     end
 
     it "should lookup the variable in scope" do
-        @scope.expects(:lookupvar).with("myvar", false).returns(:myvalue)
+        @my_future.expects(:value).returns :myvalue
         @var.safeevaluate.should == :myvalue
     end
 
     it "should return undef if the variable wasn't set" do
-        @scope.expects(:lookupvar).with("myvar", false).returns(:undefined)
+        @my_future.expects(:value).returns :undefined
         @var.safeevaluate.should == :undef
     end
 
     describe "when converting to string" do
         it "should transform its value to a variable" do
-            value = stub 'value', :is_a? => true, :to_s => "myvar"
-            Puppet::Parser::AST::Variable.new( :value => value ).to_s.should == "\$myvar"
+            @var.to_s.should == "\$myvar"
         end
     end
 end

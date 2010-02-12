@@ -19,8 +19,8 @@ describe Puppet::Parser::AST::IfStatement do
             @else = stub 'else'
             @else.stubs(:safeevaluate)
 
-            @ifstmt = Puppet::Parser::AST::IfStatement.new :test => @test, :statements => @stmt
-            @ifelsestmt = Puppet::Parser::AST::IfStatement.new :test => @test, :statements => @stmt, :else => @else
+            @ifstmt = Puppet::Parser::AST::IfStatement.new :test => @test, :statements => @stmt, :scope => @scope
+            @ifelsestmt = Puppet::Parser::AST::IfStatement.new :test => @test, :statements => @stmt, :else => @else, :scope => @scope
         end
 
         it "should evaluate test" do

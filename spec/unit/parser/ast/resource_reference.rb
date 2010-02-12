@@ -12,7 +12,7 @@ describe Puppet::Parser::AST::ResourceReference do
 
     def newref(type, title)
         title = stub 'title', :safeevaluate => title
-        ref = Puppet::Parser::AST::ResourceReference.new(:type => type, :title => title)
+        ref = Puppet::Parser::AST::ResourceReference.new(:type => type, :title => title, :scope => @scope)
     end
 
     it "should correctly produce reference strings" do
@@ -25,7 +25,7 @@ describe Puppet::Parser::AST::ResourceReference do
 
     it "should return an array of resources if given an array of titles" do
         titles = mock 'titles', :safeevaluate => ["title1","title2"]
-        ref = ast::ResourceReference.new( :title => titles, :type => "File" )
+        ref = ast::ResourceReference.new( :title => titles, :type => "File", :scope => @scope )
         ref.evaluate.should == [
             Puppet::Resource.new("file", "title1"),
             Puppet::Resource.new("file", "title2")
@@ -41,6 +41,6 @@ describe Puppet::Parser::AST::ResourceReference do
         type = stub 'type', :is_a? => true, :to_s => "file"
         title = stub 'title', :is_a? => true, :to_s => "[/tmp/a, /tmp/b]"
 
-        ast::ResourceReference.new( :type => type, :title => title ).to_s.should == "File[/tmp/a, /tmp/b]"
+        ast::ResourceReference.new( :type => type, :title => title, :scope => @scope ).to_s.should == "File[/tmp/a, /tmp/b]"
     end
 end

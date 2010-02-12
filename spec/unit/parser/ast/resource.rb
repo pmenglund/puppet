@@ -10,7 +10,7 @@ describe Puppet::Parser::AST::Resource do
         @compiler = Puppet::Parser::Compiler.new(Puppet::Node.new("mynode"))
         @scope = Puppet::Parser::Scope.new(:compiler => @compiler)
         @scope.stubs(:resource).returns(stub_everything)
-        @resource = ast::Resource.new(:title => @title, :type => "file", :parameters => ast::ASTArray.new(:children => []) )
+        @resource = ast::Resource.new(:title => @title, :type => "file", :parameters => ast::ASTArray.new(:children => []), :scope => @scope )
         @resource.stubs(:qualified_type).returns("Resource")
     end
 

@@ -339,14 +339,14 @@ describe Puppet::Resource::Type do
             @type.expects(:subscope).with(@scope, @resource).returns subscope
             @type.expects(:set_resource_parameters).with(@resource, subscope)
 
-            @type.evaluate_code(@resource)
+            @type.evaluate_code
         end
 
         it "should store the class scope" do
             subscope = stub 'subscope', :compiler => @compiler
             @type.expects(:subscope).with(@scope, @resource).returns subscope
 
-            @type.evaluate_code(@resource)
+            @type.evaluate_code
             @compiler.class_scope(@type).should equal(subscope)
         end
 
@@ -365,13 +365,13 @@ describe Puppet::Resource::Type do
             @type.stubs(:subscope).returns stub("subscope", :compiler => @compiler)
             code.expects(:safeevaluate)
 
-            @type.evaluate_code(@resource)
+            @type.evaluate_code
         end
 
         it "should noop if there is no code" do
             @type.expects(:code).returns nil
 
-            @type.evaluate_code(@resource)
+            @type.evaluate_code
         end
 
         describe "and it has a parent class" do

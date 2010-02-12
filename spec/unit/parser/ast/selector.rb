@@ -10,6 +10,8 @@ describe Puppet::Parser::AST::Selector do
     describe "when evaluating" do
 
         before :each do
+            @scope = stub_everything 'scope'
+
             @param = stub 'param'
             @param.stubs(:safeevaluate).returns("value")
 
@@ -30,7 +32,7 @@ describe Puppet::Parser::AST::Selector do
             @values = stub 'values', :instance_of? => true
             @values.stubs(:each).multiple_yields(@value1, @value2)
 
-            @selector = Puppet::Parser::AST::Selector.new :param => @param, :values => @values
+            @selector = Puppet::Parser::AST::Selector.new :param => @param, :values => @values, :scope => @scope
             @selector.stubs(:fail)
         end
 
@@ -91,13 +93,13 @@ describe Puppet::Parser::AST::Selector do
             end
 
             it "should delegate matching to evaluate_match" do
-                @param1.expects(:evaluate_match).with("value")
+                @param1.expects(:evaluate_match).with { |*arg| arg[0] == "value" }
                 @selector.evaluate
             end
 
             it "should transmit the sensitive parameter to evaluate_match" do
                 Puppet.stubs(:[]).with(:casesensitive).returns(:sensitive)
-                @param1.expects(:evaluate_match).with { |*arg| arg[2][:sensitive] == :sensitive }
+                @param1.expects(:evaluate_match).with { |*arg| arg[1][:sensitive] == :sensitive }
 
                 @selector.evaluate
             end
@@ -105,33 +107,33 @@ describe Puppet::Parser::AST::Selector do
             it "should transmit the AST file and line to evaluate_match" do
                 @selector.file = :file
                 @selector.line = :line
-                @param1.expects(:evaluate_match).with { |*arg| arg[2][:file] == :file and arg[2][:line] == :line }
+                @param1.expects(:evaluate_match).with { |*arg| arg[1][:file] == :file and arg[1][:line] == :line }
 
                 @selector.evaluate
             end
 
 
             it "should evaluate the matching param" do
-                @param1.stubs(:evaluate_match).with("value").returns(true)
+                @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
                 @value1.expects(:safeevaluate)
                 @selector.evaluate
             end
 
             it "should return this evaluated option if it matches" do
-                @param1.stubs(:evaluate_match).with("value").returns(true)
+                @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
                 @value1.stubs(:safeevaluate).returns(:result)
                 @selector.evaluate.should == :result
             end
 
             it "should unset scope ephemeral variables after option evaluation" do
-                @param1.stubs(:evaluate_match).with("value").retrns(true)
+                @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
                 @value1.stubs(:safeevaluate).returns(:result)
                 @scope.expects(:unset_ephemeral_var)
                 @selector.evaluate
             end
 
             it "should not leak ephemeral variables even if evaluation fails" do
-                @param1.stubs(:evaluate_match).with("value").returns(true)
+                @param1.stubs(:evaluate_match).with { |*arg| arg[0] == "value" }.returns(true)
                 @value1.stubs(:safeevaluate).raises
                 @scope.expects(:unset_ephemeral_var)
                 lambda { @selector.evaluate }.should raise_error
@@ -145,9 +147,9 @@ describe Puppet::Parser::AST::Selector do
     end
     describe "when converting to string" do
         it "should produce a string version of this selector" do
-            values = Puppet::Parser::AST::ASTArray.new :children => [ Puppet::Parser::AST::ResourceParam.new(:param => "type", :value => "value", :add => false) ]
-            param = Puppet::Parser::AST::Variable.new :value => "myvar"
-            selector = Puppet::Parser::AST::Selector.new :param => param, :values => values
+            values = Puppet::Parser::AST::ASTArray.new :children => [ Puppet::Parser::AST::ResourceParam.new(:param => "type", :value => "value", :add => false, :scope => @scope) ]
+            param = Puppet::Parser::AST::Variable.new :value => "myvar", :scope => @scope
+            selector = Puppet::Parser::AST::Selector.new :param => param, :values => values, :scope => @scope
             selector.to_s.should == "$myvar ? { type => value }"
         end
     end
