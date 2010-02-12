@@ -15,7 +15,7 @@ class Puppet::Parser::AST
         # Short-curcuit evaluation.  If we're true, evaluate our statements,
         # else if there's an 'else' setting, evaluate it.
         # the first option that matches.
-        def evaluate(scope)
+        def evaluate
             value = @test.safeevaluate
 
             # let's emulate a new scope for each branches

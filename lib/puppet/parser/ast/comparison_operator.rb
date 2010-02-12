@@ -13,7 +13,7 @@ class Puppet::Parser::AST
 
         # Returns a boolean which is the result of the boolean operation
         # of lval and rval operands
-        def evaluate(scope)
+        def evaluate
             # evaluate the operands, should return a boolean value
             lval = @lval.safeevaluate
             rval = @rval.safeevaluate

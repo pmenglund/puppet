@@ -28,7 +28,7 @@ describe Puppet::Parser::AST::IfStatement do
 
             @test.expects(:safeevaluate)
 
-            @ifstmt.evaluate(@scope)
+            @ifstmt.evaluate
         end
 
         it "should evaluate if statements if test is true" do
@@ -36,7 +36,7 @@ describe Puppet::Parser::AST::IfStatement do
 
             @stmt.expects(:safeevaluate)
 
-            @ifstmt.evaluate(@scope)
+            @ifstmt.evaluate
         end
 
         it "should not evaluate if statements if test is false" do
@@ -44,7 +44,7 @@ describe Puppet::Parser::AST::IfStatement do
 
             @stmt.expects(:safeevaluate).never
 
-            @ifstmt.evaluate(@scope)
+            @ifstmt.evaluate
         end
 
         it "should evaluate the else branch if test is false" do
@@ -52,7 +52,7 @@ describe Puppet::Parser::AST::IfStatement do
 
             @else.expects(:safeevaluate)
 
-            @ifelsestmt.evaluate(@scope)
+            @ifelsestmt.evaluate
         end
 
         it "should not evaluate the else branch if test is true" do
@@ -60,7 +60,7 @@ describe Puppet::Parser::AST::IfStatement do
 
             @else.expects(:safeevaluate).never
 
-            @ifelsestmt.evaluate(@scope)
+            @ifelsestmt.evaluate
         end
 
         it "should reset ephemeral statements after evaluation" do
@@ -69,7 +69,7 @@ describe Puppet::Parser::AST::IfStatement do
             @stmt.expects(:safeevaluate)
             @scope.expects(:unset_ephemeral_var)
 
-            @ifstmt.evaluate(@scope)
+            @ifstmt.evaluate
         end
     end
 end

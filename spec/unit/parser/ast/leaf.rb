@@ -16,8 +16,7 @@ describe Puppet::Parser::AST::Leaf do
     describe "when evaluate_match is called" do
         it "should evaluate itself" do
             @leaf.expects(:safeevaluate)
-
-            @leaf.evaluate_match("value", @scope)
+            @leaf.evaluate_match("value")
         end
 
         it "should match values by equality" do
@@ -25,20 +24,20 @@ describe Puppet::Parser::AST::Leaf do
             @leaf.stubs(:safeevaluate).returns(@value)
             @value.expects(:==).with("value")
 
-            @leaf.evaluate_match("value", @scope)
+            @leaf.evaluate_match("value")
         end
 
         it "should downcase the evaluated value if wanted" do
             @leaf.stubs(:safeevaluate).returns(@value)
             @value.expects(:downcase).returns("value")
 
-            @leaf.evaluate_match("value", @scope, :insensitive => true)
+            @leaf.evaluate_match("value", :insensitive => true)
         end
 
         it "should match undef if value is an empty string" do
             @leaf.stubs(:safeevaluate).returns("")
 
-            @leaf.evaluate_match(:undef, @scope).should be_true
+            @leaf.evaluate_match(:undef).should be_true
         end
     end
 
@@ -86,11 +85,11 @@ describe Puppet::Parser::AST::Undef do
     end
 
     it "should match undef with undef" do
-        @undef.evaluate_match(:undef, @scope).should be_true
+        @undef.evaluate_match(:undef).should be_true
     end
 
     it "should not match undef with an empty string" do
-        @undef.evaluate_match("", @scope).should be_false
+        @undef.evaluate_match("").should be_false
     end
 end
 
@@ -222,7 +221,7 @@ describe Puppet::Parser::AST::Regex do
         it "should return self" do
             val = Puppet::Parser::AST::Regex.new :value => "/ab/"
 
-            val.evaluate(@scope).should === val
+            val.evaluate.should === val
         end
     end
 
@@ -237,20 +236,20 @@ describe Puppet::Parser::AST::Regex do
         it "should issue the regexp match" do
             @value.expects(:match).with("value")
 
-            @regex.evaluate_match("value", @scope)
+            @regex.evaluate_match("value")
         end
 
         it "should set ephemeral scope vars if there is a match" do
             @scope.expects(:ephemeral_from).with(true, nil, nil)
 
-            @regex.evaluate_match("value", @scope)
+            @regex.evaluate_match("value")
         end
 
         it "should return the match to the caller" do
             @value.stubs(:match).with("value").returns(:match)
             @scope.stubs(:ephemeral_from)
 
-            @regex.evaluate_match("value", @scope)
+            @regex.evaluate_match("value")
         end
     end
 
@@ -333,7 +332,7 @@ describe Puppet::Parser::AST::HostName do
     end
 
     it "should evaluate to its value" do
-        @host.evaluate(@scope).should == @value
+        @host.evaluate.should == @value
     end
 
     it "should delegate eql? to the underlying value if it is an HostName" do

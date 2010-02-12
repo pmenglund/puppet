@@ -10,7 +10,7 @@ class Puppet::Parser::AST
         end
 
         # Return the parameter and the value.
-        def evaluate(scope)
+        def evaluate
             Puppet::Parser::Resource::Param.new(
                 :name => @param,
                 :value => @value.safeevaluate,

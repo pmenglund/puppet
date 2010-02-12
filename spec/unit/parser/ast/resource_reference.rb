@@ -16,17 +16,17 @@ describe Puppet::Parser::AST::ResourceReference do
     end
 
     it "should correctly produce reference strings" do
-        newref("File", "/tmp/yay").evaluate(@scope).to_s.should == "File[/tmp/yay]"
+        newref("File", "/tmp/yay").evaluate.to_s.should == "File[/tmp/yay]"
     end
 
     it "should produce a single resource when the title evaluates to a string" do
-        newref("File", "/tmp/yay").evaluate(@scope).should == Puppet::Resource.new("file", "/tmp/yay")
+        newref("File", "/tmp/yay").evaluate.should == Puppet::Resource.new("file", "/tmp/yay")
     end
 
     it "should return an array of resources if given an array of titles" do
         titles = mock 'titles', :safeevaluate => ["title1","title2"]
         ref = ast::ResourceReference.new( :title => titles, :type => "File" )
-        ref.evaluate(@scope).should == [
+        ref.evaluate.should == [
             Puppet::Resource.new("file", "title1"),
             Puppet::Resource.new("file", "title2")
         ]
@@ -34,7 +34,7 @@ describe Puppet::Parser::AST::ResourceReference do
 
     it "should pass its scope's namespaces to all created resource references" do
         @scope.add_namespace "foo"
-        newref("File", "/tmp/yay").evaluate(@scope).namespaces.should == ["foo"]
+        newref("File", "/tmp/yay").evaluate.namespaces.should == ["foo"]
     end
 
     it "should return a correct representation when converting to string" do

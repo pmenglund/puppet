@@ -15,7 +15,7 @@ class Puppet::Parser::AST
 
         # Evaluate the actual statements; this only gets called if
         # our test was true matched.
-        def evaluate(scope)
+        def evaluate
             @statements.safeevaluate
         end
     end

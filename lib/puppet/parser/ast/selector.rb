@@ -11,7 +11,7 @@ class Puppet::Parser::AST
         end
 
         # Find the value that corresponds with the test.
-        def evaluate(scope)
+        def evaluate
             # Get our parameter.
             paramvalue = @param.safeevaluate
 
@@ -28,7 +28,7 @@ class Puppet::Parser::AST
             # Then look for a match in the options.
             @values.each do |obj|
                 # short circuit asap if we have a match
-                return obj.value.safeevaluate if obj.param.evaluate_match(paramvalue, scope, :file => file, :line => line, :sensitive => sensitive)
+                return obj.value.safeevaluate if obj.param.evaluate_match(paramvalue, :file => file, :line => line, :sensitive => sensitive)
 
                 # Store the default, in case it's necessary.
                 default = obj if obj.param.is_a?(Default)

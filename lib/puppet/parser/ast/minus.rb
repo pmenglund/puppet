@@ -11,7 +11,7 @@ class Puppet::Parser::AST
             yield @value
         end
 
-        def evaluate(scope)
+        def evaluate
             val = @value.safeevaluate
             val = Puppet::Parser::Scope.number?(val)
             if val == nil

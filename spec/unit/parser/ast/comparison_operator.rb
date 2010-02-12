@@ -16,7 +16,7 @@ describe Puppet::Parser::AST::ComparisonOperator do
         rval.expects(:safeevaluate)
 
         operator = Puppet::Parser::AST::ComparisonOperator.new :lval => lval, :operator => "==", :rval => rval
-        operator.evaluate(@scope)
+        operator.evaluate
     end
 
     it "should convert arguments strings to numbers if they are" do
@@ -24,7 +24,7 @@ describe Puppet::Parser::AST::ComparisonOperator do
         Puppet::Parser::Scope.expects(:number?).with("2").returns(2)
 
         operator = Puppet::Parser::AST::ComparisonOperator.new :lval => @one, :operator => "==", :rval => @two
-        operator.evaluate(@scope)
+        operator.evaluate
     end
 
     %w{< > <= >= ==}.each do |oper|
@@ -35,7 +35,7 @@ describe Puppet::Parser::AST::ComparisonOperator do
             Puppet::Parser::Scope.stubs(:number?).with("two").returns(nil)
 
             operator = Puppet::Parser::AST::ComparisonOperator.new :lval => lval, :operator => oper, :rval => rval
-            operator.evaluate(@scope).should == "one".send(oper,"two")
+            operator.evaluate.should == "one".send(oper,"two")
         end
     end
 
@@ -46,7 +46,7 @@ describe Puppet::Parser::AST::ComparisonOperator do
         Puppet::Parser::Scope.stubs(:number?).with("2").returns(2)
 
         operator = Puppet::Parser::AST::ComparisonOperator.new :lval => lval, :operator => ">", :rval => rval
-        lambda { operator.evaluate(@scope) }.should raise_error(ArgumentError)
+        lambda { operator.evaluate }.should raise_error(ArgumentError)
     end
 
     it "should fail for an unknown operator" do
@@ -57,14 +57,14 @@ describe Puppet::Parser::AST::ComparisonOperator do
        it "should return the result of using '#{oper}' to compare the left and right sides" do
            operator = Puppet::Parser::AST::ComparisonOperator.new :lval => @one, :operator => oper, :rval => @two
 
-           operator.evaluate(@scope).should == 1.send(oper,2)
+           operator.evaluate.should == 1.send(oper,2)
        end
     end
 
     it "should return the result of using '!=' to compare the left and right sides" do
         operator = Puppet::Parser::AST::ComparisonOperator.new :lval => @one, :operator => '!=', :rval => @two
 
-        operator.evaluate(@scope).should == true
+        operator.evaluate.should == true
     end
 
     it "should work for variables too" do
@@ -75,7 +75,7 @@ describe Puppet::Parser::AST::ComparisonOperator do
         @scope.expects(:lookupvar).with("two", false).returns(2)
 
         operator = Puppet::Parser::AST::ComparisonOperator.new :lval => one, :operator => "<", :rval => two
-        operator.evaluate(@scope).should == true
+        operator.evaluate.should == true
     end
 
     # see ticket #1759
@@ -85,7 +85,7 @@ describe Puppet::Parser::AST::ComparisonOperator do
            nine = stub 'two', :safeevaluate => "9"
            operator = Puppet::Parser::AST::ComparisonOperator.new :lval => ten, :operator => oper, :rval => nine
 
-           operator.evaluate(@scope).should == 10.send(oper,9)
+           operator.evaluate.should == 10.send(oper,9)
        end
     end
 

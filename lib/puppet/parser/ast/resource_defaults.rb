@@ -10,7 +10,7 @@ class Puppet::Parser::AST
 
         # As opposed to ResourceDef, this stores each default for the given
         # object type.
-        def evaluate(scope)
+        def evaluate
             # Use a resource reference to canonize the type
             ref = Puppet::Resource.new(@type, "whatever")
             type = ref.type

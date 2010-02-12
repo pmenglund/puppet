@@ -15,7 +15,7 @@ class Puppet::Parser::AST
         end
 
         # Evaluate our children.
-        def evaluate(scope)
+        def evaluate
             # Make a new array, so we don't have to deal with the details of
             # flattening and such
             items = []

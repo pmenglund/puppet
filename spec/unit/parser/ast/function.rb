@@ -57,7 +57,7 @@ describe Puppet::Parser::AST::Function do
 
             argument.expects(:safeevaluate).returns("argument")
 
-            func.evaluate(@scope)
+            func.evaluate
         end
 
         it "should call the underlying ruby function" do
@@ -67,7 +67,7 @@ describe Puppet::Parser::AST::Function do
 
             @scope.expects(:function_exist).with("nothing")
 
-            func.evaluate(@scope)
+            func.evaluate
         end
 
         it "should return the ruby function return for rvalue functions" do
@@ -76,7 +76,7 @@ describe Puppet::Parser::AST::Function do
             func = Puppet::Parser::AST::Function.new :name => "exist", :ftype => :statement, :arguments => argument
             @scope.stubs(:function_exist).with("nothing").returns("returning")
 
-            func.evaluate(@scope).should == "returning"
+            func.evaluate.should == "returning"
         end
 
     end

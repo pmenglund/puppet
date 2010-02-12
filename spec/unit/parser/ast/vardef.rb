@@ -16,9 +16,8 @@ describe Puppet::Parser::AST::VarDef do
             name.expects(:safeevaluate)
             value.expects(:safeevaluate)
 
-            vardef = Puppet::Parser::AST::VarDef.new :name => name, :value => value, :file => nil,
-                                                     :line => nil
-            vardef.evaluate(@scope)
+            vardef = Puppet::Parser::AST::VarDef.new :name => name, :value => value, :file => nil, :line => nil
+            vardef.evaluate
         end
 
         it "should be in append=false mode if called without append" do
@@ -27,9 +26,8 @@ describe Puppet::Parser::AST::VarDef do
 
             @scope.expects(:setvar).with { |name,value,options| options[:append] == nil }
 
-            vardef = Puppet::Parser::AST::VarDef.new :name => name, :value => value, :file => nil,
-                                                     :line => nil
-            vardef.evaluate(@scope)
+            vardef = Puppet::Parser::AST::VarDef.new :name => name, :value => value, :file => nil, :line => nil
+            vardef.evaluate
         end
 
         it "should call scope in append mode if append is true" do
@@ -38,9 +36,8 @@ describe Puppet::Parser::AST::VarDef do
 
             @scope.expects(:setvar).with { |name,value,options| options[:append] == true }
 
-            vardef = Puppet::Parser::AST::VarDef.new :name => name, :value => value, :file => nil,
-                                                     :line => nil, :append => true
-            vardef.evaluate(@scope)
+            vardef = Puppet::Parser::AST::VarDef.new :name => name, :value => value, :file => nil, :line => nil, :append => true
+            vardef.evaluate
         end
 
         describe "when dealing with hash" do

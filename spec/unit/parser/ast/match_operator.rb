@@ -18,7 +18,7 @@ describe Puppet::Parser::AST::MatchOperator do
     it "should evaluate the left operand" do
         @lval.expects(:safeevaluate)
 
-        @operator.evaluate(@scope)
+        @operator.evaluate
     end
 
     it "should fail for an unknown operator" do
@@ -26,25 +26,25 @@ describe Puppet::Parser::AST::MatchOperator do
     end
 
     it "should evaluate_match the left operand" do
-        @rval.expects(:evaluate_match).with("this is a string", @scope).returns(:match)
+        @rval.expects(:evaluate_match).with("this is a string").returns(:match)
 
-        @operator.evaluate(@scope)
+        @operator.evaluate
     end
 
     { "=~" => true, "!~" => false }.each do |op, res|
         it "should return #{res} if the regexp matches with #{op}" do
             match = stub 'match'
-            @rval.stubs(:evaluate_match).with("this is a string", @scope).returns(match)
+            @rval.stubs(:evaluate_match).with("this is a string").returns(match)
 
             operator = Puppet::Parser::AST::MatchOperator.new :lval => @lval, :rval => @rval, :operator => op
-            operator.evaluate(@scope).should == res
+            operator.evaluate.should == res
         end
 
         it "should return #{!res} if the regexp doesn't match" do
-            @rval.stubs(:evaluate_match).with("this is a string", @scope).returns(nil)
+            @rval.stubs(:evaluate_match).with("this is a string").returns(nil)
 
             operator = Puppet::Parser::AST::MatchOperator.new :lval => @lval, :rval => @rval, :operator => op
-            operator.evaluate(@scope).should == !res
+            operator.evaluate.should == !res
         end
     end
 end

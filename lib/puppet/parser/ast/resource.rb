@@ -12,7 +12,7 @@ class Resource < AST::ResourceReference
 
     # Does not actually return an object; instead sets an object
     # in the current scope.
-    def evaluate(scope)
+    def evaluate
         # Evaluate all of the specified params.
         paramobjects = parameters.collect { |param| param.safeevaluate }
 

@@ -6,19 +6,18 @@ class Puppet::Parser::AST
         attr_accessor :value, :type
 
         # Return our value.
-        def evaluate(scope)
-            return @value
+        def evaluate
+            @value
         end
 
         # evaluate ourselves, and match
-        def evaluate_match(value, scope, options = {})
+        def evaluate_match(value, options = {})
             obj = self.safeevaluate
             if ! options[:sensitive] && obj.respond_to?(:downcase)
                 obj = obj.downcase
             end
             # "" == undef for case/selector/if
-            return true if obj == "" and value == :undef
-            obj == value
+            (obj == "" and value == :undef) or obj == value
         end
 
         def match(value)
@@ -54,8 +53,8 @@ class Puppet::Parser::AST
     class String < AST::Leaf
         # Interpolate the string looking for variables, and then return
         # the result.
-        def evaluate(scope)
-            return scope.strinterp(@value, file, line)
+        def evaluate
+            scope.strinterp(@value, file, line)
         end
 
         def to_s
@@ -65,8 +64,8 @@ class Puppet::Parser::AST
 
     # An uninterpreted string.
     class FlatString < AST::Leaf
-        def evaluate(scope)
-            return @value
+        def evaluate
+            @value
         end
 
         def to_s
@@ -130,7 +129,7 @@ class Puppet::Parser::AST
             @future = scope.future_for(@value)
         end
 
-        def evaluate(scope)
+        def evaluate
             ((var = @future.value) == :undefined) ? :undef : var
         end
 
@@ -188,17 +187,17 @@ class Puppet::Parser::AST
         # we're returning self here to wrap the regexp and to be used in places
         # where a string would have been used, without modifying any client code.
         # For instance, in many places we have the following code snippet:
-        #  val = @val.safeevaluate(@scope)
+        #  val = @val.safeevaluate
         #  if val.match(otherval)
         #      ...
         #  end
         # this way, we don't have to modify this test specifically for handling
         # regexes.
-        def evaluate(scope)
-            return self
+        def evaluate
+            self
         end
 
-        def evaluate_match(value, scope, options = {})
+        def evaluate_match(value, options = {})
             value = value.is_a?(String) ? value : value.to_s
 
             if matched = @value.match(value)

@@ -17,7 +17,7 @@ class Puppet::Parser::AST
 
         # Look up our name and value, and store them appropriately.  The
         # lexer strips off the syntax stuff like '$'.
-        def evaluate(scope)
+        def evaluate
             @value.safeevaluate
         end
 

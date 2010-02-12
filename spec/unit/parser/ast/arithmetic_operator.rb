@@ -19,7 +19,7 @@ describe Puppet::Parser::AST::ArithmeticOperator do
         rval.expects(:safeevaluate).returns(2)
 
         operator = ast::ArithmeticOperator.new :rval => rval, :operator => "+", :lval => lval
-        operator.evaluate(@scope)
+        operator.evaluate
     end
 
     it "should fail for an unknown operator" do
@@ -30,7 +30,7 @@ describe Puppet::Parser::AST::ArithmeticOperator do
         Puppet::Parser::Scope.expects(:number?).with(1).returns(1)
         Puppet::Parser::Scope.expects(:number?).with(2).returns(2)
 
-        ast::ArithmeticOperator.new(:lval => @one, :operator => "+", :rval => @two).evaluate(@scope)
+        ast::ArithmeticOperator.new(:lval => @one, :operator => "+", :rval => @two).evaluate
     end
 
 
@@ -42,7 +42,7 @@ describe Puppet::Parser::AST::ArithmeticOperator do
             Puppet::Parser::Scope.stubs(:number?).with(1).returns(one)
             Puppet::Parser::Scope.stubs(:number?).with(2).returns(two)
             one.expects(:send).with(op,two)
-            operator.evaluate(@scope)
+            operator.evaluate
         end
     end
 
@@ -50,14 +50,14 @@ describe Puppet::Parser::AST::ArithmeticOperator do
         two = stub 'two', :safeevaluate => "2"
         one = stub 'one', :safeevaluate => "1"
         operator = ast::ArithmeticOperator.new :lval => two, :operator => "+", :rval => one
-        operator.evaluate(@scope).should == 3
+        operator.evaluate.should == 3
     end
 
     it "should work even with floats" do
         two = stub 'two', :safeevaluate => 2.53
         one = stub 'one', :safeevaluate => 1.80
         operator = ast::ArithmeticOperator.new :lval => two, :operator => "+", :rval => one
-        operator.evaluate(@scope).should == 4.33
+        operator.evaluate.should == 4.33
     end
 
     it "should work for variables too" do
@@ -67,7 +67,7 @@ describe Puppet::Parser::AST::ArithmeticOperator do
         two = ast::Variable.new( :value => "two" )
 
         operator = ast::ArithmeticOperator.new :lval => one, :operator => "+", :rval => two
-        operator.evaluate(@scope).should == 3
+        operator.evaluate.should == 3
     end
 
 end

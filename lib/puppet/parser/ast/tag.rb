@@ -8,7 +8,7 @@ class Puppet::Parser::AST
         @name = :class
         attr_accessor :type
 
-        def evaluate(scope)
+        def evaluate
             [@type.safeevaluate].flatten.each do |type|
                 # Now set our class.  We don't have to worry about checking
                 # whether we've been evaluated because we're not evaluating

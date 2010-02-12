@@ -19,11 +19,11 @@ describe Puppet::Parser::AST::Resource do
         param.expects(:safeevaluate).returns Puppet::Parser::Resource::Param.new(:name => "myparam", :value => "myvalue", :source => stub("source"))
         @resource.stubs(:parameters).returns [param]
 
-        @resource.evaluate(@scope)
+        @resource.evaluate
     end
 
     it "should evaluate its title" do
-        @resource.evaluate(@scope)[0].title.should == "mytitle"
+        @resource.evaluate[0].title.should == "mytitle"
     end
 
     it "should flatten the titles array" do
@@ -35,7 +35,7 @@ describe Puppet::Parser::AST::Resource do
         array = Puppet::Parser::AST::ASTArray.new(:children => titles)
 
         @resource.title = array
-        result = @resource.evaluate(@scope).collect { |r| r.title }
+        result = @resource.evaluate.collect { |r| r.title }
         result.should be_include("one")
         result.should be_include("two")
     end
@@ -49,7 +49,7 @@ describe Puppet::Parser::AST::Resource do
         array = Puppet::Parser::AST::ASTArray.new(:children => titles)
 
         @resource.title = array
-        result = @resource.evaluate(@scope).collect { |r| r.title }
+        result = @resource.evaluate.collect { |r| r.title }
         result.should be_include("one")
         result.should be_include("two")
     end
@@ -63,7 +63,7 @@ describe Puppet::Parser::AST::Resource do
         array = Puppet::Parser::AST::ASTArray.new(:children => titles)
 
         @resource.title = array
-        result = @resource.evaluate(@scope)
+        result = @resource.evaluate
 
         result.each do |res|
             @compiler.catalog.resource(res.ref).should be_instance_of(Puppet::Parser::Resource)
@@ -72,7 +72,7 @@ describe Puppet::Parser::AST::Resource do
     it "should generate virtual resources if it is virtual" do
         @resource.virtual = true
 
-        result = @resource.evaluate(@scope)
+        result = @resource.evaluate
         result[0].should be_virtual
     end
 
@@ -96,25 +96,25 @@ describe Puppet::Parser::AST::Resource do
             @twoscope.resource = @scope.resource
         end
 
-        def resource(type, params = nil)
-            params ||= Puppet::Parser::AST::ASTArray.new(:children => [])
-            Puppet::Parser::AST::Resource.new(:type => type, :title => Puppet::Parser::AST::String.new(:value => "myresource"), :parameters => params)
+        def resource(type, scope)
+            params = Puppet::Parser::AST::ASTArray.new(:children => [])
+            Puppet::Parser::AST::Resource.new(:type => type, :title => Puppet::Parser::AST::String.new(:value => "myresource"), :parameters => params, :scope => scope)
         end
 
         it "should be able to generate resources with fully qualified type information" do
-            resource("two").evaluate(@twoscope)[0].type.should == "One::Two"
+            resource("two",@twoscope).evaluate[0].type.should == "One::Two"
         end
 
         it "should be able to generate resources with unqualified type information" do
-            resource("one").evaluate(@twoscope)[0].type.should == "One"
+            resource("one",@twoscope).evaluate[0].type.should == "One"
         end
 
         it "should correctly generate resources that can look up builtin types" do
-            resource("file").evaluate(@twoscope)[0].type.should == "File"
+            resource("file",@twoscope).evaluate[0].type.should == "File"
         end
 
         it "should fail for resource types that do not exist" do
-            lambda { resource("nosuchtype").evaluate(@twoscope) }.should raise_error(Puppet::ParseError)
+            lambda { resource("nosuchtype",@twoscope).evaluate }.should raise_error(Puppet::ParseError)
         end
     end
 end

@@ -12,12 +12,8 @@ class Collection < AST::Branch
     associates_doc
 
     # We return an object that does a late-binding evaluation.
-    def evaluate(scope)
-        if self.query
-            str, code = self.query.safeevaluate scope
-        else
-            str = code = nil
-        end
+    def evaluate
+        str, code = query && query.safeevaluate
 
         newcoll = Puppet::Parser::Collector.new(scope, @type, str, code, self.form)
 

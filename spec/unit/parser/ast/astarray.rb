@@ -20,7 +20,7 @@ describe Puppet::Parser::AST::ASTArray do
         item2.expects(:safeevaluate).returns(246)
 
         operator = Puppet::Parser::AST::ASTArray.new :children => [item1,item2]
-        operator.evaluate(@scope)
+        operator.evaluate
     end
 
     it "should evaluate childrens of type ASTArray" do
@@ -33,7 +33,7 @@ describe Puppet::Parser::AST::ASTArray do
         item1.expects(:safeevaluate).returns(123)
 
         operator = Puppet::Parser::AST::ASTArray.new :children => [item2]
-        operator.evaluate(@scope).should == [123]
+        operator.evaluate.should == [123]
     end
 
     it "should flatten children coming from children ASTArray" do
@@ -46,7 +46,7 @@ describe Puppet::Parser::AST::ASTArray do
         item1.expects(:safeevaluate).returns(123)
 
         operator = Puppet::Parser::AST::ASTArray.new :children => [item2]
-        operator.evaluate(@scope).should == [123]
+        operator.evaluate.should == [123]
     end
 
     it "should not flatten the results of children evaluation" do
@@ -59,7 +59,7 @@ describe Puppet::Parser::AST::ASTArray do
         item1.expects(:safeevaluate).returns([123])
 
         operator = Puppet::Parser::AST::ASTArray.new :children => [item2]
-        operator.evaluate(@scope).should == [[123]]
+        operator.evaluate.should == [[123]]
     end
 
     it "should return a valid string with to_s" do

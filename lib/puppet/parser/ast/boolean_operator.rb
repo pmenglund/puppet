@@ -13,7 +13,7 @@ class Puppet::Parser::AST
 
         # Returns a boolean which is the result of the lazy boolean 
         # operation of lval and rval operands
-        def evaluate(scope)
+        def evaluate
             s = Puppet::Parser::Scope
             case @operator
             when "and"; s.true?(@lval.safeevaluate) and s.true?(@rval.safeevaluate)

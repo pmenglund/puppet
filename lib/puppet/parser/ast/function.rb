@@ -8,7 +8,7 @@ class Puppet::Parser::AST
 
         attr_accessor :name, :arguments
 
-        def evaluate(scope)
+        def evaluate
             # Make sure it's a defined function
             unless @fname
                 raise Puppet::ParseError, "Unknown function %s" % @name

@@ -20,7 +20,7 @@ class Puppet::Parser::AST
 
         # Does not actually return an object; instead sets an object
         # in the current scope.
-        def evaluate(scope)
+        def evaluate
             # Get our object reference.
             resource = @object.safeevaluate
 

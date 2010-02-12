@@ -14,17 +14,17 @@ describe Puppet::Parser::AST::Not do
         val.expects(:safeevaluate)
 
         operator = Puppet::Parser::AST::Not.new :value => val
-        operator.evaluate(@scope)
+        operator.evaluate
     end
 
     it "should return true for ! false" do
         operator = Puppet::Parser::AST::Not.new :value => @false_ast
-        operator.evaluate(@scope).should == true
+        operator.evaluate.should == true
     end
 
     it "should return false for ! true" do
         operator = Puppet::Parser::AST::Not.new :value => @true_ast
-        operator.evaluate(@scope).should == false
+        operator.evaluate.should == false
     end
 
 end

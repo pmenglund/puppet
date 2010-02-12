@@ -60,7 +60,7 @@ class Puppet::Parser::AST
         # We duplicate code here, rather than using exceptwrap, because this
         # is called so many times during parsing.
         begin
-            evaluate(scope)
+            evaluate
         rescue Puppet::Error => detail
             raise adderrorcontext(detail)
         rescue => detail

@@ -16,10 +16,8 @@ describe Puppet::Parser::AST::Collection do
     it "should evaluate its query" do
         query = mock 'query'
         collection = Puppet::Parser::AST::Collection.new :query => query, :form => :virtual
-
         query.expects(:safeevaluate)
-
-        collection.evaluate(@scope)
+        collection.evaluate
     end
 
     it "should instantiate a Collector for this type" do
@@ -27,7 +25,7 @@ describe Puppet::Parser::AST::Collection do
 
         Puppet::Parser::Collector.expects(:new).with(@scope, "test", nil, nil, :virtual)
 
-        collection.evaluate(@scope)
+        collection.evaluate
     end
 
     it "should tell the compiler about this collector" do
@@ -36,7 +34,7 @@ describe Puppet::Parser::AST::Collection do
 
         @compiler.expects(:add_collection).with("whatever")
 
-        collection.evaluate(@scope)
+        collection.evaluate
     end
 
     it "should evaluate overriden paramaters" do
@@ -46,7 +44,7 @@ describe Puppet::Parser::AST::Collection do
 
         @overrides.expects(:safeevaluate)
 
-        collection.evaluate(@scope)
+        collection.evaluate
     end
 
     it "should tell the collector about overrides" do
@@ -56,7 +54,7 @@ describe Puppet::Parser::AST::Collection do
 
         collector.expects(:add_override)
 
-        collection.evaluate(@scope)
+        collection.evaluate
     end
 
 
