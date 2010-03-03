@@ -29,16 +29,6 @@ describe Puppet::Parser::AST::CaseStatement do
             @casestmt.evaluate
         end
 
-        it "should downcase the evaluated test value if allowed" do
-            Puppet.stubs(:[]).with(:casesensitive).returns(false)
-            value = stub 'test'
-            @test.stubs(:safeevaluate).returns(value)
-
-            value.expects(:downcase)
-
-            @casestmt.evaluate
-        end
-
         it "should scan each option" do
             @options.expects(:each).multiple_yields(@option1, @option2)
 

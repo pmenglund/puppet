@@ -16,6 +16,7 @@ class Puppet::Parser::AST
             if ! options[:sensitive] && obj.respond_to?(:downcase)
                 obj = obj.downcase
             end
+            value = value.downcase if not options[:sensitive] and value.respond_to?(:downcase)
             # "" == undef for case/selector/if
             (obj == "" and value == :undef) or obj == value
         end
