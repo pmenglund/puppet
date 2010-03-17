@@ -2030,6 +2030,12 @@ class Type
         return trans
     end
 
+    def to_resource
+        # this 'type instance' versus 'resource' distinction seems artificial
+        # I'd like to see it collapsed someday ~JW
+        self.to_trans.to_resource
+    end
+
     %w{exported virtual}.each do |m|
         define_method(m+"?") do
             self.send(m)

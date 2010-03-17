@@ -15,6 +15,10 @@ class Puppet::Resource
     attr_accessor :file, :line, :catalog, :exported, :virtual, :validate_parameters, :strict
     attr_reader :namespaces
 
+    require 'puppet/indirector'
+    extend Puppet::Indirector
+    indirects :resource, :terminus_class => :ral
+
     ATTRIBUTES = [:file, :line, :exported]
 
     def self.from_pson(pson)
@@ -331,6 +335,17 @@ class Puppet::Resource
 
     def validate_parameter(name)
         raise ArgumentError, "Invalid parameter #{name}" unless valid_parameter?(name)
+    end
+
+    def name
+        # this is potential namespace conflict
+        # between the notion of an "indirector name"
+        # and a "resource name"
+        [ type, title ].join('/')
+    end
+
+    def to_resource
+        self
     end
 
     private
