@@ -213,9 +213,6 @@ describe "puppetrun" do
 
         describe "the main command" do
             before :each do
-                @client = stub_everything 'client'
-                @client.stubs(:run).returns("success")
-                Puppet::Network::Client.runner.stubs(:new).returns(@client)
                 @puppetrun.options.stubs(:[]).with(:parallel).returns(1)
                 @puppetrun.options.stubs(:[]).with(:ping).returns(false)
                 @puppetrun.options.stubs(:[]).with(:ignoreschedules).returns(false)
@@ -248,20 +245,26 @@ describe "puppetrun" do
             end
 
             describe "during call of run_for_host" do
-                it "should create a Runner Client per given host" do
-                    Puppet::Network::Client.runner.expects(:new).returns(@client)
+                before do
+                    require 'puppet/run'
+                    options = {
+                        :background => true, :ignoreschedules => false, :tags => []
+                    }
+                    @run = Puppet::Run.new( options.dup )
+                    @run.stubs(:status).returns("success")
 
-                    @puppetrun.run_for_host('host')
+                    Puppet::Run.indirection.expects(:terminus_class=).with( :rest )
+                    Puppet::Run.expects(:new).with( options ).returns(@run)
                 end
 
-                it "should call Client.run for the given host" do
-                    @client.expects(:run)
+                it "should call run on a Puppet::Run for the given host" do
+                    @run.expects(:save).with{|req| req.uri == 'https://host:8139/production/run/host'}.returns(@run)
 
                     @puppetrun.run_for_host('host')
                 end
 
                 it "should exit the child with 0 on success" do
-                    @client.stubs(:run).returns("success")
+                    @run.stubs(:status).returns("success")
 
                     @puppetrun.expects(:exit).with(0)
 
@@ -269,7 +272,7 @@ describe "puppetrun" do
                 end
 
                 it "should exit the child with 3 on running" do
-                    @client.stubs(:run).returns("running")
+                    @run.stubs(:status).returns("running")
 
                     @puppetrun.expects(:exit).with(3)
 
@@ -277,7 +280,7 @@ describe "puppetrun" do
                 end
 
                 it "should exit the child with 12 on unknown answer" do
-                    @client.stubs(:run).returns("whatever")
+                    @run.stubs(:status).returns("whatever")
 
                     @puppetrun.expects(:exit).with(12)
 
