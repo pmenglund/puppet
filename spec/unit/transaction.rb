@@ -153,7 +153,7 @@ describe Puppet::Transaction do
             @status = Puppet::Resource::Status.new(@resource)
 
             @transaction = Puppet::Transaction.new(Puppet::Resource::Catalog.new)
-            @transaction.event_manager.stubs(:queue_event)
+            @transaction.event_manager.stubs(:queue_events)
             @transaction.resource_harness.stubs(:evaluate).returns(@status)
         end
 
@@ -169,8 +169,7 @@ describe Puppet::Transaction do
 
         it "should queue any events added to the resource status" do
             @status.expects(:events).returns %w{a b}
-            @transaction.event_manager.expects(:queue_event).with(@resource, "a")
-            @transaction.event_manager.expects(:queue_event).with(@resource, "b")
+            @transaction.event_manager.expects(:queue_events).with(@resource, ["a", "b"])
             @transaction.apply(@resource)
         end
 
