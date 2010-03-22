@@ -149,6 +149,6 @@ class Puppet::Util::Autoload
     end
 
     def search_directories(dummy_argument=:work_arround_for_ruby_GC_bug)
-        [module_directories, Puppet[:libdir].split(File::PATH_SEPARATOR), $:].flatten
+        [module_directories, Puppet[:libdir].split(File::PATH_SEPARATOR), $LOAD_PATH].flatten
     end
 end

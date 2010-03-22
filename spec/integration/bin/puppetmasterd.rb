@@ -123,7 +123,7 @@ describe "puppetmasterd" do
             end
         }
 
-        $?.should == 0
+        $CHILD_STATUS.should == 0
 
         pid.should be_nil
     end
