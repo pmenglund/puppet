@@ -94,7 +94,7 @@ class Module
     end
 
     def writer_defined? (name)
-        method_defined? name.to_sym.writer
+        method_defined?(name.to_sym.writer)
     end
 
     # If you pass a predicate symbol :foo? to this method, it'll first
@@ -130,7 +130,7 @@ class Module
     def define_opposite_readers (name_pairs)
         name_pairs.collect! { |k, v| [k.to_sym, v.to_sym] }
         for opposite_name, name in name_pairs do
-            define_reader(name) unless method_defined? name
+            define_reader(name) unless method_defined?(name)
             class_eval %{def #{opposite_name} ; not #{name} end}
         end
     end
@@ -138,7 +138,7 @@ class Module
     def define_opposite_writers (name_pairs)
         name_pairs.collect! { |k, v| [k.to_sym, v.to_sym] }
         for opposite_name, name in name_pairs do
-            define_writer(name) unless writer_defined? name
+            define_writer(name) unless writer_defined?(name)
             class_eval %{def #{opposite_name.writer} x
                 self.#{name.writer} !x end}
             class_eval %{def #{opposite_name.imperative}

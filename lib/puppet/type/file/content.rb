@@ -70,7 +70,7 @@ module Puppet
         # If content was specified, return that; else try to return the source content;
         # else, return nil.
         def actual_content
-            return @actual_content if defined?(@actual_content) and @actual_content
+            return @actual_content if @actual_content
 
             if s = resource.parameter(:source)
                 return s.content

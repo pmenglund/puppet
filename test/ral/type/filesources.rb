@@ -13,7 +13,7 @@ class TestFileSources < Test::Unit::TestCase
     include PuppetTest::FileTesting
     def setup
         super
-        if defined? @port
+        if defined?(@port)
             @port += 1
         else
             @port = 12345

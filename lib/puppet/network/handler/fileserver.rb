@@ -438,7 +438,7 @@ class Puppet::Network::Handler
 
             # Do we have any patterns in our path, yo?
             def expandable?
-                if defined? @expandable
+                if defined?(@expandable)
                     @expandable
                 else
                     false
@@ -516,7 +516,7 @@ class Puppet::Network::Handler
             # Cache this manufactured map, since if it's used it's likely
             # to get used a lot.
             def localmap
-                unless defined? @@localmap
+                unless defined?(@@localmap)
                     @@localmap = {
                         "h" =>  Facter.value("hostname"),
                         "H" => [Facter.value("hostname"),

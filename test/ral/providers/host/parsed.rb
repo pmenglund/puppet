@@ -36,7 +36,7 @@ class TestParsedHostProvider < Test::Unit::TestCase
     end
 
     def mkhosthash
-        if defined? @hcount
+        if defined?(@hcount)
             @hcount += 1
         else
             @hcount = 1

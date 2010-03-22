@@ -19,7 +19,7 @@ class Puppet::Network::Handler
         }
 
         def autosign
-            if defined? @autosign
+            if defined?(@autosign)
                 @autosign
             else
                 Puppet[:autosign]
@@ -39,7 +39,7 @@ class Puppet::Network::Handler
             end
 
             unless FileTest.exists?(autosign)
-                unless defined? @@warnedonautosign
+                unless defined?(@@warnedonautosign)
                     @@warnedonautosign = true
                     Puppet.info "Autosign is enabled but #{autosign} is missing"
                 end

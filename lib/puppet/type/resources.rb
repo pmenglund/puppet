@@ -68,8 +68,8 @@ Puppet::Type.newtype(:resources) do
     end
 
     def check(resource)
-        @checkmethod = "#{self[:name]}_check" unless defined? @checkmethod
-        @hascheck = respond_to?(@checkmethod) unless defined? @hascheck
+        @checkmethod = "#{self[:name]}_check" unless defined?(@checkmethod)
+        @hascheck = respond_to?(@checkmethod) unless defined?(@hascheck)
         if @hascheck
             return send(@checkmethod, resource)
         else
@@ -107,7 +107,7 @@ Puppet::Type.newtype(:resources) do
     end
 
     def resource_type
-        unless defined? @resource_type
+        unless defined?(@resource_type)
             unless type = Puppet::Type.type(self[:name])
                 raise Puppet::DevError, "Could not find resource type"
             end

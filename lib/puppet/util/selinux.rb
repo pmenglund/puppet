@@ -14,7 +14,7 @@ require 'pathname'
 module Puppet::Util::SELinux
 
     def selinux_support?
-        return false unless defined? Selinux
+        return false unless defined?(Selinux)
         if Selinux.is_selinux_enabled == 1
             return true
         end

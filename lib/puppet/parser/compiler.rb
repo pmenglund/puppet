@@ -101,7 +101,7 @@ class Puppet::Parser::Compiler
 
     # Return the node's environment.
     def environment
-        unless defined? @environment
+        unless defined?(@environment)
             @environment = ((node.environment and node.environment != "") && (node.environment))||nil
         end
         @environment

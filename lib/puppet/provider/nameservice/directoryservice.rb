@@ -93,7 +93,7 @@ class DirectoryService < Puppet::Provider::NameService
         #      For example, if we're working with an user type, this will be /Users
         #      with a group type, this will be /Groups.
         #   @ds_path is an attribute of the class itself.
-        return @ds_path if defined? @ds_path
+        return @ds_path if defined?(@ds_path)
         # JJM: "Users" or "Groups" etc ...  (Based on the Puppet::Type)
         #       Remember this is a class method, so self.class is Class
         #       Also, @resource_type seems to be the reference to the
@@ -102,7 +102,7 @@ class DirectoryService < Puppet::Provider::NameService
     end
 
     def self.get_macosx_version_major
-        return @macosx_version_major if defined? @macosx_version_major
+        return @macosx_version_major if defined?(@macosx_version_major)
         begin
             # Make sure we've loaded all of the facts
             Facter.loadfacts

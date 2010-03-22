@@ -325,7 +325,7 @@ Puppet::Type.newtype(:file) do
     end
 
     def bucket
-        return @bucket if defined?(@bucket) and @bucket
+        return @bucket if @bucket
 
         backup = self[:backup]
         return nil unless backup

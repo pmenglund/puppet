@@ -29,7 +29,7 @@ module ParsedMountTesting
     def mkmountargs
         mount = nil
 
-        if defined? @pcount
+        if defined?(@pcount)
             @pcount += 1
         else
             @pcount = 1

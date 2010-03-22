@@ -33,7 +33,7 @@ class TestHost < Test::Unit::TestCase
     end
 
     def mkhost
-        if defined? @hcount
+        if defined?(@hcount)
             @hcount += 1
         else
             @hcount = 1

@@ -15,7 +15,7 @@ class Puppet::Util::Metric
     end
 
     def basedir
-        if defined? @basedir
+        if defined?(@basedir)
             @basedir
         else
             Puppet[:rrddir]

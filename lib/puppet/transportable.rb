@@ -35,7 +35,7 @@ module Puppet
         end
 
         def ref
-            @ref = Puppet::Resource.new(@type, @name) unless defined? @ref
+            @ref = Puppet::Resource.new(@type, @name) unless defined?(@ref)
             @ref.to_s
         end
 
@@ -158,7 +158,7 @@ module Puppet
         # Convert to a parseable manifest
         def to_manifest
             unless self.top
-                raise Puppet::DevError, "No keyword; cannot convert to manifest" unless defined? @keyword and @keyword
+                raise Puppet::DevError, "No keyword; cannot convert to manifest" unless @keyword
             end
 
             str = "#{@keyword} #{@name} {\n%s\n}"
@@ -215,7 +215,7 @@ module Puppet
         end
 
         def to_ref
-            unless defined? @ref
+            unless defined?(@ref)
                 if self.type and self.name
                     @ref = Puppet::Resource.new(self.type, self.name)
                 elsif self.type and ! self.name # This is old-school node types
@@ -240,7 +240,7 @@ module Puppet
         end
 
         def param(param,value)
-            @parameters = {} unless defined? @parameters
+            @parameters = {} unless defined?(@parameters)
             @parameters[param] = value
         end
 

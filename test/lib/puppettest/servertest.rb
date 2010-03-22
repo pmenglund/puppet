@@ -6,7 +6,7 @@ module PuppetTest::ServerTest
     def setup
         super
 
-        if defined? @@port
+        if defined?(@@port)
             @@port += 1
         else
             @@port = 20000

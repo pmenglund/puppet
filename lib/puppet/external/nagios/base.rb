@@ -63,7 +63,7 @@ class Nagios::Base
     # Return a mapping (or nil) for a param
     def self.mapping(name)
         name = name.intern if name.is_a? String
-        if defined? @map
+        if defined?(@map)
             @map[name]
         else
             nil
@@ -72,7 +72,7 @@ class Nagios::Base
 
     # Return the namevar for the canonical name.
     def self.namevar
-        if defined? @namevar
+        if defined?(@namevar)
             return @namevar
         else
             if parameter?(:name)
@@ -157,7 +157,7 @@ class Nagios::Base
 
     # Whether a given parameter is suppressed.
     def self.suppress?(name)
-        defined? @suppress and @suppress.include?(name)
+        defined?(@suppress) and @suppress.include?(name)
     end
 
     # Return our name as the string.
@@ -241,7 +241,7 @@ class Nagios::Base
     end
 
     def parammap(param)
-        unless defined? @map
+        unless defined?(@map)
             map = {
                 self.namevar => "cn"
             }
@@ -255,7 +255,7 @@ class Nagios::Base
     end
 
     def parent
-        unless defined? self.class.attached
+        unless defined?(self.class.attached)
             puts "Duh, you called parent on an unattached class"
             return
         end

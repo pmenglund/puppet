@@ -109,7 +109,7 @@ class Puppet::FileServing::Mount::File < Puppet::FileServing::Mount
 
     # Do we have any patterns in our path, yo?
     def expandable?
-        if defined? @expandable
+        if defined?(@expandable)
             @expandable
         else
             false

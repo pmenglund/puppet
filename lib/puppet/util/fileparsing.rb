@@ -60,7 +60,7 @@ module Puppet::Util::FileParsing
                 self.separator ||= /\s+/
                 self.joiner ||= " "
                 self.optional ||= []
-                @rollup = true unless defined? @rollup
+                @rollup = true unless defined?(@rollup)
             end
 
             if block_given?
@@ -330,7 +330,7 @@ module Puppet::Util::FileParsing
 
     # Whether to add a trailing separator to the file.  Defaults to true
     def trailing_separator
-        if defined? @trailing_separator
+        if defined?(@trailing_separator)
             return @trailing_separator
         else
             return true

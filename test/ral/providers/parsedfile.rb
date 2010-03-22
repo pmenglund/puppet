@@ -61,7 +61,7 @@ class TestParsedFile < Test::Unit::TestCase
     end
 
     def teardown
-        if defined? @provider
+        if defined?(@provider)
             @type.unprovide(@provider.name)
             @provider = nil
         end

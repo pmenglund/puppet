@@ -112,7 +112,7 @@ module Puppet
                 is in Ruby's search path",
             :call_on_define => true, # Call our hook with the default value, so we always get the libdir set.
             :hook => proc do |value|
-                $LOAD_PATH.delete(@oldlibdir) if defined? @oldlibdir and $LOAD_PATH.include?(@oldlibdir)
+                $LOAD_PATH.delete(@oldlibdir) if defined?(@oldlibdir) and $LOAD_PATH.include?(@oldlibdir)
                 @oldlibdir = value
                 $LOAD_PATH << value
             end

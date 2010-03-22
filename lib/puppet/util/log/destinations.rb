@@ -40,14 +40,14 @@ Puppet::Util::Log.newdesttype :file do
     match(/^\//)
 
     def close
-        if defined? @file
+        if defined?(@file)
             @file.close
             @file = nil
         end
     end
 
     def flush
-        @file.flush if defined? @file
+        @file.flush if defined?(@file)
     end
 
     def initialize(path)
@@ -154,8 +154,8 @@ Puppet::Util::Log.newdesttype :host do
 
     def handle(msg)
         unless msg.is_a?(String) or msg.remote
-            @hostname = Facter["hostname"].value unless defined? @hostname
-            unless defined? @domain
+            @hostname = Facter["hostname"].value unless defined?(@hostname)
+            unless defined?(@domain)
                 @domain = Facter["domain"].value
                 @hostname += ".#{@domain}" if @domain
             end

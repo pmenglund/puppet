@@ -344,7 +344,7 @@ class Puppet::Parser::Lexer
     end
 
     def indefine?
-        if defined? @indefine
+        if defined?(@indefine)
             @indefine
         else
             false

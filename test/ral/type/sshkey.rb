@@ -38,7 +38,7 @@ class TestSSHKey < Test::Unit::TestCase
     def mkkey
         key = nil
 
-        if defined? @kcount
+        if defined?(@kcount)
             @kcount += 1
         else
             @kcount = 1

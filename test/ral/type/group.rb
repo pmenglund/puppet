@@ -21,7 +21,7 @@ class TestGroup < Test::Unit::TestCase
         end
 
         def exists?
-            if defined? @ensure and @ensure == :present
+            if @ensure == :present
                 true
             else
                 false

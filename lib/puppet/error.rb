@@ -6,7 +6,7 @@ module Puppet # :nodoc:
         attr_accessor :line, :file
 
         def backtrace
-            if defined? @backtrace
+            if defined?(@backtrace)
                 return @backtrace
             else
                 return super

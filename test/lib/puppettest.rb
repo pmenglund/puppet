@@ -96,7 +96,7 @@ module PuppetTest
     # Find the root of the Puppet tree; this is not the test directory, but
     # the parent of that dir.
     def basedir(*list)
-        unless defined? @@basedir
+        unless defined?(@@basedir)
             Dir.chdir(File.dirname(__FILE__)) do
                 @@basedir = File.dirname(File.dirname(Dir.getwd))
             end
@@ -113,7 +113,7 @@ module PuppetTest
     end
 
     def exampledir(*args)
-        @@exampledir = File.join(basedir, "examples") unless defined? @@exampledir
+        @@exampledir = File.join(basedir, "examples") unless defined?(@@exampledir)
 
         if args.empty?
             return @@exampledir
@@ -167,7 +167,7 @@ module PuppetTest
     def setup
         ENV["PATH"] += File::PATH_SEPARATOR + "/usr/sbin" unless ENV["PATH"].split(File::PATH_SEPARATOR).include?("/usr/sbin")
         @memoryatstart = Puppet::Util.memory
-        if defined? @@testcount
+        if defined?(@@testcount)
             @@testcount += 1
         else
             @@testcount = 0
@@ -228,7 +228,7 @@ module PuppetTest
     end
 
     def tempfile
-        if defined? @@tmpfilenum
+        if defined?(@@tmpfilenum)
             @@tmpfilenum += 1
         else
             @@tmpfilenum = 1
@@ -251,7 +251,7 @@ module PuppetTest
     end
 
     def tmpdir
-        unless defined? @tmpdir and @tmpdir
+        unless @tmpdir
             @tmpdir = case Facter["operatingsystem"].value
                 when "Darwin"; "/private/tmp"
                 when "SunOS"; "/var/tmp"

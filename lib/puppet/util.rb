@@ -356,7 +356,7 @@ module Util
     module_function :benchmark
 
     def memory
-        unless defined? @pmap
+        unless defined?(@pmap)
             pmap = %x{which pmap 2>/dev/null}.chomp
             if $CHILD_STATUS != 0 or pmap =~ /^no/
                 @pmap = nil

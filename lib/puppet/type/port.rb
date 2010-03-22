@@ -29,7 +29,7 @@
 #            # We actually want to return the whole array here, not just the first
 #            # value.
 #            def should
-#                if defined? @should
+#                if defined?(@should)
 #                    if @should[0] == :absent
 #                        return :absent
 #                    else
@@ -67,7 +67,7 @@
 #            # We actually want to return the whole array here, not just the first
 #            # value.
 #            def should
-#                if defined? @should
+#                if defined?(@should)
 #                    if @should[0] == :absent
 #                        return :absent
 #                    else

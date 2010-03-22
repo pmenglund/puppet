@@ -131,7 +131,7 @@ module Manager
 
     # Create a loader for Puppet types.
     def typeloader
-        unless defined? @typeloader
+        unless defined?(@typeloader)
 
                         @typeloader = Puppet::Util::Autoload.new(
                 self,

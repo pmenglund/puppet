@@ -317,7 +317,7 @@ class Type
 
     # Return the parameter names
     def self.parameters
-        return [] unless defined? @parameters
+        return [] unless defined?(@parameters)
         @parameters.collect { |klass| klass.name }
     end
 
@@ -351,14 +351,14 @@ class Type
 
     # Return the list of validproperties
     def self.validproperties
-        return {} unless defined? @parameters
+        return {} unless defined?(@parameters)
 
         return @validproperties.keys
     end
 
     # does the name reflect a valid parameter?
     def self.validparameter?(name)
-        raise Puppet::DevError, "Class #{self} has not defined parameters" unless defined? @parameters
+        raise Puppet::DevError, "Class #{self} has not defined parameters" unless defined?(@parameters)
         return !!(@paramhash.include?(name) or @@metaparamhash.include?(name))
     end
 
@@ -585,7 +585,7 @@ class Type
     # name conflicts, does it necessarily mean that the objects conflict?
     # Defaults to true.
     def self.isomorphic?
-        if defined? @isomorphic
+        if defined?(@isomorphic)
             return @isomorphic
         else
             return true
@@ -604,7 +604,7 @@ class Type
         # Once an object is managed, it always stays managed; but an object
         # that is listed as unmanaged might become managed later in the process,
         # so we have to check that every time
-        if defined? @managed and @managed
+        if @managed
             return @managed
         else
             @managed = false
@@ -625,7 +625,7 @@ class Type
     # this is a retarded hack method to get around the difference between
     # component children and file children
     def self.depthfirst?
-        return (defined? @depthfirst) && (@depthfirst)
+        return (defined?(@depthfirst)) && (@depthfirst)
     end
 
     def depthfirst?
@@ -820,13 +820,13 @@ class Type
     # remove all of the instances of a single type
     def self.clear
         raise "Global resource removal is deprecated"
-        if defined? @objects
+        if defined?(@objects)
             @objects.each do |name, obj|
                 obj.remove(true)
             end
             @objects.clear
         end
-        @aliases.clear if defined? @aliases
+        @aliases.clear if defined?(@aliases)
     end
 
     # Force users to call this, so that we can merge objects if
@@ -840,7 +840,7 @@ class Type
     # remove a specified object
     def self.delete(resource)
         raise "Global resource removal is deprecated"
-        return unless defined? @objects
+        return unless defined?(@objects)
         @objects.delete(resource.title) if @objects.include?(resource.title)
         @aliases.delete(resource.title) if @aliases.include?(resource.title)
         if @aliases.has_value?(resource)
@@ -857,7 +857,7 @@ class Type
     # iterate across each of the type's instances
     def self.each
         raise "Global resource iteration is deprecated"
-        return unless defined? @objects
+        return unless defined?(@objects)
         @objects.each { |name,instance|
             yield instance
         }
@@ -1009,7 +1009,7 @@ class Type
 
             args = [args] unless args.is_a?(Array)
 
-            self.devfail "No parent for #{self.class}, #{self.name}?" unless defined? @resource
+            self.devfail "No parent for #{self.class}, #{self.name}?" unless defined?(@resource)
 
             args.each { |property|
                 property = property.intern unless property.is_a?(Symbol)
@@ -1330,7 +1330,7 @@ class Type
 
     # Find the default provider.
     def self.defaultprovider
-        unless defined? @defaultprovider and @defaultprovider
+        unless @defaultprovider
             suitable = suitableprovider()
 
             # Find which providers are a default for this system.
@@ -1596,7 +1596,7 @@ class Type
             return nil
         end
 
-        unless defined? @schedule
+        unless defined?(@schedule)
             if name = self[:schedule]
                 if sched = catalog.resource(:schedule, name)
                     @schedule = sched
@@ -1668,7 +1668,7 @@ class Type
 
         @defaults = {}
 
-        @parameters = [] unless defined? @parameters
+        @parameters = [] unless defined?(@parameters)
 
         @validproperties = {}
         @properties = []
@@ -1686,12 +1686,12 @@ class Type
             end
         }
 
-        @doc = "" unless defined? @doc
+        @doc = "" unless defined?(@doc)
 
     end
 
     def self.to_s
-        if defined? @name
+        if defined?(@name)
             "Puppet::Type::#{@name.to_s.capitalize}"
         else
             super
@@ -1876,7 +1876,7 @@ class Type
     # Is this resource being purged?  Used by transactions to forbid
     # deletion when there are dependencies.
     def purging?
-        if defined? @purging
+        if defined?(@purging)
             @purging
         else
             false
@@ -1886,7 +1886,7 @@ class Type
     # Retrieve the title of an object.  If no title was set separately,
     # then use the object's name.
     def title
-        unless defined? @title and @title
+        unless @title
             namevar = self.class.namevar
             if self.class.validparameter?(namevar)
                 @title = self[:name]

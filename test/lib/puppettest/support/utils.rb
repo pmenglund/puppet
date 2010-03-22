@@ -53,7 +53,7 @@ module PuppetTest::Support::Utils
         else
             puts id
         end
-        raise "Could not retrieve user name; 'id' did not work" unless defined? @me
+        raise "Could not retrieve user name; 'id' did not work" unless defined?(@me)
     end
 
     # Define a variable that contains a group I'm in.

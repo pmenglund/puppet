@@ -64,7 +64,7 @@ class Puppet::Util::Autoload
             end
         end
 
-        @wrap = true unless defined? @wrap
+        @wrap = true unless defined?(@wrap)
     end
 
     # Load a single plugin by name.  We use 'load' here so we can reload a

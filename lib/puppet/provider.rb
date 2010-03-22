@@ -108,7 +108,7 @@ class Puppet::Provider
     # Create the methods for a given command.
     def self.make_command_methods(name)
         # Now define a method for that command
-        unless metaclass.method_defined? name
+        unless metaclass.method_defined?(name)
             meta_def(name) do |*args|
                 raise Puppet::Error, "Command #{name} is missing" unless command(name)
                 if args.empty?
@@ -123,7 +123,7 @@ class Puppet::Provider
 
             # And then define an instance method that just calls the class method.
             # We need both, so both instances and classes can easily run the commands.
-            unless method_defined? name
+            unless method_defined?(name)
                 define_method(name) do |*args|
                     self.class.send(name, *args)
                 end
@@ -174,7 +174,7 @@ class Puppet::Provider
 
     # Retrieve the data source.  Defaults to the provider name.
     def self.source
-        @source = self.name unless defined? @source
+        @source = self.name unless defined?(@source)
         @source
     end
 
@@ -193,7 +193,7 @@ class Puppet::Provider
     end
 
 #    def self.to_s
-#        unless defined? @str
+#        unless defined?(@str)
 #            if self.resource_type
 #                @str = "#{resource_type.name} provider #{self.name}"
 #            else

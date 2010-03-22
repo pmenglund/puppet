@@ -434,7 +434,7 @@ class Puppet::Util::Settings
     end
 
     def reuse
-        return unless defined? @used
+        return unless defined?(@used)
         @sync.synchronize do # yay, thread-safe
             new = @used
             @used = []
@@ -495,7 +495,7 @@ class Puppet::Util::Settings
             # Clear the list of environments, because they cache, at least, the module path.
             # We *could* preferentially just clear them if the modulepath is changed,
             # but we don't really know if, say, the vardir is changed and the modulepath
-            # is defined relative to it. We need the defined? stuff because of loading
+            # is defined relative to it. We need the defined?(stuff) because of loading
             # order issues.
             Puppet::Node::Environment.clear if defined?(Puppet::Node) and defined?(Puppet::Node::Environment)
         end

@@ -6,7 +6,7 @@ require 'puppet'
 class Puppet::Provider::NameService < Puppet::Provider
     class << self
         def autogen_default(param)
-            return ((defined? @autogen_defaults) && (@autogen_defaults[symbolize(param)]))||nil
+            return ((defined?(@autogen_defaults)) && (@autogen_defaults[symbolize(param)]))||nil
         end
 
         def autogen_defaults(hash)
@@ -32,7 +32,7 @@ class Puppet::Provider::NameService < Puppet::Provider
 
         def option(name, option)
             name = name.intern if name.is_a? String
-            return ((defined? @options and @options.include? name and @options[name].include? option) && (@options[name][option]))||nil
+            return ((defined?(@options) and @options.include? name and @options[name].include? option) && (@options[name][option]))||nil
         end
 
         def options(name, hash)
@@ -76,7 +76,7 @@ class Puppet::Provider::NameService < Puppet::Provider
         # This is annoying, but there really aren't that many options,
         # and this *is* built into Ruby.
         def section
-            unless defined? @resource_type
+            unless defined?(@resource_type)
                 raise Puppet::DevError,
                     "Cannot determine Etc section without a resource type"
 
@@ -141,7 +141,7 @@ class Puppet::Provider::NameService < Puppet::Provider
         end
 
         # Make sure we don't use the same value multiple times
-        if defined? @@prevauto
+        if defined?(@@prevauto)
             @@prevauto += 1
         else
             Etc.send(group) { |obj|

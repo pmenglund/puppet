@@ -15,7 +15,7 @@ class TestPuppetUtilSubclassLoader < Test::Unit::TestCase
 
     def mk_subclass(name, path, parent)
         # Make a fake client
-        unless defined? @basedir
+        unless defined?(@basedir)
             @basedir ||= tempfile()
             $LOAD_PATH << @basedir
             cleanup { $LOAD_PATH.delete(@basedir) if $LOAD_PATH.include?(@basedir) }

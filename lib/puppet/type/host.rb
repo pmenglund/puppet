@@ -46,7 +46,7 @@ module Puppet
             # We actually want to return the whole array here, not just the first
             # value.
             def should
-                if defined? @should
+                if defined?(@should)
                     if @should == [:absent]
                         return :absent
                     else

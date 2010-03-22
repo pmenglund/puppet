@@ -24,7 +24,7 @@ class TestParsedSSHKey < Test::Unit::TestCase
     end
 
     def mkkey(name = "host.domain.com")
-        if defined? @pcount
+        if defined?(@pcount)
             @pcount += 1
         else
             @pcount = 1
