@@ -47,8 +47,11 @@ module PuppetTest::ServerTest
         # then create the actual server
         server = nil
         assert_nothing_raised {
-            server = Puppet::Network::HTTPServer::WEBrick.new(
+
+                        server = Puppet::Network::HTTPServer::WEBrick.new(
+                
                 :Port => @@port,
+        
                 :Handlers => handlers
             )
         }

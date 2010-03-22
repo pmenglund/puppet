@@ -1,5 +1,5 @@
 Process.maxgroups = 1024
-module RDoc 
+module RDoc
     def self.caller(skip=nil)
         in_gem_wrapper = false
         Kernel.caller.reject { |call|

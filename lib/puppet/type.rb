@@ -188,12 +188,15 @@ class Type
         @@metaparamhash ||= {}
         name = symbolize(name)
 
-        param = genclass(name,
+
+            param = genclass(
+                name,
             :parent => options[:parent] || Puppet::Parameter,
             :prefix => "MetaParam",
             :hash => @@metaparamhash,
             :array => @@metaparams,
             :attributes => options[:attributes],
+
             &block
         )
 
@@ -238,12 +241,15 @@ class Type
     # @parameters array, and does some basic checking on it.
     def self.newparam(name, options = {}, &block)
         options[:attributes] ||= {}
-        param = genclass(name,
+
+            param = genclass(
+                name,
             :parent => options[:parent] || Puppet::Parameter,
             :attributes => options[:attributes],
             :block => block,
             :prefix => "Parameter",
             :array => @parameters,
+
             :hash => @paramhash
         )
 
@@ -264,8 +270,7 @@ class Type
     end
 
     def self.newstate(name, options = {}, &block)
-        Puppet.warning "newstate() has been deprecrated; use newproperty(%s)" %
-            name
+        Puppet.warning "newstate() has been deprecrated; use newproperty(%s)" % name
         newproperty(name, options, &block)
     end
 
@@ -286,8 +291,7 @@ class Type
         end
 
         if @validproperties.include?(name)
-            raise Puppet::DevError, "Class %s already has a property named %s" %
-                [self.name, name]
+            raise Puppet::DevError, "Class %s already has a property named %s" % [self.name, name]
         end
 
         if parent = options[:parent]
@@ -525,8 +529,7 @@ class Type
         end
 
         if @parameters.include?(name)
-            raise Puppet::Error, "Parameter '%s' is already defined in %s" %
-                [name, self.ref]
+            raise Puppet::Error, "Parameter '%s' is already defined in %s" % [name, self.ref]
         end
 
         if provider and ! provider.class.supports_parameter?(klass)
@@ -542,8 +545,7 @@ class Type
             # make sure the parameter doesn't have any errors
             return @parameters[name] = klass.new(options)
         rescue => detail
-            error = Puppet::Error.new("Parameter %s failed: %s" %
-                [name, detail])
+            error = Puppet::Error.new("Parameter %s failed: %s" % [name, detail])
             error.set_backtrace(detail.backtrace)
             raise error
         end
@@ -724,9 +726,8 @@ class Type
 
         if property = @parameters[:ensure]
             unless is.include? property
-               raise Puppet::DevError,
-                        "The is value is not in the is array for '%s'" %
-                        [property.name]
+                raise Puppet::DevError,
+                    "The is value is not in the is array for '%s'" % [property.name]
             end
             ensureis = is[property]
             if property.insync?(ensureis) and property.should == :absent
@@ -736,15 +737,13 @@ class Type
 
         properties.each { |property|
             unless is.include? property
-               raise Puppet::DevError,
-                        "The is value is not in the is array for '%s'" %
-                        [property.name]
+                raise Puppet::DevError,
+                    "The is value is not in the is array for '%s'" % [property.name]
             end
 
             propis = is[property]
             unless property.insync?(propis)
-                property.debug("Not in sync: %s vs %s" %
-                    [propis.inspect, property.should.inspect])
+                property.debug("Not in sync: %s vs %s" % [propis.inspect, property.should.inspect])
                 insync = false
             #else
             #    property.debug("In sync")
@@ -842,16 +841,13 @@ class Type
         end
 
         if exobj = @objects[name] and self.isomorphic?
-            msg = "Object '%s[%s]' already exists" %
-                [newobj.class.name, name]
+            msg = "Object '%s[%s]' already exists" % [newobj.class.name, name]
 
             if exobj.file and exobj.line
-                msg += ("in file %s at line %s" %
-                    [object.file, object.line])
+                msg += ("in file %s at line %s" % [object.file, object.line])
             end
             if object.file and object.line
-                msg += ("and cannot be redefined in file %s at line %s" %
-                    [object.file, object.line])
+                msg += ("and cannot be redefined in file %s at line %s" % [object.file, object.line])
             end
             error = Puppet::Error.new(msg)
             raise error
@@ -869,8 +865,7 @@ class Type
         if @objects.include?(name)
             unless @objects[name] == obj
                 raise Puppet::Error.new(
-                    "Cannot create alias %s: object already exists" %
-                    [name]
+                    "Cannot create alias %s: object already exists" % [name]
                 )
             end
         end
@@ -878,8 +873,7 @@ class Type
         if @aliases.include?(name)
             unless @aliases[name] == obj
                 raise Puppet::Error.new(
-                    "Object %s already has alias %s" %
-                    [@aliases[name].name, name]
+                    "Object %s already has alias %s" % [@aliases[name].name, name]
                 )
             end
         end
@@ -1092,8 +1086,7 @@ class Type
             end
 
             unless defined? @resource
-                self.devfail "No parent for %s, %s?" %
-                    [self.class, self.name]
+                self.devfail "No parent for %s, %s?" % [self.class, self.name]
             end
 
             args.each { |property|
@@ -1106,8 +1099,7 @@ class Type
                     if @resource.class.validattr?(property)
                         next
                     else
-                        raise Puppet::Error, "%s is not a valid attribute for %s" %
-                            [property, self.class.name]
+                        raise Puppet::Error, "%s is not a valid attribute for %s" % [property, self.class.name]
                     end
                 end
                 next unless propertyklass.checkable?
@@ -1118,8 +1110,8 @@ class Type
 
     newmetaparam(:loglevel) do
         desc "Sets the level that information will be logged.
-             The log levels have the biggest impact when logs are sent to
-             syslog (which is currently the default)."
+            The log levels have the biggest impact when logs are sent to
+            syslog (which is currently the default)."
         defaultto :notice
 
         newvalues(*Puppet::Util::Log.levels)
@@ -1434,16 +1426,13 @@ class Type
             retval = nil
             if defaults.length > 1
                 Puppet.warning(
-                    "Found multiple default providers for %s: %s; using %s" %
-                    [self.name, defaults.collect { |i| i.name.to_s }.join(", "),
-                        defaults[0].name]
+                    "Found multiple default providers for %s: %s; using %s" % [self.name, defaults.collect { |i| i.name.to_s }.join(", "), defaults[0].name]
                 )
                 retval = defaults.shift
             elsif defaults.length == 1
                 retval = defaults.shift
             else
-                raise Puppet::DevError, "Could not find a default provider for %s" %
-                    self.name
+                raise Puppet::DevError, "Could not find a default provider for %s" % self.name
             end
 
             @defaultprovider = retval
@@ -1502,8 +1491,7 @@ class Type
                     provider
                 else
                     raise Puppet::DevError,
-                        "Could not find parent provider %s of %s" %
-                            [pname, name]
+                        "Could not find parent provider %s of %s" % [pname, name]
                 end
             end
         else
@@ -1514,13 +1502,16 @@ class Type
 
         self.providify
 
-        provider = genclass(name,
+
+            provider = genclass(
+                name,
             :parent => parent,
             :hash => provider_hash,
             :prefix => "Provider",
             :block => block,
             :include => feature_module,
             :extend => feature_module,
+
             :attributes => options
         )
 
@@ -1585,8 +1576,11 @@ class Type
 
     def self.unprovide(name)
         if provider_hash.has_key? name
-            rmclass(name,
+
+            rmclass(
+                name,
                 :hash => provider_hash,
+
                 :prefix => "Provider"
             )
             if @defaultprovider and @defaultprovider.name == name
@@ -1614,8 +1608,7 @@ class Type
         elsif klass = self.class.provider(name)
             @provider = klass.new(self)
         else
-            raise ArgumentError, "Could not find %s provider of %s" %
-                [name, self.class.name]
+            raise ArgumentError, "Could not find %s provider of %s" % [name, self.class.name]
         end
     end
 
@@ -1690,10 +1683,10 @@ class Type
     # the instantiation phase, so that the schedule can be anywhere in the
     # file.
     def schedule
-         unless catalog
-             warning "Cannot schedule without a schedule-containing catalog"
-             return nil
-         end
+        unless catalog
+            warning "Cannot schedule without a schedule-containing catalog"
+            return nil
+        end
 
         unless defined? @schedule
             if name = self[:schedule]
@@ -1776,14 +1769,14 @@ class Type
         @attr_aliases = {}
 
         @paramdoc = Hash.new { |hash,key|
-          if key.is_a?(String)
-            key = key.intern
-          end
-          if hash.include?(key)
-            hash[key]
-          else
-            "Param Documentation for %s not found" % key
-          end
+            if key.is_a?(String)
+                key = key.intern
+            end
+            if hash.include?(key)
+                hash[key]
+            else
+                "Param Documentation for %s not found" % key
+            end
         }
 
         unless defined? @doc
@@ -1818,9 +1811,12 @@ class Type
 
     # create a log at specified level
     def log(msg)
+
         Puppet::Util::Log.create(
+
             :level => @parameters[:loglevel].value,
             :message => msg,
+
             :source => self
         )
     end
@@ -1992,8 +1988,7 @@ class Type
             elsif self.class.validproperty?(namevar)
                 @title = self.should(namevar)
             else
-                self.devfail "Could not find namevar %s for %s" %
-                    [namevar, self.class.name]
+                self.devfail "Could not find namevar %s for %s" % [namevar, self.class.name]
             end
         end
 

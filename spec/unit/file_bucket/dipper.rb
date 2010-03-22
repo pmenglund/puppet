@@ -32,9 +32,12 @@ describe Puppet::FileBucket::Dipper do
         bucketfile.stubs(:checksum_data).returns("DIGEST123")
         bucketfile.expects(:save).with(req)
 
-        Puppet::FileBucket::File.stubs(:new).with(
+
+                    Puppet::FileBucket::File.stubs(:new).with(
+                
             "my contents",
             :bucket_path => '/my/bucket',
+        
             :path => '/my/file'
         ).returns(bucketfile)
 
@@ -62,8 +65,11 @@ describe Puppet::FileBucket::Dipper do
     end
 
     it "should backup files to a remote server" do
-        @dipper = Puppet::FileBucket::Dipper.new(
+
+                    @dipper = Puppet::FileBucket::Dipper.new(
+                
             :Server => "puppetmaster",
+        
             :Port   => "31337"
         )
 
@@ -76,9 +82,12 @@ describe Puppet::FileBucket::Dipper do
         bucketfile.stubs(:checksum_data).returns("DIGEST123")
         bucketfile.expects(:save).with(req)
 
-        Puppet::FileBucket::File.stubs(:new).with(
+
+                    Puppet::FileBucket::File.stubs(:new).with(
+                
             "my contents",
             :bucket_path => nil,
+        
             :path => '/my/file'
         ).returns(bucketfile)
 
@@ -88,8 +97,11 @@ describe Puppet::FileBucket::Dipper do
     end
 
     it "should retrieve files from a remote server" do
-        @dipper = Puppet::FileBucket::Dipper.new(
+
+                    @dipper = Puppet::FileBucket::Dipper.new(
+                
             :Server => "puppetmaster",
+        
             :Port   => "31337"
         )
 

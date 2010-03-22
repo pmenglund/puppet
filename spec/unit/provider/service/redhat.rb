@@ -37,7 +37,7 @@ describe provider_class do
             @provider.should respond_to(method)
         end
         describe "when running #{method}" do
-        
+
             it "should use any provided explicit command" do
                 @resource.stubs(:[]).with(method).returns "/user/specified/command"
                 @provider.expects(:execute).with { |command, *args| command == ["/user/specified/command"] }
@@ -48,7 +48,7 @@ describe provider_class do
                 @resource.stubs(:[]).with("has#{method}".intern).returns :true
                 @provider.expects(:execute).with { |command, *args| command ==  ['/sbin/service', 'myservice', method.to_s]}
                 @provider.send(method)
-            end            
+            end
         end
     end
 
@@ -80,8 +80,8 @@ describe provider_class do
                 @provider.status.should == :running
             end
             it "should consider the service :stopped if it doesn't have a pid" do
-                  @provider.expects(:getpid).returns nil
-                  @provider.status.should == :stopped
+                @provider.expects(:getpid).returns nil
+                @provider.status.should == :stopped
             end
         end
     end

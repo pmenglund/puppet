@@ -7,7 +7,7 @@ module Puppet::Util::SUIDManager
     extend Forwardable
 
     to_delegate_to_process = [ :euid=, :euid, :egid=, :egid,
-                               :uid=, :uid, :gid=, :gid, :groups=, :groups ]
+        :uid=, :uid, :gid=, :gid, :groups=, :groups ]
 
     to_delegate_to_process.each do |method|
         def_delegator Process, method
@@ -46,7 +46,7 @@ module Puppet::Util::SUIDManager
         raise ArgumentError, "Invalid id type %s" % type unless map.include?(type)
         ret = Puppet::Util.send(type, id)
         if ret == nil
-          raise Puppet::Error, "Invalid %s: %s" % [map[type], id]
+            raise Puppet::Error, "Invalid %s: %s" % [map[type], id]
         end
         return ret
     end

@@ -61,7 +61,7 @@
 #            desc 'Any aliases the port might have.  Multiple values must be
 #                specified as an array.  Note that this property is not the same as
 #                the "alias" metaparam; use this property to add aliases to a port
-#                in the services file, and "alias" to aliases for use in your Puppet 
+#                in the services file, and "alias" to aliases for use in your Puppet
 #                scripts.'
 #
 #            # We actually want to return the whole array here, not just the first

@@ -17,9 +17,12 @@ class Puppet::Util::FileType
     def self.newfiletype(name, &block)
         @filetypes ||= {}
 
-        klass = genclass(name,
+
+                    klass = genclass(
+                name,
             :block => block,
             :prefix => "FileType",
+        
             :hash => @filetypes
         )
 
@@ -43,8 +46,7 @@ class Puppet::Util::FileType
                     if Puppet[:trace]
                         puts detail.backtrace
                     end
-                    raise Puppet::Error, "%s could not read %s: %s" %
-                        [self.class, @path, detail]
+                    raise Puppet::Error, "%s could not read %s: %s" % [self.class, @path, detail]
                 end
             end
 
@@ -61,8 +63,7 @@ class Puppet::Util::FileType
                     if Puppet[:debug]
                         puts detail.backtrace
                     end
-                    raise Puppet::Error, "%s could not write %s: %s" %
-                        [self.class, @path, detail]
+                    raise Puppet::Error, "%s could not write %s: %s" % [self.class, @path, detail]
                 end
             end
         end
@@ -259,7 +260,7 @@ class Puppet::Util::FileType
             begin
                 output = Puppet::Util.execute(%w{crontab -l}, :uid => @path)
                 if output.include?("You are not authorized to use the cron command")
-                    raise Puppet::Error, "User %s not authorized to use cron" % @path 
+                    raise Puppet::Error, "User %s not authorized to use cron" % @path
                 end
                 return output
             rescue => detail

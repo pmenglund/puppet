@@ -96,11 +96,14 @@ class TestParsedSSHKey < Test::Unit::TestCase
         assert_equal("one", result[:name], "Did not call post hook")
         assert_equal(%w{two}, result[:host_aliases], "Did not call post hook")
 
-        assert_equal("one,two type key",
+
+                    assert_equal(
+                "one,two type key",
             @provider.to_line(:record_type => :parsed,
             :name => "one",
             :host_aliases => %w{two},
             :type => "type",
+        
             :key => "key"),
             "Did not use pre-hook when generating line"
         )

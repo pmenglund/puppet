@@ -18,7 +18,7 @@ class Puppet::Parser::Lexer
     def lex_error msg
         raise Puppet::LexError.new(msg)
     end
-        
+
     class Token
         attr_accessor :regex, :name, :string, :skip, :incr_line, :skip_text, :accumulate
 
@@ -45,10 +45,10 @@ class Puppet::Parser::Lexer
                 @name.to_s
             end
         end
-        
+
         def acceptable?(context={})
             # By default tokens are aceeptable in any context
-            true 
+            true
         end
     end
 
@@ -108,51 +108,54 @@ class Puppet::Parser::Lexer
     end
 
     TOKENS = TokenList.new
-    TOKENS.add_tokens(
-        '[' => :LBRACK,
-        ']' => :RBRACK,
-        '{' => :LBRACE,
-        '}' => :RBRACE,
-        '(' => :LPAREN,
-        ')' => :RPAREN,
-        '=' => :EQUALS,
-        '+=' => :APPENDS,
-        '==' => :ISEQUAL,
-        '>=' => :GREATEREQUAL,
-        '>' => :GREATERTHAN,
-        '<' => :LESSTHAN,
-        '<=' => :LESSEQUAL,
-        '!=' => :NOTEQUAL,
-        '!' => :NOT,
-        ',' => :COMMA,
-        '.' => :DOT,
-        ':' => :COLON,
-        '@' => :AT,
-        '<<|' => :LLCOLLECT,
-        '|>>' => :RRCOLLECT,
-        '<|' => :LCOLLECT,
-        '|>' => :RCOLLECT,
-        ';' => :SEMIC,
-        '?' => :QMARK,
-        '\\' => :BACKSLASH,
-        '=>' => :FARROW,
-        '+>' => :PARROW,
-        '+' => :PLUS,
-        '-' => :MINUS,
-        '/' => :DIV,
-        '*' => :TIMES,
-        '<<' => :LSHIFT,
-        '>>' => :RSHIFT,
-        '=~' => :MATCH,
-        '!~' => :NOMATCH,
-        %r{([a-z][-\w]*)?(::[a-z][-\w]*)+} => :CLASSNAME, # Require '::' in the class name, else we'd compete with NAME
-        %r{((::){0,1}[A-Z][-\w]*)+} => :CLASSREF,
-        "<string>" => :STRING, 
-        "<dqstring up to first interpolation>" => :DQPRE,
-        "<dqstring between two interpolations>" => :DQMID,
-        "<dqstring after final interpolation>" => :DQPOST,
-        "<boolean>" => :BOOLEAN
-        )
+
+        TOKENS.add_tokens(
+
+            '[' => :LBRACK,
+            ']' => :RBRACK,
+            '{' => :LBRACE,
+            '}' => :RBRACE,
+            '(' => :LPAREN,
+
+            ')' => :RPAREN,
+            '=' => :EQUALS,
+            '+=' => :APPENDS,
+            '==' => :ISEQUAL,
+            '>=' => :GREATEREQUAL,
+            '>' => :GREATERTHAN,
+            '<' => :LESSTHAN,
+            '<=' => :LESSEQUAL,
+            '!=' => :NOTEQUAL,
+            '!' => :NOT,
+            ',' => :COMMA,
+            '.' => :DOT,
+            ':' => :COLON,
+            '@' => :AT,
+            '<<|' => :LLCOLLECT,
+            '|>>' => :RRCOLLECT,
+            '<|' => :LCOLLECT,
+            '|>' => :RCOLLECT,
+            ';' => :SEMIC,
+            '?' => :QMARK,
+            '\\' => :BACKSLASH,
+            '=>' => :FARROW,
+            '+>' => :PARROW,
+            '+' => :PLUS,
+            '-' => :MINUS,
+            '/' => :DIV,
+            '*' => :TIMES,
+            '<<' => :LSHIFT,
+            '>>' => :RSHIFT,
+            '=~' => :MATCH,
+            '!~' => :NOMATCH,
+            %r{([a-z][-\w]*)?(::[a-z][-\w]*)+} => :CLASSNAME, # Require '::' in the class name, else we'd compete with NAME
+            %r{((::){0,1}[A-Z][-\w]*)+} => :CLASSREF,
+            "<string>" => :STRING,
+            "<dqstring up to first interpolation>" => :DQPRE,
+            "<dqstring between two interpolations>" => :DQMID,
+            "<dqstring after final interpolation>" => :DQPOST,
+            "<boolean>" => :BOOLEAN
+            )
 
     TOKENS.add_token :NUMBER, %r{\b(?:0[xX][0-9A-Fa-f]+|0?\d+(?:\.\d+)?(?:[eE]-?\d+)?)\b} do |lexer, value|
         [TOKENS[:NAME], value]
@@ -209,8 +212,8 @@ class Puppet::Parser::Lexer
     DQ_initial_token_types      = {'$' => :DQPRE,'"' => :STRING}
     DQ_continuation_token_types = {'$' => :DQMID,'"' => :DQPOST}
 
-    TOKENS.add_token :DQUOTE, /"/ do |lexer, value| 
-         lexer.tokenize_interpolated_string(DQ_initial_token_types)
+    TOKENS.add_token :DQUOTE, /"/ do |lexer, value|
+        lexer.tokenize_interpolated_string(DQ_initial_token_types)
     end
 
     TOKENS.add_token :DQCONT, /\}/ do |lexer, value|
@@ -242,22 +245,25 @@ class Puppet::Parser::Lexer
 
     KEYWORDS = TokenList.new
 
-    KEYWORDS.add_tokens(
-        "case" => :CASE,
-        "class" => :CLASS,
-        "default" => :DEFAULT,
-        "define" => :DEFINE,
-        "import" => :IMPORT,
-        "if" => :IF,
-        "elsif" => :ELSIF,
-        "else" => :ELSE,
-        "inherits" => :INHERITS,
-        "node" => :NODE,
-        "and"  => :AND,
-        "or"   => :OR,
-        "undef"   => :UNDEF,
-        "false" => :FALSE,
-        "true" => :TRUE
+
+        KEYWORDS.add_tokens(
+
+            "case" => :CASE,
+            "class" => :CLASS,
+            "default" => :DEFAULT,
+            "define" => :DEFINE,
+            "import" => :IMPORT,
+            "if" => :IF,
+            "elsif" => :ELSIF,
+            "else" => :ELSE,
+            "inherits" => :INHERITS,
+            "node" => :NODE,
+            "and"  => :AND,
+            "or"   => :OR,
+            "undef"   => :UNDEF,
+            "false" => :FALSE,
+
+            "true" => :TRUE
     )
 
     def clear
@@ -304,7 +310,7 @@ class Puppet::Parser::Lexer
         # until we either match or run out of chars.  This way our worst-case is three
         # tries, where it is otherwise the number of string token we have.  Also,
         # the lookups are optimized hash lookups, instead of regex scans.
-        # 
+        #
         s = @scanner.peek(3)
         token = TOKENS.lookup(s[0,3]) || TOKENS.lookup(s[0,2]) || TOKENS.lookup(s[0,1])
         [ token, token && @scanner.scan(token.regex) ]
@@ -366,8 +372,8 @@ class Puppet::Parser::Lexer
         @expected = []
         @commentstack = [ ['', @line] ]
         @lexing_context = {
-            :after => nil, 
-            :start_of_line => true, 
+            :after => nil,
+            :start_of_line => true,
             :string_interpolation_depth => 0
             }
     end
@@ -513,7 +519,7 @@ class Puppet::Parser::Lexer
                     ch
                 else
                     Puppet.warning "Unrecognised escape sequence '\\#{ch}'#{file && " in file #{file}"}#{line && " at line #{line}"}"
-                     "\\#{ch}"
+                    "\\#{ch}"
                 end
             end
         }

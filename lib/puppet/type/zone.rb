@@ -172,8 +172,7 @@ Puppet::Type.newtype(:zone) do
                     end
                     provider.send(method)
                 else
-                    raise Puppet::DevError, "Cannot move %s from %s" %
-                        [direction, st[:name]]
+                    raise Puppet::DevError, "Cannot move %s from %s" % [direction, st[:name]]
                 end
             end
 
@@ -315,8 +314,7 @@ end
                 security_policy=NONE
                 root_password=&lt;%= password %>
                 timeserver=localhost
-                name_service=DNS {domain_name=&lt;%= domain %>
-                        name_server=&lt;%= nameserver %>}
+                name_service=DNS {domain_name=&lt;%= domain %> name_server=&lt;%= nameserver %>}
                 network_interface=primary {hostname=&lt;%= realhostname %>
                         ip_address=&lt;%= ip %>
                         netmask=&lt;%= netmask %>

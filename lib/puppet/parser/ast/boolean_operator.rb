@@ -11,7 +11,7 @@ class Puppet::Parser::AST
             [@lval,@rval,@operator].each { |child| yield child }
         end
 
-        # Returns a boolean which is the result of the lazy boolean 
+        # Returns a boolean which is the result of the lazy boolean
         # operation of lval and rval operands
         def evaluate
             s = Puppet::Parser::Scope

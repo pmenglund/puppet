@@ -44,8 +44,7 @@ module Puppet
             It is recommended to avoid duplicate names whenever possible.
 
             Note that if an ``exec`` receives an event from another resource,
-            it will get executed again (or execute the command specified in
-            ``refresh``, if there is one).
+            it will get executed again (or execute the command specified in ``refresh``, if there is one).
 
             There is a strong tendency to use ``exec`` to do whatever work Puppet
             can't already do; while this is obviously acceptable (and unavoidable)
@@ -133,8 +132,7 @@ module Puppet
                 end
 
                 unless self.should.include?(status.exitstatus.to_s)
-                    self.fail("%s returned %s instead of one of [%s]" %
-                        [self.resource[:command], status.exitstatus, self.should.join(",")])
+                    self.fail("%s returned %s instead of one of [%s]" % [self.resource[:command], status.exitstatus, self.should.join(",")])
                 end
 
                 return event
@@ -514,8 +512,7 @@ module Puppet
                 end
             else
                 raise ArgumentError,
-                    "%s is somehow not qualified with no search path" %
-                        self[:command]
+                    "%s is somehow not qualified with no search path" % self[:command]
             end
         end
 
@@ -581,8 +578,7 @@ module Puppet
                                 value = $2
                                 if environment.include? name
                                     warning(
-                                    "Overriding environment setting '%s' with '%s'" %
-                                        [name, value]
+                                    "Overriding environment setting '%s' with '%s'" % [name, value]
                                     )
                                 end
                                 environment[name] = value

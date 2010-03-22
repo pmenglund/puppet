@@ -14,7 +14,7 @@ describe provider do
         @fakehdiutilplist = Plist::Emit.dump(@fakehdiutilinfo)
 
         @hdiutilmountargs = ["mount", "-plist", "-nobrowse", "-readonly",
-                             "-noidme", "-mountrandom", "/tmp"]
+            "-noidme", "-mountrandom", "/tmp"]
     end
 
     it "should not be versionable" do

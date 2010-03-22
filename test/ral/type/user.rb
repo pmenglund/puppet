@@ -64,11 +64,14 @@ class TestUser < Test::Unit::TestCase
     def mkuser(name)
         user = nil
         assert_nothing_raised {
-            user = Puppet::Type.type(:user).new(
+
+                        user = Puppet::Type.type(:user).new(
+                
                 :name => name,
                 :comment => "Puppet Testing User",
                 :gid => Puppet::Util::SUIDManager.gid,
                 :shell => findshell(),
+        
                 :home => "/home/%s" % name
             )
         }
@@ -106,12 +109,18 @@ class TestUser < Test::Unit::TestCase
 
         trans = assert_events([:user_changed], comp, "user")
 
-        assert_equal("A different comment", user.provider.comment,
+
+                    assert_equal(
+                "A different comment", user.provider.comment,
+        
             "Comment was not changed")
 
         assert_rollback_events(trans, [:user_changed], "user")
 
-        assert_equal(old, user.provider.comment,
+
+                    assert_equal(
+                old, user.provider.comment,
+        
             "Comment was not reverted")
     end
 
@@ -155,8 +164,7 @@ class TestUser < Test::Unit::TestCase
         trans = assert_events([:user_changed], comp, "user")
 
         user.retrieve
-        assert_equal(newshell, user.provider.shell,
-            "Shell was not changed")
+        assert_equal(newshell, user.provider.shell, "Shell was not changed")
 
         assert_rollback_events(trans, [:user_changed], "user")
         user.retrieve
@@ -252,8 +260,7 @@ class TestUser < Test::Unit::TestCase
         assert_apply(user)
 
         # Make sure that the groups are a string, not an array
-        assert(user.provider.groups.is_a?(String),
-            "Incorrectly passed an array to groups")
+        assert(user.provider.groups.is_a?(String), "Incorrectly passed an array to groups")
 
         currentvalue = user.retrieve
 
@@ -326,15 +333,21 @@ class TestUser < Test::Unit::TestCase
         home = nil
         ogroup = nil
         assert_nothing_raised {
-            user = Puppet::Type.type(:user).new(
+
+                        user = Puppet::Type.type(:user).new(
+                
                 :name => "pptestu",
                 :home => file,
                 :gid => "pptestg",
+        
                 :groups => "yayness"
             )
-            home = Puppet::Type.type(:file).new(
+
+                        home = Puppet::Type.type(:file).new(
+                
                 :path => file,
                 :owner => "pptestu",
+        
                 :ensure => "directory"
             )
             group = Puppet::Type.type(:group).new(
@@ -385,8 +398,7 @@ class TestUser < Test::Unit::TestCase
         trans = assert_events([:user_created], comp, "user")
 
         user.retrieve
-        assert_equal("Puppet Testing User", user.provider.comment,
-            "Comment was not set")
+        assert_equal("Puppet Testing User", user.provider.comment, "Comment was not set")
 
         tests = Puppet::Type.type(:user).validproperties
 

@@ -26,11 +26,14 @@ class Collection < AST::Branch
                 param.safeevaluate
             end
 
-            newcoll.add_override(
+
+                        newcoll.add_override(
+                
                 :parameters => params,
                 :file => @file,
                 :line => @line,
                 :source => scope.source,
+        
                 :scope => scope
             )
         end
@@ -43,9 +46,12 @@ class Collection < AST::Branch
         if override.is_a?(AST::ASTArray)
             @override = override
         else
-            @override = AST::ASTArray.new(
+
+                        @override = AST::ASTArray.new(
+                
                 :line => override.line,
                 :file => override.file,
+        
                 :children => [override]
             )
         end

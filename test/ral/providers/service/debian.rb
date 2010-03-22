@@ -23,14 +23,20 @@ class TestDebianServiceProvider < Test::Unit::TestCase
 
     def assert_enabled( servicename, output)
         provider = prepare_provider( servicename, output )
-        assert_equal(:true, provider.enabled?,
-                     "Service provider=debian thinks service is disabled, when it isn't")
+
+            assert_equal(
+                :true, provider.enabled?,
+
+                    "Service provider=debian thinks service is disabled, when it isn't")
     end
 
     def assert_disabled( servicename, output )
         provider = prepare_provider( servicename, output )
-        assert_equal(:false, provider.enabled?,
-                     "Service provider=debian thinks service is enabled, when it isn't")
+
+            assert_equal(
+                :false, provider.enabled?,
+
+                    "Service provider=debian thinks service is enabled, when it isn't")
     end
 
     # Testing #822
@@ -53,6 +59,6 @@ class TestDebianServiceProvider < Test::Unit::TestCase
     /etc/rc5.d/S89test3
     /etc/rc6.d/K11test3
 """)
-        assert_disabled("test4", " Removing any system startup links for /etc/init.d/test4 ...\n")
+    assert_disabled("test4", " Removing any system startup links for /etc/init.d/test4 ...\n")
     end
 end

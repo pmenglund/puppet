@@ -12,8 +12,7 @@ class Puppet::Network::Client::Resource < Puppet::Network::Client
         when Puppet::TransBucket
             # nothing
         else
-            raise Puppet::DevError, "You must pass a transportable object, not a %s" %
-                bucket.class
+            raise Puppet::DevError, "You must pass a transportable object, not a %s" % bucket.class
         end
 
         unless @local

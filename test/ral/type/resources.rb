@@ -113,8 +113,7 @@ class TestResources < Test::Unit::TestCase
         assert(! genned.empty?, "generated resource list was empty")
 
         # Now make sure the generate method only finds the unmanaged resources
-        assert_equal(unmanned.collect { |r| r.title }.sort, genned.collect { |r| r.title },
-            "Did not return correct purge list")
+        assert_equal(unmanned.collect { |r| r.title }.sort, genned.collect { |r| r.title }, "Did not return correct purge list")
 
         # Now make sure our metaparams carried over
         genned.each do |res|

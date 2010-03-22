@@ -13,8 +13,11 @@ class TestLangFunctions < Test::Unit::TestCase
     include PuppetTest::ResourceTesting
     def test_functions
         assert_nothing_raised do
+
             Puppet::Parser::AST::Function.new(
+
                 :name => "fakefunction",
+
                 :arguments => AST::ASTArray.new(
                     :children => [nameobj("avalue")]
                 )
@@ -22,8 +25,11 @@ class TestLangFunctions < Test::Unit::TestCase
         end
 
         assert_raise(Puppet::ParseError) do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "fakefunction",
+
                 :arguments => AST::ASTArray.new(
                     :children => [nameobj("avalue")]
                 )
@@ -39,9 +45,12 @@ class TestLangFunctions < Test::Unit::TestCase
 
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "fakefunction",
                 :ftype => :rvalue,
+
                 :arguments => AST::ASTArray.new(
                     :children => [nameobj("avalue")]
                 )
@@ -83,12 +92,14 @@ class TestLangFunctions < Test::Unit::TestCase
     def test_failfunction
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "fail",
                 :ftype => :statement,
+
                 :arguments => AST::ASTArray.new(
-                    :children => [stringobj("this is a failure"),
-                        stringobj("and another")]
+                    :children => [stringobj("this is a failure"), stringobj("and another")]
                 )
             )
         end
@@ -115,12 +126,14 @@ class TestLangFunctions < Test::Unit::TestCase
         end
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "template",
                 :ftype => :rvalue,
+
                 :arguments => AST::ASTArray.new(
-                    :children => [stringobj("one"),
-                        stringobj("two")]
+                    :children => [stringobj("one"), stringobj("two")]
                 )
             )
         end
@@ -141,8 +154,7 @@ class TestLangFunctions < Test::Unit::TestCase
         end
 
         # Ensure that we got the output we expected from that evaluation.
-        assert_equal("template One\ntemplate \n", scope.lookupvar("output"),
-                     "Undefined template variables do not raise exceptions")
+        assert_equal("template One\ntemplate \n", scope.lookupvar("output"), "Undefined template variables do not raise exceptions")
 
         # Now, fill in the last variable and make sure the whole thing
         # evaluates correctly.
@@ -152,7 +164,10 @@ class TestLangFunctions < Test::Unit::TestCase
             ast.evaluate(scope)
         end
 
-        assert_equal("template One\ntemplate Two\n", scope.lookupvar("output"),
+
+            assert_equal(
+                "template One\ntemplate Two\n", scope.lookupvar("output"),
+
             "Templates were not handled correctly")
     end
 
@@ -166,9 +181,12 @@ class TestLangFunctions < Test::Unit::TestCase
 
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "template",
                 :ftype => :rvalue,
+
                 :arguments => AST::ASTArray.new(
                     :children => [stringobj(template)]
                 )
@@ -187,7 +205,10 @@ class TestLangFunctions < Test::Unit::TestCase
             ast.evaluate(scope)
         end
 
-        assert_equal("template this is yay\n", scope.lookupvar("output"),
+
+            assert_equal(
+                "template this is yay\n", scope.lookupvar("output"),
+
             "Templates were not handled correctly")
 
     end
@@ -202,9 +223,12 @@ class TestLangFunctions < Test::Unit::TestCase
 
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "template",
                 :ftype => :rvalue,
+
                 :arguments => AST::ASTArray.new(
                     :children => [stringobj(template)]
                 )
@@ -224,8 +248,11 @@ class TestLangFunctions < Test::Unit::TestCase
             ast.evaluate(scope)
         end
 
-        assert_equal("template deprecated value\n", scope.lookupvar("output"),
-                     "Deprecated template variables were not handled correctly")
+
+            assert_equal(
+                "template deprecated value\n", scope.lookupvar("output"),
+
+                    "Deprecated template variables were not handled correctly")
     end
 
     # Make sure that problems with kernel method visibility still exist.
@@ -235,9 +262,12 @@ class TestLangFunctions < Test::Unit::TestCase
 
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "template",
                 :ftype => :rvalue,
+
                 :arguments => AST::ASTArray.new(
                     :children => [stringobj(template)]
                 )
@@ -261,9 +291,12 @@ class TestLangFunctions < Test::Unit::TestCase
 
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "template",
                 :ftype => :rvalue,
+
                 :arguments => AST::ASTArray.new(
                     :children => [stringobj(template)]
                 )
@@ -301,7 +334,10 @@ class TestLangFunctions < Test::Unit::TestCase
         fileobj = catalog.vertices.find { |r| r.title == file }
         assert(fileobj, "File was not in catalog")
 
-        assert_equal("original text\n", fileobj["content"],
+
+            assert_equal(
+                "original text\n", fileobj["content"],
+
             "Template did not work")
 
         Puppet[:filetimeout] = -5
@@ -327,9 +363,12 @@ class TestLangFunctions < Test::Unit::TestCase
 
         func = nil
         assert_nothing_raised do
+
             func = Puppet::Parser::AST::Function.new(
+
                 :name => "template",
                 :ftype => :rvalue,
+
                 :arguments => AST::ASTArray.new(
                     :children => [stringobj(template)]
                 )
@@ -349,8 +388,11 @@ class TestLangFunctions < Test::Unit::TestCase
                 ast.evaluate(scope)
             end
 
-            assert_equal("template #{value}\n", scope.lookupvar("output"),
-                         "%s did not get evaluated correctly" % string.inspect)
+
+                assert_equal(
+                    "template #{value}\n", scope.lookupvar("output"),
+
+                        "%s did not get evaluated correctly" % string.inspect)
         end
     end
 
@@ -377,8 +419,7 @@ class TestLangFunctions < Test::Unit::TestCase
         }
 
         assert(obj, "Did not autoload function")
-        assert(Puppet::Parser::Scope.method_defined?(:function_autofunc),
-            "Did not set function correctly")
+        assert(Puppet::Parser::Scope.method_defined?(:function_autofunc), "Did not set function correctly")
     end
 
     def test_search

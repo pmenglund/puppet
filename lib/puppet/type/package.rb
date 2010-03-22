@@ -7,8 +7,7 @@ module Puppet
     newtype(:package) do
         @doc = "Manage packages.  There is a basic dichotomy in package
             support right now:  Some package types (e.g., yum and apt) can
-            retrieve their own package files, while others (e.g., rpm and
-            sun) cannot.  For those package formats that cannot retrieve
+            retrieve their own package files, while others (e.g., rpm and sun) cannot.  For those package formats that cannot retrieve
             their own files, you can use the ``source`` parameter to point to
             the correct file.
 
@@ -138,8 +137,7 @@ module Puppet
                             # that can't query versions.
                             return true
                         else
-                            self.debug "%s %s is installed, latest is %s" %
-                                [@resource.name, is.inspect, @latest.inspect]
+                            self.debug "%s %s is installed, latest is %s" % [@resource.name, is.inspect, @latest.inspect]
                         end
                     when :absent
                         return true if is == :absent or is == :purged

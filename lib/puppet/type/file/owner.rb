@@ -79,8 +79,7 @@ module Puppet
             when String
                 newvalue
             else
-                raise Puppet::DevError, "Invalid uid type %s(%s)" %
-                    [newvalue.class, newvalue]
+                raise Puppet::DevError, "Invalid uid type %s(%s)" % [newvalue.class, newvalue]
             end
         end
 

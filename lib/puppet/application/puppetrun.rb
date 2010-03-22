@@ -84,8 +84,7 @@ Puppet::Application.new(:puppetrun) do
                         end
                         print "%s finished with exit code %s\n" % [host, $?.exitstatus]
                     else
-                        $stderr.puts "Could not find host for PID %s with status %s" %
-                            [pid, $?.exitstatus]
+                        $stderr.puts "Could not find host for PID %s with status %s" % [pid, $?.exitstatus]
                     end
                 rescue Errno::ECHILD
                     # There are no children left, so just exit unless there are still

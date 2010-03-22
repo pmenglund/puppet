@@ -187,14 +187,14 @@ describe content do
                     Puppet[:show_diff] = true
                 end
 
-                it "should display a diff if the current contents are different from the desired content" do 
+                it "should display a diff if the current contents are different from the desired content" do
                     @content.should = "some content"
                     @content.expects(:string_file_diff).once
 
                     @content.insync?("other content")
                 end
 
-                it "should not display a diff if the sum for the current contents is the same as the sum for the desired content" do 
+                it "should not display a diff if the sum for the current contents is the same as the sum for the desired content" do
                     @content.should = "some content"
                     @content.expects(:string_file_diff).never
 

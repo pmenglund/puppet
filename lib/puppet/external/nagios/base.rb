@@ -197,7 +197,7 @@ class Nagios::Base
             self[param] = value
         }
         if @namevar == :_naginator_name
-          self['_naginator_name'] = self['name']
+            self['_naginator_name'] = self['name']
         end
     end
 
@@ -346,9 +346,9 @@ class Nagios::Base
     end
 
     newtype :hostgroup do
-      setparameters :hostgroup_name, :alias, :members, :hostgroup_members, :notes,
-          :notes_url, :action_url,
-          :register, :use
+        setparameters :hostgroup_name, :alias, :members, :hostgroup_members, :notes,
+            :notes_url, :action_url,
+            :register, :use
     end
 
     newtype :service do
@@ -434,14 +434,14 @@ class Nagios::Base
     end
 
     newtype :hostdependency do
-      auxiliary = true
-      setparameters :dependent_host_name, :dependent_hostgroup_name, :host_name,
-          :hostgroup_name, :inherits_parent, :execution_failure_criteria,
-          :notification_failure_criteria, :dependency_period,
-          :register, :use,
-          :_naginator_name
+        auxiliary = true
+        setparameters :dependent_host_name, :dependent_hostgroup_name, :host_name,
+            :hostgroup_name, :inherits_parent, :execution_failure_criteria,
+            :notification_failure_criteria, :dependency_period,
+            :register, :use,
+            :_naginator_name
 
-      setnamevar :_naginator_name
+        setnamevar :_naginator_name
     end
 
     newtype :hostescalation do

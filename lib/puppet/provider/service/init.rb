@@ -60,8 +60,7 @@ Puppet::Type.type(:service).provide :init, :parent => :base do
         when true, "true"; @parameters[:hasstatus] = true
         when false, "false"; @parameters[:hasstatus] = false
         else
-            raise Puppet::Error, "Invalid 'hasstatus' value %s" %
-                value.inspect
+            raise Puppet::Error, "Invalid 'hasstatus' value %s" % value.inspect
         end
     end
 

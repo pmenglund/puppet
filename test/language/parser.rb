@@ -80,8 +80,7 @@ class TestParser < Test::Unit::TestCase
         @@tmpfiles << name
 
         File.open(file, "w") { |f|
-            f.puts "file { \"%s\": ensure => file, mode => 755 }\n" %
-               name
+            f.puts "file { \"%s\": ensure => file, mode => 755 }\n" % name
         }
     end
 
@@ -312,18 +311,18 @@ class TestParser < Test::Unit::TestCase
 
         File.open(file, "w") do |f|
             f.puts %{
-node nodeA, nodeB {
-    file { "#{other}": ensure => file }
+                node nodeA, nodeB {
+                    file { "#{other}": ensure => file }
 
 }
 }
-        end
+    end
 
-        parser = mkparser
-        parser.file = file
-        ast = nil
-        assert_nothing_raised {
-            ast = parser.parse
+    parser = mkparser
+    parser.file = file
+    ast = nil
+    assert_nothing_raised {
+        ast = parser.parse
         }
     end
 
@@ -349,12 +348,12 @@ file { "/tmp/yayness":
     ensure => exists
 }
 }
-        parser = mkparser
-        parser.string = str
+    parser = mkparser
+    parser.string = str
 
-        # Make sure it parses fine
-        assert_nothing_raised {
-            parser.parse
+    # Make sure it parses fine
+    assert_nothing_raised {
+        parser.parse
         }
     end
 
@@ -558,7 +557,7 @@ file { "/tmp/yayness":
             parser.parse %{define one::two { }}
         }
         assert(parser.definition("one::two"), "Could not find one::two with no namespace")
-        
+
         # Now try using the definition
         assert_nothing_raised("Could not parse fully-qualified definition usage") {
             parser.parse %{one::two { yayness: }}
@@ -589,7 +588,7 @@ file { "/tmp/yayness":
         @@tmpfiles << basedir
         Dir.mkdir(basedir)
         modfiles = [ "init.pp", "mani1.pp", "mani2.pp",
-                     "sub/smani1.pp", "sub/smani2.pp" ]
+            "sub/smani1.pp", "sub/smani2.pp" ]
 
         modpath = File.join(basedir, "modules")
         Puppet[:modulepath] = modpath
@@ -611,8 +610,8 @@ file { "/tmp/yayness":
         end
 
         manifest_texts = [ "import '#{modname}'",
-                           "import '#{modname}/init'",
-                           "import '#{modname}/init.pp'" ]
+            "import '#{modname}/init'",
+            "import '#{modname}/init.pp'" ]
 
         manifest = File.join(modpath, "manifest.pp")
         manifest_texts.each do |txt|
@@ -661,8 +660,7 @@ file { "/tmp/yayness":
         end
 
         [one, two].each do |file|
-            assert(@logs.detect { |l| l.message =~ /importing '#{file}'/},
-                "did not import %s" % file)
+            assert(@logs.detect { |l| l.message =~ /importing '#{file}'/}, "did not import %s" % file)
         end
     end
 
@@ -865,11 +863,10 @@ file { "/tmp/yayness":
             result = parser.newclass "Yayness"
         end
         assert_equal(result, parser.find_hostclass("", "yayNess"))
-        
+
         assert_nothing_raised do
             result = parser.newdefine "FunTest"
         end
-        assert_equal(result, parser.find_definition("", "fUntEst"),
-            "%s was not matched" % "fUntEst")
+        assert_equal(result, parser.find_definition("", "fUntEst"), "%s was not matched" % "fUntEst")
     end
 end

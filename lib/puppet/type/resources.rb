@@ -104,14 +104,14 @@ Puppet::Type.newtype(:resources) do
             select { |r| r.class.validproperty?(:ensure) }.
             select { |r| able_to_ensure_absent?(r) }.
             each { |resource|
-              @parameters.each do |name, param|
-                  resource[name] = param.value if param.metaparam?
-              end
+                @parameters.each do |name, param|
+                    resource[name] = param.value if param.metaparam?
+                end
 
-              # Mark that we're purging, so transactions can handle relationships
-              # correctly
-              resource.purging
-          }
+                # Mark that we're purging, so transactions can handle relationships
+                # correctly
+                resource.purging
+            }
     end
 
     def resource_type

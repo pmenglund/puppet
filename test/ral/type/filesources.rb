@@ -59,11 +59,14 @@ class TestFileSources < Test::Unit::TestCase
         tofile = nil
         trans = nil
 
-        tofile = Puppet::Type.type(:file).new(
-            :path => todir,
-            :recurse => true,
-            :backup => false,
-            :source => fromdir
+
+            tofile = Puppet::Type.type(:file).new(
+
+                :path => todir,
+                :recurse => true,
+                :backup => false,
+
+                :source => fromdir
         )
         catalog = mk_catalog(tofile)
         catalog.apply
@@ -192,10 +195,13 @@ class TestFileSources < Test::Unit::TestCase
         File.open(file1, "w") { |f| f.puts "yay" }
         rootobj = nil
         assert_nothing_raised {
+
             rootobj = Puppet::Type.type(:file).new(
+
                 :name => basedir,
                 :recurse => true,
                 :check => %w{type owner},
+
                 :mode => 0755
             )
         }
@@ -240,8 +246,11 @@ class TestFileSources < Test::Unit::TestCase
 
         serverpid = nil
         assert_nothing_raised("Could not start on port %s" % @port) {
+
             server = Puppet::Network::HTTPServer::WEBrick.new(
+
                 :Port => @port,
+
                 :Handlers => {
                     :CA => {}, # so that certs autogenerate
                     :FileServer => {
@@ -264,9 +273,12 @@ class TestFileSources < Test::Unit::TestCase
         sleep(1)
 
         name = File.join(tmpdir(), "nosourcefile")
-        file = Puppet::Type.type(:file).new(
-            :source => "puppet://localhost/noexist/file",
-            :name => name
+
+            file = Puppet::Type.type(:file).new(
+
+                :source => "puppet://localhost/noexist/file",
+
+                :name => name
         )
 
         assert_raise Puppet::Error do
@@ -291,8 +303,11 @@ class TestFileSources < Test::Unit::TestCase
         # Now the files should be exactly the same, so we should not see attempts
         # at copying
         assert_nothing_raised {
+
             file = Puppet::Type.type(:file).new(
+
                 :path => to,
+
                 :source => from
             )
         }
@@ -300,7 +315,7 @@ class TestFileSources < Test::Unit::TestCase
         currentvalue = file.retrieve
 
         assert(currentvalue[file.property(:checksum)],
-               "File does not have a checksum property")
+            "File does not have a checksum property")
 
         assert_equal(0, file.evaluate.length, "File produced changes")
     end
@@ -317,8 +332,11 @@ class TestFileSources < Test::Unit::TestCase
 
         file = nil
         assert_nothing_raised {
+
             file = Puppet::Type.type(:file).new(
+
                 :name => to,
+
                 :source => files
             )
         }
@@ -343,8 +361,11 @@ class TestFileSources < Test::Unit::TestCase
 
         file = nil
         assert_nothing_raised {
+
             file = Puppet::Type.type(:file).new(
+
                 :name => dest,
+
                 :source => source
             )
         }
@@ -364,9 +385,12 @@ class TestFileSources < Test::Unit::TestCase
 
         file = nil
         assert_nothing_raised {
+
             file = Puppet::Type.type(:file).new(
+
                 :name => dest,
                 :ensure => "file",
+
                 :source => source
             )
         }
@@ -408,10 +432,13 @@ class TestFileSources < Test::Unit::TestCase
         File.open(source, "w") { |f| f.puts "yayness" }
 
         dest = tempfile()
-        file = Puppet::Type.newfile(
-            :path => dest,
-            :source => source,
-            :recurse => true
+
+            file = Puppet::Type.newfile(
+
+                :path => dest,
+                :source => source,
+
+                :recurse => true
         )
 
 
@@ -429,16 +456,14 @@ class TestFileSources < Test::Unit::TestCase
         assert_apply(file)
 
         # Make sure it doesn't change.
-        assert_equal("yayness\n", File.read(dest),
-            "File got replaced when :replace was false")
+        assert_equal("yayness\n", File.read(dest), "File got replaced when :replace was false")
 
         # Now set it to true and make sure it does change.
         file[:replace] = true
         assert_apply(file)
 
         # Make sure it changes.
-        assert_equal("funtest\n", File.read(dest),
-            "File was not replaced when :replace was true")
+        assert_equal("funtest\n", File.read(dest), "File was not replaced when :replace was true")
     end
 
     def test_sourceselect
@@ -463,7 +488,10 @@ class TestFileSources < Test::Unit::TestCase
             }
         end
 
-        obj = Puppet::Type.newfile(:path => dest, :recurse => true,
+
+            obj = Puppet::Type.newfile(
+                :path => dest, :recurse => true,
+
             :source => sources)
 
         assert_equal(:first, obj[:sourceselect], "sourceselect has the wrong default")

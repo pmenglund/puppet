@@ -134,8 +134,11 @@ describe Puppet::Type.type(:file) do
             File.open(@file, "w", 0644) { |f| f.puts "yayness"; f.flush }
             File.symlink(@file, @link)
 
-            @resource = Puppet::Type.type(:file).new(
+
+                        @resource = Puppet::Type.type(:file).new(
+                
                 :path => @link,
+        
                 :mode => "755"
             )
             @catalog.add_resource @resource

@@ -17,7 +17,7 @@ describe provider_class do
         @resource.stubs(:[]).with(:path).returns ["/service/path","/alt/service/path"]
 #        @resource.stubs(:ref).returns "Service[myservice]"
         File.stubs(:directory?).returns(true)
-        
+
         @provider = provider_class.new
         @provider.resource = @resource
     end
@@ -48,18 +48,18 @@ describe provider_class do
             lambda { @provider.initscript }.should raise_error(Puppet::Error, "Could not find init script for 'myservice'")
         end
     end
-    
+
     describe "if the init script is present" do
         before :each do
             File.stubs(:stat).with("/service/path/myservice").returns true
         end
-        
+
         [:start, :stop, :status, :restart].each do |method|
             it "should have a #{method} method" do
                 @provider.should respond_to(method)
             end
             describe "when running #{method}" do
-            
+
                 it "should use any provided explicit command" do
                     @resource.stubs(:[]).with(method).returns "/user/specified/command"
                     @provider.expects(:execute).with { |command, *args| command == ["/user/specified/command"] }
@@ -70,7 +70,7 @@ describe provider_class do
                     @resource.stubs(:[]).with("has#{method}".intern).returns :true
                     @provider.expects(:execute).with { |command, *args| command ==  ["/service/path/myservice",method]}
                     @provider.send(method)
-                end            
+                end
             end
         end
 

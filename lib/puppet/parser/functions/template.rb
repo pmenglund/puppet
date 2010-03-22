@@ -16,8 +16,7 @@ Puppet::Parser::Functions::newfunction(:template, :type => :rvalue, :doc =>
                 wrapper.result
             rescue => detail
                 raise Puppet::ParseError,
-                    "Failed to parse template %s: %s" %
-                        [file, detail]
+                    "Failed to parse template %s: %s" % [file, detail]
             end
         end.join("")
 end

@@ -40,8 +40,7 @@ class Puppet::Provider
         elsif superclass.respond_to? :command and command = superclass.command(name)
             # nothing
         else
-            raise Puppet::DevError, "No command %s defined for provider %s" %
-                [name, self.name]
+            raise Puppet::DevError, "No command %s defined for provider %s" % [name, self.name]
         end
 
         return binary(command)

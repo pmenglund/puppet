@@ -45,8 +45,7 @@ class Puppet::Provider::NameService < Puppet::Provider
 
         def options(name, hash)
             unless resource_type.valid_parameter?(name)
-                raise Puppet::DevError, "%s is not a valid attribute for %s" %
-                    [name, resource_type.name]
+                raise Puppet::DevError, "%s is not a valid attribute for %s" % [name, resource_type.name]
             end
             @options ||= {}
             @options[name] ||= {}
@@ -111,8 +110,7 @@ class Puppet::Provider::NameService < Puppet::Provider
             if @checks.include? name
                 block = @checks[name][:block]
                 unless block.call(value)
-                    raise ArgumentError, "Invalid value %s: %s" %
-                        [value, @checks[name][:error]]
+                    raise ArgumentError, "Invalid value %s: %s" % [value, @checks[name][:error]]
                 end
             end
         end
@@ -179,7 +177,7 @@ class Puppet::Provider::NameService < Puppet::Provider
     end
 
     def create
-       if exists?
+        if exists?
             info "already exists"
             # The object already exists
             return nil
@@ -188,8 +186,7 @@ class Puppet::Provider::NameService < Puppet::Provider
         begin
             execute(self.addcmd)
         rescue Puppet::ExecutionFailure => detail
-            raise Puppet::Error, "Could not create %s %s: %s" %
-                [@resource.class.name, @resource.name, detail]
+            raise Puppet::Error, "Could not create %s %s: %s" % [@resource.class.name, @resource.name, detail]
         end
     end
 
@@ -203,8 +200,7 @@ class Puppet::Provider::NameService < Puppet::Provider
         begin
             execute(self.deletecmd)
         rescue Puppet::ExecutionFailure => detail
-            raise Puppet::Error, "Could not delete %s %s: %s" %
-                [@resource.class.name, @resource.name, detail]
+            raise Puppet::Error, "Could not delete %s %s: %s" % [@resource.class.name, @resource.name, detail]
         end
     end
 

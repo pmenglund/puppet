@@ -52,11 +52,14 @@ module PuppetTest
     def self.munge_argv
         require 'getoptlong'
 
-        result = GetoptLong.new(
-            [ "--debug",    "-d", GetoptLong::NO_ARGUMENT       ],
-            [ "--resolve",  "-r", GetoptLong::REQUIRED_ARGUMENT ],
-            [ "-n",               GetoptLong::REQUIRED_ARGUMENT ],
-            [ "--help",     "-h", GetoptLong::NO_ARGUMENT       ]
+
+            result = GetoptLong.new(
+
+                [ "--debug",    "-d", GetoptLong::NO_ARGUMENT       ],
+                [ "--resolve",  "-r", GetoptLong::REQUIRED_ARGUMENT ],
+                [ "-n",               GetoptLong::REQUIRED_ARGUMENT ],
+
+                [ "--help",     "-h", GetoptLong::NO_ARGUMENT       ]
         )
 
         usage = "USAGE: TESTOPTS='[-n <method> -n <method> ...] [-d]' rake [target] [target] ..."
@@ -176,7 +179,10 @@ module PuppetTest
             @@testcount = 0
         end
 
-        @configpath = File.join(tmpdir,
+
+            @configpath = File.join(
+                tmpdir,
+
             "configdir" + @@testcount.to_s + "/"
         )
 
@@ -261,11 +267,11 @@ module PuppetTest
     def tmpdir
         unless defined? @tmpdir and @tmpdir
             @tmpdir = case Facter["operatingsystem"].value
-                      when "Darwin"; "/private/tmp"
-                      when "SunOS"; "/var/tmp"
-                      else
-                            "/tmp"
-                      end
+                when "Darwin"; "/private/tmp"
+                when "SunOS"; "/var/tmp"
+                else
+                    "/tmp"
+                        end
 
 
             @tmpdir = File.join(@tmpdir, "puppettesting" + Process.pid.to_s)
@@ -314,8 +320,7 @@ module PuppetTest
         diff = @memoryatend - @memoryatstart
 
         if diff > 1000
-            Puppet.info "%s#%s memory growth (%s to %s): %s" %
-                [self.class, @method_name, @memoryatstart, @memoryatend, diff]
+            Puppet.info "%s#%s memory growth (%s to %s): %s" % [self.class, @method_name, @memoryatstart, @memoryatend, diff]
         end
 
         # reset all of the logs

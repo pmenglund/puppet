@@ -84,7 +84,10 @@ describe "Report REST Terminus" do
         }
         report.newmetric(:times, timemetrics)
 
-        report.newmetric(:changes,
+
+                    report.newmetric(
+                :changes,
+        
             :total => 20
         )
 

@@ -61,7 +61,7 @@ module Puppet
 
         newproperty(:options, :array_matching => :all) do
             desc "Key options, see sshd(8) for possible values. Multiple values
-                  should be specified as an array."
+                should be specified as an array."
 
             defaultto do :absent end
 

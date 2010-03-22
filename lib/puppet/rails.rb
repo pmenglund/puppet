@@ -58,13 +58,13 @@ module Puppet::Rails
 
             socket          = Puppet[:dbsocket]
             args[:socket]   = socket unless socket.empty?
-	        
+
             connections     = Puppet[:dbconnections].to_i
-            args[:pool]     = connections if connections > 0 
+            args[:pool]     = connections if connections > 0
         when "oracle_enhanced":
-	        args[:database] = Puppet[:dbname] unless Puppet[:dbname].empty?
-	        args[:username] = Puppet[:dbuser] unless Puppet[:dbuser].empty?
-	        args[:password] = Puppet[:dbpassword] unless Puppet[:dbpassword].empty?
+            args[:database] = Puppet[:dbname] unless Puppet[:dbname].empty?
+            args[:username] = Puppet[:dbuser] unless Puppet[:dbuser].empty?
+            args[:password] = Puppet[:dbpassword] unless Puppet[:dbpassword].empty?
 
             connections     = Puppet[:dbconnections].to_i
             args[:pool]     = connections if connections > 0
@@ -136,7 +136,7 @@ module Puppet::Rails
             ActiveRecord::Base.establish_connection(database_arguments())
         rescue => detail
             if Puppet[:trace]
-               puts detail.backtrace
+                puts detail.backtrace
             end
             raise Puppet::Error, "Could not connect to database: %s" % detail
         end

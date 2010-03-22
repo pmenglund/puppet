@@ -49,8 +49,8 @@ describe "ralsh" do
         end
 
         it "should load Facter facts" do
-          Facter.expects(:loadfacts).once
-          @ralsh.run_preinit
+            Facter.expects(:loadfacts).once
+            @ralsh.run_preinit
         end
     end
 

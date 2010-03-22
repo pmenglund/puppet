@@ -21,9 +21,9 @@ describe Puppet::Parser::AST do
     end
 
     [ Puppet::Parser::AST::Collection, Puppet::Parser::AST::Else,
-      Puppet::Parser::AST::Function, Puppet::Parser::AST::IfStatement,
-      Puppet::Parser::AST::Resource, Puppet::Parser::AST::ResourceDefaults,
-      Puppet::Parser::AST::ResourceOverride, 
+        Puppet::Parser::AST::Function, Puppet::Parser::AST::IfStatement,
+        Puppet::Parser::AST::Resource, Puppet::Parser::AST::ResourceDefaults,
+        Puppet::Parser::AST::ResourceOverride,
     ].each do |k|
         it "#{k}.use_docs should return true" do
             ast = k.new({})
@@ -32,7 +32,7 @@ describe Puppet::Parser::AST do
     end
 
     it "Puppet::Parser::AST::VarDef.use_docs should return true" do
-        # MQR TODO: this needs a better soluton.  The prblem is that creating a vardef is more complicated 
+        # MQR TODO: this needs a better soluton.  The prblem is that creating a vardef is more complicated
         #           with futures--specifically, the name has to be resolvable at creation time.
         @scope = stub 'scope',:future_for => stub('future',:value => stub("x",:safeevaluate => 'x'))
         ast = Puppet::Parser::AST::VarDef.new(:name => 'x', :scope => @scope)

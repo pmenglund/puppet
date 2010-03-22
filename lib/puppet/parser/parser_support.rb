@@ -201,15 +201,14 @@ class Puppet::Parser::Parser
         pat = file
         if pat.index('$')
             Puppet.warning(
-               "The import of #{pat} contains a variable reference;" +
-               " variables are not interpolated for imports " +
-               "in file #{@lexer.file} at line #{@lexer.line}"
+                "The import of #{pat} contains a variable reference;" +
+                " variables are not interpolated for imports " +
+                "in file #{@lexer.file} at line #{@lexer.line}"
             )
         end
         files = Puppet::Parser::Files.find_manifests(pat, :cwd => dir, :environment => @environment)
         if files.size == 0
-            raise Puppet::ImportError.new("No file(s) found for import " +
-                                          "of '#{pat}'")
+            raise Puppet::ImportError.new("No file(s) found for import " + "of '#{pat}'")
         end
 
         files.collect { |file|
@@ -247,7 +246,7 @@ class Puppet::Parser::Parser
         @loading.extend(MonitorMixin)
         class << @loading
             def done_with(item)
-                synchronize do 
+                synchronize do
                     delete(item)[:busy].signal if self.has_key?(item) and self[item][:loader] == Thread.current
                 end
             end
@@ -256,9 +255,9 @@ class Puppet::Parser::Parser
                     if !self.has_key? item
                         self[item] = { :loader => Thread.current, :busy => self.new_cond}
                         :nobody
-                      elsif self[item][:loader] == Thread.current
+                    elsif self[item][:loader] == Thread.current
                         :this_thread
-                      else
+                    else
                         flag = self[item][:busy]
                         flag.wait
                         flag.signal
@@ -273,16 +272,16 @@ class Puppet::Parser::Parser
     def able_to_import?(classname,item,msg)
         unless @loaded.include?(item)
             begin
-              case @loading.owner_of(item)
-              when :this_thread
-                  return
-              when :another_thread
-                  return able_to_import?(classname,item,msg)
-              when :nobody
-                  import(item)
-                  Puppet.info "Autoloaded #{msg}"
-                  @loaded << item
-              end
+                case @loading.owner_of(item)
+                when :this_thread
+                    return
+                when :another_thread
+                    return able_to_import?(classname,item,msg)
+                when :nobody
+                    import(item)
+                    Puppet.info "Autoloaded #{msg}"
+                    @loaded << item
+                end
             rescue Puppet::ImportError => detail
                 # We couldn't load the item
             ensure
@@ -302,7 +301,7 @@ class Puppet::Parser::Parser
 
         # First try to load the top-level module then the individual file
         [[mod,     "module %s"              %            mod ],
-         [filename,"file %s from module %s" % [filename, mod]]
+        [filename,"file %s from module %s" % [filename, mod]]
         ].any? { |item,description| able_to_import?(classname,item,description) }
     end
 

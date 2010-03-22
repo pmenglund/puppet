@@ -30,8 +30,7 @@ Puppet::Util::Log.newdesttype :syslog do
         if msg.source == "Puppet"
             @syslog.send(msg.level, msg.to_s.gsub("%", '%%'))
         else
-            @syslog.send(msg.level, "(%s) %s" %
-                [msg.source.to_s.gsub("%", ""),
+            @syslog.send(msg.level, "(%s) %s" % [msg.source.to_s.gsub("%", ""),
                     msg.to_s.gsub("%", '%%')
                 ]
             )
@@ -74,8 +73,7 @@ Puppet::Util::Log.newdesttype :file do
     end
 
     def handle(msg)
-        @file.puts("%s %s (%s): %s" %
-            [msg.time, msg.source, msg.level, msg.to_s])
+        @file.puts("%s %s (%s): %s" % [msg.time, msg.source, msg.level, msg.to_s])
 
         @file.flush if @autoflush
     end

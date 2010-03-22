@@ -120,7 +120,7 @@ describe Puppet::Indirector::REST do
                     lambda { @searcher.deserialize(@response) }.should raise_error(Net::HTTPError,"Error #{rc} on SERVER: There was a problem (header)")
                 end
             end
-        }    
+        }
 
         it "should return the results of converting from the format specified by the content-type header if the response code is in the 200s" do
             @model.expects(:convert_from).with("myformat", "mydata").returns "myobject"

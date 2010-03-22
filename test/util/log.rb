@@ -36,9 +36,12 @@ class TestLog < Test::Unit::TestCase
         levels.collect { |level|
             next if level == :alert
             assert_nothing_raised() {
-                Puppet::Util::Log.new(
+
+                            Puppet::Util::Log.new(
+                
                     :level => level,
                     :source => "Test",
+        
                     :message => "Unit test for %s" % level
                 )
             }
@@ -119,8 +122,11 @@ class TestLog < Test::Unit::TestCase
         Puppet::Util::Log.newdestination :syslog
 
         assert_nothing_raised {
-            Puppet::Util::Log.new(
+
+                        Puppet::Util::Log.new(
+                
                 :level => :info,
+        
                 :message => "A message with %s in it"
             )
         }
@@ -129,8 +135,11 @@ class TestLog < Test::Unit::TestCase
     # Verify that the error and source are always strings
     def test_argsAreStrings
         msg = nil
-        file = Puppet::Type.type(:file).new(
+
+                    file = Puppet::Type.type(:file).new(
+                
             :path => tempfile(),
+        
             :check => %w{owner group}
         )
         assert_nothing_raised {
@@ -170,11 +179,9 @@ class TestLog < Test::Unit::TestCase
         Puppet::Util::Log.close(:console)
         Puppet::Util::Log.newdestination(file)
         Puppet.warning "A test"
-        assert(File.read(file) !~ /A test/,
-            "File defualted to autoflush")
+        assert(File.read(file) !~ /A test/, "File defualted to autoflush")
         Puppet::Util::Log.flush
-        assert(File.read(file) =~ /A test/,
-            "File did not flush")
+        assert(File.read(file) =~ /A test/, "File did not flush")
         Puppet::Util::Log.close(file)
 
         # Now try one with autoflush enabled
@@ -182,8 +189,7 @@ class TestLog < Test::Unit::TestCase
         file = tempfile
         Puppet::Util::Log.newdestination(file)
         Puppet.warning "A test"
-        assert(File.read(file) =~ /A test/,
-            "File did not autoflush")
+        assert(File.read(file) =~ /A test/, "File did not autoflush")
         Puppet::Util::Log.close(file)
     end
 
@@ -207,8 +213,7 @@ class TestLog < Test::Unit::TestCase
         # Now reopen the log
         Puppet::Util::Log.reopen
         Puppet.warning "Reopen test"
-        assert(File.read(file) =~ /Reopen test/,
-            "File did not reopen")
+        assert(File.read(file) =~ /Reopen test/, "File did not reopen")
         Puppet::Util::Log.close(file)
     end
 end

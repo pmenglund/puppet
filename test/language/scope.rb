@@ -63,29 +63,40 @@ class TestScope < Test::Unit::TestCase
         # Test that the scopes convert to hash structures correctly.
         # For topscope recursive vs non-recursive should be identical
         assert_equal(topscope.to_hash(false), topscope.to_hash(true),
-                     "Recursive and non-recursive hash is identical for topscope")
+            "Recursive and non-recursive hash is identical for topscope")
 
         # Check the variable we expect is present.
-        assert_equal({"first" => "topval"}, topscope.to_hash(),
-                     "topscope returns the expected hash of variables")
+        assert_equal({"first" => "topval"}, topscope.to_hash(), "topscope returns the expected hash of variables")
 
         # Now, check that midscope does the right thing in all cases.
-        assert_equal({"second" => "midval"},
-                     midscope.to_hash(false),
-                     "midscope non-recursive hash contains only midscope variable")
-        assert_equal({"first" => "topval", "second" => "midval"},
-                     midscope.to_hash(true),
-                     "midscope recursive hash contains topscope variable also")
+
+            assert_equal(
+                {"second" => "midval"},
+                    midscope.to_hash(false),
+
+                    "midscope non-recursive hash contains only midscope variable")
+
+                    assert_equal(
+                        {"first" => "topval", "second" => "midval"},
+                    midscope.to_hash(true),
+
+                    "midscope recursive hash contains topscope variable also")
 
         # Finally, check the ability to shadow symbols by adding a shadow to
         # bottomscope, then checking that we see the right stuff.
         botscope.setvar("first", "shadowval")
-        assert_equal({"third" => "botval", "first" => "shadowval"},
-                     botscope.to_hash(false),
-                     "botscope has the right non-recursive hash")
-        assert_equal({"third" => "botval", "first" => "shadowval", "second" => "midval"},
-                     botscope.to_hash(true),
-                     "botscope values shadow parent scope values")
+
+            assert_equal(
+                {"third" => "botval", "first" => "shadowval"},
+                    botscope.to_hash(false),
+
+                    "botscope has the right non-recursive hash")
+
+                    assert_equal(
+                        {"third" => "botval", "first" => "shadowval", "second" => "midval"},
+                    botscope.to_hash(true),
+
+                    "botscope values shadow parent scope values")
     end
 
     def test_declarative
@@ -120,15 +131,30 @@ class TestScope < Test::Unit::TestCase
 
     # Make sure we know what we consider to be truth.
     def test_truth
-        assert_equal(true, Puppet::Parser::Scope.true?("a string"),
+
+        assert_equal(
+            true, Puppet::Parser::Scope.true?("a string"),
+
             "Strings not considered true")
-        assert_equal(true, Puppet::Parser::Scope.true?(true),
+
+                assert_equal(
+                    true, Puppet::Parser::Scope.true?(true),
+
             "True considered true")
-        assert_equal(false, Puppet::Parser::Scope.true?(""),
+
+                assert_equal(
+                    false, Puppet::Parser::Scope.true?(""),
+
             "Empty strings considered true")
-        assert_equal(false, Puppet::Parser::Scope.true?(false),
+
+                assert_equal(
+                    false, Puppet::Parser::Scope.true?(false),
+
             "false considered true")
-        assert_equal(false, Puppet::Parser::Scope.true?(:undef),
+
+                assert_equal(
+                    false, Puppet::Parser::Scope.true?(:undef),
+
             "undef considered true")
     end
 
@@ -195,18 +221,18 @@ include yay
 @@host { puppet: ip => \"192.168.0.3\" }
 Host <<||>>"
 
-        config = nil
-        # We run it twice because we want to make sure there's no conflict
-        # if we pull it up from the database.
-        node = mknode
-        node.merge "hostname" => node.name
-        2.times { |i|
-            config = Puppet::Parser::Compiler.new(node).compile
+    config = nil
+    # We run it twice because we want to make sure there's no conflict
+    # if we pull it up from the database.
+    node = mknode
+    node.merge "hostname" => node.name
+    2.times { |i|
+        config = Puppet::Parser::Compiler.new(node).compile
 
-            flat = config.extract.flatten
+        flat = config.extract.flatten
 
-            %w{puppet myhost}.each do |name|
-                assert(flat.find{|o| o.name == name }, "Did not find #{name}")
+        %w{puppet myhost}.each do |name|
+            assert(flat.find{|o| o.name == name }, "Did not find #{name}")
             end
         }
         Puppet[:storeconfigs] = false
@@ -221,14 +247,15 @@ Host <<||>>"
     def test_namespaces
         scope = mkscope
 
-        assert_equal([""], scope.namespaces,
+
+            assert_equal(
+                [""], scope.namespaces,
+
             "Started out with incorrect namespaces")
         assert_nothing_raised { scope.add_namespace("fun::test") }
-        assert_equal(["fun::test"], scope.namespaces,
-            "Did not add namespace correctly")
+        assert_equal(["fun::test"], scope.namespaces, "Did not add namespace correctly")
         assert_nothing_raised { scope.add_namespace("yay::test") }
-        assert_equal(["fun::test", "yay::test"], scope.namespaces,
-            "Did not add extra namespace correctly")
+        assert_equal(["fun::test", "yay::test"], scope.namespaces, "Did not add extra namespace correctly")
     end
 
     # #629 - undef should be "" or :undef
@@ -237,10 +264,16 @@ Host <<||>>"
 
         scope.setvar("testing", :undef)
 
-        assert_equal(:undef, scope.lookupvar("testing", false),
+
+            assert_equal(
+                :undef, scope.lookupvar("testing", false),
+
             "undef was not returned as :undef when not string")
 
-        assert_equal("", scope.lookupvar("testing", true),
+
+                assert_equal(
+                    "", scope.lookupvar("testing", true),
+
             "undef was not returned as '' when string")
     end
 end

@@ -65,7 +65,7 @@ class Puppet::Util::Settings
             unsafe_clear(exceptcli)
         end
     end
-    
+
     # Remove all set values, potentially skipping cli values.
     def unsafe_clear(exceptcli = false)
         @values.each do |name, values|
@@ -227,8 +227,8 @@ class Puppet::Util::Settings
                 if include?(v)
                     #if there is only one value, just print it for back compatibility
                     if v == val
-                         puts value(val,env)
-                         break
+                        puts value(val,env)
+                        break
                     end
                     puts "%s = %s" % [v, value(v,env)]
                 else
@@ -598,9 +598,9 @@ Generated on #{Time.now}.
 
 }.gsub(/^/, "# ")
 
-        # Add a section heading that matches our name.
-        if @config.include?(:name)
-            str += "[%s]\n" % self[:name]
+#         Add a section heading that matches our name.
+if @config.include?(:name)
+    str += "[%s]\n" % self[:name]
         end
         eachsection do |section|
             persection(section) do |obj|
@@ -678,7 +678,7 @@ Generated on #{Time.now}.
             end
             throw :foundval, nil
         end
-        
+
         # If we didn't get a value, use the default
         val = @config[param].default if val.nil?
 
@@ -753,16 +753,14 @@ Generated on #{Time.now}.
         tmpfile = file + ".tmp"
         sync = Sync.new
         unless FileTest.directory?(File.dirname(tmpfile))
-            raise Puppet::DevError, "Cannot create %s; directory %s does not exist" %
-                [file, File.dirname(file)]
+            raise Puppet::DevError, "Cannot create %s; directory %s does not exist" % [file, File.dirname(file)]
         end
 
         sync.synchronize(Sync::EX) do
             File.open(file, ::File::CREAT|::File::RDWR, 0600) do |rf|
                 rf.lock_exclusive do
                     if File.exist?(tmpfile)
-                        raise Puppet::Error, ".tmp file already exists for %s; Aborting locked write. Check the .tmp file and delete if appropriate" %
-                            [file]
+                        raise Puppet::Error, ".tmp file already exists for %s; Aborting locked write. Check the .tmp file and delete if appropriate" % [file]
                     end
 
                     # If there's a failure, remove our tmpfile

@@ -9,10 +9,10 @@ module Puppet::Util::Backups
 
         # let the path be specified
         file ||= self[:path]
-        return true unless FileTest.exists?(file)  
+        return true unless FileTest.exists?(file)
 
         return perform_backup_with_bucket(file) if self.bucket
-        return perform_backup_with_backuplocal(file, self[:backup]) 
+        return perform_backup_with_backuplocal(file, self[:backup])
     end
 
     private
@@ -83,5 +83,5 @@ module Puppet::Util::Backups
         sum = self.bucket.backup(f)
         self.info "Filebucketed %s to %s with sum %s" % [f, self.bucket.name, sum]
         return sum
-	end
+        end
 end

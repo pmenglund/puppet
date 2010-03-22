@@ -20,9 +20,7 @@ module Puppet::Network
         # Verify that our client has access.  We allow untrusted access to
         # puppetca methods but no others.
         def authorized?(request)
-            msg = "%s client %s access to %s" %
-                [request.authenticated? ? "authenticated" : "unauthenticated",
-                    request, request.call]
+            msg = "%s client %s access to %s" % [request.authenticated? ? "authenticated" : "unauthenticated", request, request.call]
 
             if request.authenticated?
                 if authconfig.exists?
@@ -58,8 +56,7 @@ module Puppet::Network
             if handler_loaded?(request.handler)
                 return true
             else
-                Puppet.warning "Client %s requested unavailable functionality %s" %
-                    [request, request.handler]
+                Puppet.warning "Client %s requested unavailable functionality %s" % [request, request.handler]
                 return false
             end
         end
@@ -73,8 +70,7 @@ module Puppet::Network
             end
             unless authorized?(request)
                 raise InvalidClientRequest.new(
-                    "Host %s not authorized to call %s" %
-                        [request, request.call]
+                    "Host %s not authorized to call %s" % [request, request.call]
                 )
             end
         end

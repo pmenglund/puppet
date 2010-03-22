@@ -74,7 +74,7 @@ class Puppet::Parser::Resource < Puppet::Resource
             finish()
             #
             # But this "fixes" it in place! -- not the right
-            # solution, but enought to restore functionality 
+            # solution, but enought to restore functionality
             # when applied on top of Luke's patches.
             #
             klass.code = klass.code.instantiate(klass.adjust_context(self)) if klass.code.respond_to? :instantiate
@@ -227,10 +227,10 @@ class Puppet::Parser::Resource < Puppet::Resource
             # the database interaction doesn't have to worry about
             # whether it returns an array or a string.
             result[p] = if v.is_a?(Array) and v.length == 1
-                              v[0]
-                          else
-                              v
-                          end
+                v[0]
+                    else
+                        v
+                            end
         end
 
         result.file = self.file
@@ -353,8 +353,7 @@ class Puppet::Parser::Resource < Puppet::Resource
         params.each do |param|
             # Don't set the same parameter twice
             if @parameters[param.name]
-                self.fail Puppet::ParseError, "Duplicate parameter '%s' for on %s" %
-                    [param.name, self.to_s]
+                self.fail Puppet::ParseError, "Duplicate parameter '%s' for on %s" % [param.name, self.to_s]
             end
 
             set_parameter(param)

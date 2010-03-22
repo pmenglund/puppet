@@ -14,8 +14,11 @@ module Functions
 
     def self.autoloader
         unless defined? @autoloader
-            @autoloader = Puppet::Util::Autoload.new(self,
+
+                        @autoloader = Puppet::Util::Autoload.new(
+                self,
                 "puppet/parser/functions",
+        
                 :wrap => false
             )
         end

@@ -140,8 +140,7 @@ class Puppet::Network::Client
     end
 
     def run
-        raise Puppet::DevError, "Client type %s did not override run" %
-            self.class
+        raise Puppet::DevError, "Client type %s did not override run" % self.class
     end
 
     def scheduled?
@@ -168,9 +167,12 @@ class Puppet::Network::Client
     # timer events here.
     def start
         # Create our timer.  Puppet will handle observing it and such.
-        timer = Puppet.newtimer(
+
+                    timer = Puppet.newtimer(
+                
             :interval => Puppet[:runinterval],
             :tolerance => 1,
+        
             :start? => true
         ) do
             begin

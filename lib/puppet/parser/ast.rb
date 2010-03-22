@@ -26,10 +26,10 @@ class Puppet::Parser::AST
 
     # allow our subclass to specify they want documentation
     class << self
-       attr_accessor :use_docs
-       def associates_doc
-         self.use_docs = true
-       end
+        attr_accessor :use_docs
+        def associates_doc
+        self.use_docs = true
+        end
     end
 
     # Evaluate the current object.  Just a stub method, since the subclass
@@ -86,7 +86,7 @@ class Puppet::Parser::AST
         else x
         end
     end
- 
+
     def self.instantiate(context,args)
         args = args.dup
         context = adjust_context(context) unless context.is_a? Puppet::Parser::Scope

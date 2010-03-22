@@ -59,7 +59,7 @@ class Puppet::Network::HTTP::MongrelREST < Mongrel::HttpHandler
             begin
                 response.start(status,false,result) { |head, body| body.write(result) }
             rescue ArgumentError
-	        response.start(status)              { |head, body| body.write(result) }
+                response.start(status)              { |head, body| body.write(result) }
             end
         end
     end

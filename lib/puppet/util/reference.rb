@@ -69,7 +69,7 @@ class Puppet::Util::Reference
     def self.markdown(name, text)
         puts "Creating markdown for #{name} reference."
         dir = "/tmp/" + Puppet::PUPPETVERSION
-        FileUtils.mkdir(dir) unless File.directory?(dir) 
+        FileUtils.mkdir(dir) unless File.directory?(dir)
         Puppet::Util.secure_open(dir + "/" + "#{name}.rst", "w") do |f|
             f.puts text
         end
@@ -88,7 +88,7 @@ class Puppet::Util::Reference
             $stderr.puts output
             exit(1)
         end
- 
+
         File.unlink(dir + "/" + "#{name}.rst")
     end
 

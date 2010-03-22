@@ -96,8 +96,7 @@ class Puppet::FileServing::Mount::File < Puppet::FileServing::Mount
         if node
             map = clientmap(node)
         else
-            Puppet.notice "No client; expanding '%s' with local host" %
-                path
+            Puppet.notice "No client; expanding '%s' with local host" % path
             # Else, use the local information
             map = localmap()
         end

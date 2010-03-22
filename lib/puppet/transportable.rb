@@ -66,15 +66,14 @@ module Puppet
         end
 
         def to_manifest
-            "%s { '%s':\n%s\n}" %
-                [self.type.to_s, self.name,
-                 @params.collect { |p, v|
-                     if v.is_a? Array
-                         "    #{p} => [\'#{v.join("','")}\']"
-                     else
-                         "    #{p} => \'#{v}\'"
-                     end
-                 }.join(",\n")
+            "%s { '%s':\n%s\n}" % [self.type.to_s, self.name,
+                @params.collect { |p, v|
+                    if v.is_a? Array
+                        "    #{p} => [\'#{v.join("','")}\']"
+                    else
+                        "    #{p} => \'#{v}\'"
+                    end
+                }.join(",\n")
                 ]
         end
 
@@ -152,8 +151,7 @@ module Puppet
                     # nada
                 else
                     raise Puppet::DevError,
-                        "TransBuckets cannot handle objects of type %s" %
-                            arg.class
+                        "TransBuckets cannot handle objects of type %s" % arg.class
                 end
             }
             @children += args

@@ -47,7 +47,7 @@ Puppet::Type.newtype(:file) do
         end
 
         to_canonicalize do |s|
-            # Get rid of any duplicate slashes, and remove any trailing slashes unless 
+            # Get rid of any duplicate slashes, and remove any trailing slashes unless
             # the title is just a slash, in which case leave it.
             s.gsub(/\/+/, "/").sub(/(.)\/$/,'\1')
         end
@@ -203,8 +203,7 @@ Puppet::Type.newtype(:file) do
             ``follow`` will copy the target file instead of the link, ``manage``
             will copy the link itself, and ``ignore`` will just pass it by.
             When not copying, ``manage`` and ``ignore`` behave equivalently
-            (because you cannot really ignore links entirely during local
-            recursion), and ``follow`` will manage the file to which the
+            (because you cannot really ignore links entirely during local recursion), and ``follow`` will manage the file to which the
             link points."
 
         newvalues(:follow, :manage)
@@ -507,9 +506,9 @@ Puppet::Type.newtype(:file) do
     def remove_less_specific_files(files)
         mypath = self[:path].split(File::Separator)
         other_paths = catalog.vertices.
-          select  { |r| r.is_a?(self.class) and r[:path] != self[:path] }.
-          collect { |r| r[:path].split(File::Separator) }.
-          select  { |p| p[0,mypath.length]  == mypath }
+            select  { |r| r.is_a?(self.class) and r[:path] != self[:path] }.
+            collect { |r| r[:path].split(File::Separator) }.
+            select  { |p| p[0,mypath.length]  == mypath }
 
         return files if other_paths.empty?
 
@@ -632,8 +631,7 @@ Puppet::Type.newtype(:file) do
                 notice "Not removing directory; use 'force' to override"
             end
         when "link", "file"
-            debug "Removing existing %s for replacement with %s" %
-                [s.ftype, should]
+            debug "Removing existing %s for replacement with %s" % [s.ftype, should]
             File.unlink(self[:path])
         else
             self.fail "Could not back up files of type %s" % s.ftype
@@ -731,9 +729,9 @@ Puppet::Type.newtype(:file) do
             while File.exists?(path) or File.symlink?(path)
                 path = "#{self[:path]}.puppettmp_#{rand(10000)}"
                 end
-          else
-            path = self[:path]
-          end
+            else
+                path = self[:path]
+            end
 
         mode = self.should(:mode) # might be nil
         umask = mode ? 000 : 022

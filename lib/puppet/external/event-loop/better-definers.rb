@@ -69,7 +69,7 @@ class Module
             new_aliases.kind_of? Array or new_aliases = [new_aliases]
             for new_alias in new_aliases do
                 class_eval %{def #{new_alias}(*args, &block)
-                            #{existing_name}(*args, &block) end}
+                    #{existing_name}(*args, &block) end}
             end
         end
     end
@@ -110,7 +110,7 @@ class Module
             end
             if name.predicate?
                 class_eval %{def #{name.imperative}
-                           self.#{name.writer} true end}
+                    self.#{name.writer} true end}
             end
         end
     end
@@ -140,9 +140,9 @@ class Module
         for opposite_name, name in name_pairs do
             define_writer(name) unless writer_defined? name
             class_eval %{def #{opposite_name.writer} x
-                         self.#{name.writer} !x end}
+                self.#{name.writer} !x end}
             class_eval %{def #{opposite_name.imperative}
-                         self.#{name.writer} false end}
+                self.#{name.writer} false end}
         end
     end
 
@@ -167,7 +167,7 @@ class Module
         define_opposite_writer(opposite_name => name)
     end
 
-  public :define_method
+    public :define_method
 
     def define_methods (*names, &body)
         names.each { |name| define_method(name, &body) }

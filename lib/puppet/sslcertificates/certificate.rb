@@ -41,8 +41,11 @@ class Puppet::SSLCertificates::Certificate
             self.mkkey()
         end
         if @password
+
             @key = OpenSSL::PKey::RSA.new(
+
                 File.read(@keyfile),
+
                 @password
             )
         else
@@ -177,11 +180,14 @@ class Puppet::SSLCertificates::Certificate
 #                end
 #            }
 
-        if @password
-            #passwdproc = proc { @password }
-            keytext = @key.export(
-                OpenSSL::Cipher::DES.new(:EDE3, :CBC),
-                @password
+    if @password
+    #        passwdproc = proc { @password }
+
+        keytext = @key.export(
+
+            OpenSSL::Cipher::DES.new(:EDE3, :CBC),
+
+            @password
             )
             File.open(@keyfile, "w", 0400) { |f|
                 f << keytext
@@ -226,7 +232,7 @@ class Puppet::SSLCertificates::Certificate
     def subject(string = false)
         subj = @@params2names.collect { |param, name|
             if @params.include?(param)
-               [name, @params[param]]
+                [name, @params[param]]
             end
         }.reject { |ary| ary.nil? }
 
@@ -262,8 +268,11 @@ class Puppet::SSLCertificates::Certificate
                 text = nil
 
                 if thing.is_a?(OpenSSL::PKey::RSA) and @password
+
                     text = thing.export(
+
                         OpenSSL::Cipher::DES.new(:EDE3, :CBC),
+
                         @password
                     )
                 else

@@ -87,7 +87,7 @@ module Puppet
             "Whether to create the necessary user and group that puppetd will
             run as."],
         :manage_internal_file_permissions => [true,
-            "Whether Puppet should manage the owner, group, and mode of files 
+            "Whether Puppet should manage the owner, group, and mode of files
             it uses internally"
             ],
         :path => {:default => "none",
@@ -131,8 +131,7 @@ module Puppet
         ],
         :environment => {:default => "production", :desc => "The environment Puppet is running in.  For clients
             (e.g., ``puppetd``) this determines the environment itself, which
-            is used to find modules and much more.  For servers (i.e.,
-            ``puppetmasterd``) this provides the default environment for nodes
+            is used to find modules and much more.  For servers (i.e., ``puppetmasterd``) this provides the default environment for nodes
             we know nothing about."
         },
         :diff_args => ["-u", "Which arguments to pass to the diff command when printing differences between files."],
@@ -157,8 +156,7 @@ module Puppet
         :http_proxy_host => ["none",
             "The HTTP proxy host to use for outgoing connections.  Note: You
             may need to use a FQDN for the server hostname when using a proxy."],
-        :http_proxy_port => [3128,
-            "The HTTP proxy port to use for outgoing connections"],
+        :http_proxy_port => [3128, "The HTTP proxy port to use for outgoing connections"],
         :filetimeout => [ 15,
             "The minimum time to wait (in seconds) between checking for updates in
             configuration files.  This timeout determines how quickly Puppet checks whether
@@ -187,14 +185,14 @@ module Puppet
             If true, then storeconfigs performance will be higher and still allow exported/collected
             resources, but other usage external to Puppet might not work",
             :hook => proc do |value|
-                    Puppet.settings[:storeconfigs] = true if value
+                Puppet.settings[:storeconfigs] = true if value
                 end
             },
         :config_version => ["", "How to determine the configuration version.  By default, it will be the
             time that the configuration is parsed, but you can provide a shell script to override how the
             version is determined.  The output of this script will be added to every log message in the
             reports, allowing you to correlate changes on your hosts to the source version on the server."],
-        :zlib => [true, 
+        :zlib => [true,
             "Boolean; whether to use the zlib library",
         ],
         :prerun_command => ["", "A command to run before every agent run.  If this command returns a non-zero
@@ -212,7 +210,10 @@ module Puppet
         fqdn = hostname
     end
 
-    Puppet.setdefaults(:main,
+
+        Puppet.setdefaults(
+        :main,
+
         # We have to downcase the fqdn, because the current ssl stuff (as oppsed to in master) doesn't have good facilities for
         # manipulating naming.
         :certname => {:default => fqdn.downcase, :desc => "The name to use when handling certificates.  Defaults
@@ -292,7 +293,9 @@ module Puppet
         }
     )
 
-    setdefaults(:ca,
+
+        setdefaults(
+        :ca,
         :ca_name => ["$certname", "The name to use the Certificate Authority certificate."],
         :cadir => {  :default => "$ssldir/ca",
             :owner => "service",
@@ -321,6 +324,7 @@ module Puppet
             :owner => "service",
             :group => "service",
             :mode => 0664,
+
             :desc => "The certificate revocation list (CRL) for the CA. Will be used if present but otherwise ignored.",
             :hook => proc do |value|
                 if value == 'false'
@@ -364,13 +368,13 @@ module Puppet
                 never autosigns any key request), and the path to a file, which
                 uses that configuration file to determine which keys to sign."},
         :ca_days => ["", "How long a certificate should be valid.
-                 This parameter is deprecated, use ca_ttl instead"],
+            This parameter is deprecated, use ca_ttl instead"],
         :ca_ttl => ["5y", "The default TTL for new certificates; valid values
-                must be an integer, optionally followed by one of the units
-                'y' (years of 365 days), 'd' (days), 'h' (hours), or
-                's' (seconds). The unit defaults to seconds. If this parameter
-                is set, ca_days is ignored. Examples are '3600' (one hour)
-                and '1825d', which is the same as '5y' (5 years) "],
+            must be an integer, optionally followed by one of the units
+            'y' (years of 365 days), 'd' (days), 'h' (hours), or
+            's' (seconds). The unit defaults to seconds. If this parameter
+            is set, ca_days is ignored. Examples are '3600' (one hour)
+            and '1825d', which is the same as '5y' (5 years) "],
         :ca_md => ["md5", "The type of hash used in certificates."],
         :req_bits => [2048, "The bit length of the certificates."],
         :keylength => [1024, "The bit length of keys."],
@@ -384,7 +388,9 @@ module Puppet
     )
 
     # Define the config default.
-    self.setdefaults(self.settings[:name],
+
+        self.setdefaults(
+        self.settings[:name],
         :config => ["$confdir/puppet.conf",
             "The configuration file for #{Puppet[:name]}."],
         :pidfile => ["$rundir/$name.pid", "The pid file"],
@@ -394,6 +400,7 @@ module Puppet
             options are webrick and mongrel.  If you use mongrel, you will need
             a proxy in front of the process or processes, since Mongrel cannot
             speak SSL.",
+
             :call_on_define => true, # Call our hook with the default value, so we always get the correct bind address set.
             :hook => proc { |value|  value == "webrick" ? Puppet.settings[:bindaddress] = "0.0.0.0" : Puppet.settings[:bindaddress] = "127.0.0.1" if Puppet.settings[:bindaddress] == "" }
         }
@@ -402,10 +409,8 @@ module Puppet
     self.setdefaults(:puppetmasterd,
         :user => ["puppet", "The user puppetmasterd should run as."],
         :group => ["puppet", "The group puppetmasterd should run as."],
-        :manifestdir => ["$confdir/manifests",
-            "Where puppetmasterd looks for its manifests."],
-        :manifest => ["$manifestdir/site.pp",
-            "The entry-point manifest for puppetmasterd."],
+        :manifestdir => ["$confdir/manifests", "Where puppetmasterd looks for its manifests."],
+        :manifest => ["$manifestdir/site.pp", "The entry-point manifest for puppetmasterd."],
         :code => ["", "Code to parse directly.  This is essentially only used
             by ``puppet``, and should only be set if you're writing your own Puppet
             executable"],
@@ -426,11 +431,11 @@ module Puppet
         :masterport => [8140, "Which port puppetmasterd listens on."],
         :parseonly => [false, "Just check the syntax of the manifests."],
         :node_name => ["cert", "How the puppetmaster determines the client's identity
-           and sets the 'hostname', 'fqdn' and 'domain' facts for use in the manifest,
-           in particular for determining which 'node' statement applies to the client.
-           Possible values are 'cert' (use the subject's CN in the client's
-           certificate) and 'facter' (use the hostname that the client
-           reported in its facts)"],
+            and sets the 'hostname', 'fqdn' and 'domain' facts for use in the manifest,
+            in particular for determining which 'node' statement applies to the client.
+            Possible values are 'cert' (use the subject's CN in the client's
+            certificate) and 'facter' (use the hostname that the client
+            reported in its facts)"],
         :bucketdir => {
             :default => "$vardir/bucket",
             :mode => 0750,
@@ -445,7 +450,7 @@ module Puppet
         ],
         :ca => [true, "Wether the master should function as a certificate authority."],
         :modulepath => {:default => "$confdir/modules:/usr/share/puppet/modules",
-           :desc => "The search path for modules as a colon-separated list of
+            :desc => "The search path for modules as a colon-separated list of
             directories.", :type => :setting }, # We don't want this to be considered a file, since it's multiple files.
         :ssl_client_header => ["HTTP_X_CLIENT_DN", "The header containing an authenticated
             client's SSL DN.  Only used with Mongrel.  This header must be set by the proxy
@@ -467,12 +472,12 @@ module Puppet
             comma-separated (whitespace is okay)."
         ],
         :reportdir => {:default => "$vardir/reports",
-                :mode => 0750,
-                :owner => "service",
-                :group => "service",
-                :desc => "The directory in which to store reports
-                    received from the client.  Each client gets a separate
-                    subdirectory."},
+            :mode => 0750,
+            :owner => "service",
+            :group => "service",
+            :desc => "The directory in which to store reports
+                received from the client.  Each client gets a separate
+                subdirectory."},
         :fileserverconfig => ["$confdir/fileserver.conf",
             "Where the fileserver configuration is stored."],
         :rrddir => {:default => "$vardir/rrd",
@@ -502,10 +507,8 @@ module Puppet
                 this file reflects the state discovered through interacting
                 with clients."
             },
-        :clientyamldir => {:default => "$vardir/client_yaml", :mode => "750",
-            :desc => "The directory in which client-side YAML data is stored."},
-        :client_datadir => {:default => "$vardir/client_data", :mode => "750",
-            :desc => "The directory in which serialized data is stored on the client."},
+        :clientyamldir => {:default => "$vardir/client_yaml", :mode => "750", :desc => "The directory in which client-side YAML data is stored."},
+        :client_datadir => {:default => "$vardir/client_data", :mode => "750", :desc => "The directory in which serialized data is stored on the client."},
         :classfile => { :default => "$statedir/classes.txt",
             :owner => "root",
             :mode => 0644,
@@ -518,8 +521,7 @@ module Puppet
             :mode => 0640,
             :desc => "The log file for puppetd.  This is generally not used."
         },
-        :server => ["puppet",
-            "The server to which server puppetd should connect"],
+        :server => ["puppet", "The server to which server puppetd should connect"],
         :ignoreschedules => [false,
             "Boolean; whether puppetd should ignore schedules.  This is useful
             for initial puppetd runs."],
@@ -539,8 +541,8 @@ module Puppet
         :catalog_format => {
             :default => "",
             :desc => "(Deprecated for 'preferred_serialization_format') What format to
-                     use to dump the catalog.  Only supports 'marshal' and 'yaml'.  Only
-                     matters on the client, since it asks the server for a specific format.",
+                use to dump the catalog.  Only supports 'marshal' and 'yaml'.  Only
+                matters on the client, since it asks the server for a specific format.",
             :hook => proc { |value|
                 if value
                     Puppet.warning "Setting 'catalog_format' is deprecated; use 'preferred_serialization_format' instead."
@@ -553,8 +555,7 @@ module Puppet
             instances will be serialized using this method, since not all classes
             can be guaranteed to support this format, but it will be used for all
             classes that support it."],
-        :puppetdlockfile => [ "$statedir/puppetdlock",
-            "A lock file to temporarily stop puppetd from doing anything."],
+        :puppetdlockfile => [ "$statedir/puppetdlock", "A lock file to temporarily stop puppetd from doing anything."],
         :usecacheonfailure => [true,
             "Whether to use the cached configuration when the remote
             configuration will not compile.  This option is useful for testing
@@ -567,8 +568,7 @@ module Puppet
             fact be stale even if the timestamps are up to date - if the facts
             change or if the server changes."
         ],
-        :downcasefacts => [false,
-            "Whether facts should be made all lowercase when sent to the server."],
+        :downcasefacts => [false, "Whether facts should be made all lowercase when sent to the server."],
         :dynamicfacts => ["memorysize,memoryfree,swapsize,swapfree",
             "Facts that are dynamic; these facts will be ignored when deciding whether
             changed facts should result in a recompile.  Multiple facts should be
@@ -594,16 +594,16 @@ module Puppet
             :call_on_define => false,
             :desc => "(Deprecated for 'report_server') The server to which to send transaction reports.",
             :hook => proc do |value|
-              if value
-                Puppet.settings[:report_server] = value
-              end
-            end   
+                if value
+                    Puppet.settings[:report_server] = value
+                end
+            end
         },
         :report_server => ["$server",
-          "The server to which to send transaction reports."
+            "The server to which to send transaction reports."
         ],
         :report_port => ["$masterport",
-          "The port to communicate with the report_server."
+            "The port to communicate with the report_server."
         ],
         :report => [false,
             "Whether to send reports after every transaction."
@@ -615,25 +615,29 @@ module Puppet
     )
 
     # Plugin information.
-    self.setdefaults(:main,
+
+        self.setdefaults(
+        :main,
         :plugindest => ["$libdir",
             "Where Puppet should store plugins that it pulls down from the central
             server."],
         :pluginsource => ["puppet://$server/plugins",
             "From where to retrieve plugins.  The standard Puppet ``file`` type
-             is used for retrieval, so anything that is a valid file source can
-             be used here."],
-        :pluginsync => [false,
-            "Whether plugins should be synced with the central server."],
-        :pluginsignore => [".svn CVS .git",
-            "What files to ignore when pulling down plugins."]
+            is used for retrieval, so anything that is a valid file source can
+            be used here."],
+        :pluginsync => [false, "Whether plugins should be synced with the central server."],
+
+        :pluginsignore => [".svn CVS .git", "What files to ignore when pulling down plugins."]
     )
 
     # Central fact information.
-    self.setdefaults(:main,
+
+        self.setdefaults(
+        :main,
         :factpath => {:default => "$vardir/facts/",
             :desc => "Where Puppet should look for facts.  Multiple directories should
                 be colon-separated, like normal PATH variables.",
+
             :call_on_define => true, # Call our hook with the default value, so we always get the value added to facter.
             :type => :setting, # Don't consider it a file, because it could be multiple colon-separated files
             :hook => proc { |value| Facter.search(value) if Facter.respond_to?(:search) }},
@@ -642,26 +646,25 @@ module Puppet
             server."],
         :factsource => ["puppet://$server/facts/",
             "From where to retrieve facts.  The standard Puppet ``file`` type
-             is used for retrieval, so anything that is a valid file source can
-             be used here."],
-        :factsync => [false,
-            "Whether facts should be synced with the central server."],
-        :factsignore => [".svn CVS",
-            "What files to ignore when pulling down facts."]
+            is used for retrieval, so anything that is a valid file source can
+            be used here."],
+        :factsync => [false, "Whether facts should be synced with the central server."],
+        :factsignore => [".svn CVS", "What files to ignore when pulling down facts."]
     )
 
-    self.setdefaults(:tagmail,
-        :tagmap => ["$confdir/tagmail.conf",
-            "The mapping between reporting tags and email addresses."],
-        :sendmail => [%x{which sendmail 2>/dev/null}.chomp,
-            "Where to find the sendmail binary with which to send email."],
-        :reportfrom => ["report@" + [Facter["hostname"].value, Facter["domain"].value].join("."),
-            "The 'from' email address for the reports."],
-        :smtpserver => ["none",
-            "The server through which to send email reports."]
+
+        self.setdefaults(
+        :tagmail,
+        :tagmap => ["$confdir/tagmail.conf", "The mapping between reporting tags and email addresses."],
+        :sendmail => [%x{which sendmail 2>/dev/null}.chomp, "Where to find the sendmail binary with which to send email."],
+
+        :reportfrom => ["report@" + [Facter["hostname"].value, Facter["domain"].value].join("."), "The 'from' email address for the reports."],
+        :smtpserver => ["none", "The server through which to send email reports."]
     )
 
-    self.setdefaults(:rails,
+
+        self.setdefaults(
+        :rails,
         :dblocation => { :default => "$statedir/clientconfigs.sqlite3",
             :mode => 0660,
             :owner => "service",
@@ -689,12 +692,15 @@ module Puppet
             :group => "service",
             :desc => "Where Rails-specific logs are sent"
         },
+
         :rails_loglevel => ["info", "The log level for Rails connections.  The value must be
             a valid log level within Rails.  Production environments normally use ``info``
             and other environments normally use ``debug``."]
     )
 
-    setdefaults(:transaction,
+
+        setdefaults(
+        :transaction,
         :tags => ["", "Tags to use to find resources.  If this is set, then
             only resources tagged with the specified tags will be applied.
             Values must be comma-separated."],
@@ -702,16 +708,20 @@ module Puppet
             being evaluated.  This allows you to interactively see exactly
             what is being done."],
         :summarize => [false,
+
             "Whether to print a transaction summary."
         ]
     )
 
-    setdefaults(:main,
+
+        setdefaults(
+        :main,
         :casesensitive => [false,
             "Whether matching in case statements and selectors
             should be case-sensitive.  Case insensitivity is
             handled by downcasing all values before comparison."],
         :external_nodes => ["none",
+
             "An external command that can produce node information.  The output
             must be a YAML dump of a hash, and that hash must have one or both of
             ``classes`` and ``parameters``, where ``classes`` is an array and
@@ -721,7 +731,9 @@ module Puppet
             This command makes it straightforward to store your node mapping
             information in other data sources like databases."])
 
-    setdefaults(:ldap,
+
+                setdefaults(
+                :ldap,
         :ldapnodes => [false,
             "Whether to search for node configurations in LDAP.  See
             http://reductivelabs.com/trac/puppet/wiki/LDAPNodes for more information."],
@@ -737,6 +749,7 @@ module Puppet
             "The LDAP server.  Only used if ``ldapnodes`` is enabled."],
         :ldapport => [389,
             "The LDAP port.  Only used if ``ldapnodes`` is enabled."],
+
         :ldapstring => ["(&(objectclass=puppetClient)(cn=%s))",
             "The search string used to find an LDAP node."],
         :ldapclassattrs => ["puppetclass",
@@ -756,8 +769,7 @@ module Puppet
         :ldapuser => ["",
             "The user to use to connect to LDAP.  Must be specified as a
             full DN."],
-        :ldappassword => ["",
-            "The password to use to connect to LDAP."],
+        :ldappassword => ["", "The password to use to connect to LDAP."],
         :ldapbase => ["",
             "The search base for LDAP searches.  It's impossible to provide
             a meaningful default here, although the LDAP libraries might
@@ -784,11 +796,14 @@ module Puppet
     )
 
     # This doesn't actually work right now.
-    setdefaults(:parser,
+
+        setdefaults(
+        :parser,
+
         :lexical => [false, "Whether to use lexical scoping (vs. dynamic)."],
         :templatedir => ["$vardir/templates",
             "Where Puppet looks for template files.  Can be a list of colon-seperated
-             directories."
+            directories."
         ]
     )
 end

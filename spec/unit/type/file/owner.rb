@@ -89,7 +89,7 @@ describe property do
 
             @owner.must be_insync(10)
         end
-        
+
         it "should not validate that users exist when a user is specified as an integer" do
             @owner.expects(:uid).never
             @owner.validuser?(10)
