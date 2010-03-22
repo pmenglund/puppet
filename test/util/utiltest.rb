@@ -25,7 +25,7 @@ class TestPuppetUtil < Test::Unit::TestCase
     def test_benchmark
         path = tempfile()
         str = "yayness"
-        File.open(path, "w") do |f| f.print "yayness" end
+        File.open(path, "w")  {|f| f.print "yayness"}
 
         # First test it with the normal args
         assert_nothing_raised do
@@ -78,7 +78,7 @@ class TestPuppetUtil < Test::Unit::TestCase
         end
 
         [:yay, "cool"].each do |var|
-            assert_equal(inst.hash[var], inst[var], "Var %s did not take" % var)
+            assert_equal(inst.hash[var], inst[var], "Var #{var} did not take")
         end
 
         assert_nothing_raised do
@@ -87,7 +87,7 @@ class TestPuppetUtil < Test::Unit::TestCase
         end
 
         [:Yay, "Cool"].each do |var|
-            assert_equal(inst.hash[var], inst[var], "Var %s did not take" % var)
+            assert_equal(inst.hash[var], inst[var], "Var #{var} did not take")
         end
     end
 

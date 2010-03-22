@@ -36,7 +36,7 @@ Puppet::Application.new(:puppetrun) do
         begin
             options[:parallel] = Integer(arg)
         rescue
-            $stderr.puts "Could not convert %s to an integer" % arg.inspect
+            $stderr.puts "Could not convert #{arg.inspect} to an integer"
             exit(23)
         end
     end
@@ -82,9 +82,9 @@ Puppet::Application.new(:puppetrun) do
                         if $CHILD_STATUS.exitstatus != 0
                             failures << host
                         end
-                        print "%s finished with exit code %s\n" % [host, $CHILD_STATUS.exitstatus]
+                        print "#{host} finished with exit code #{$CHILD_STATUS.exitstatus}\n"
                     else
-                        $stderr.puts "Could not find host for PID %s with status %s" % [pid, $CHILD_STATUS.exitstatus]
+                        $stderr.puts "Could not find host for PID #{pid} with status #{$CHILD_STATUS.exitstatus}"
                     end
                 rescue Errno::ECHILD
                     # There are no children left, so just exit unless there are still
@@ -95,7 +95,7 @@ Puppet::Application.new(:puppetrun) do
                         puts "Finished"
                         exit(0)
                     else
-                        puts "Failed: %s" % failures.join(", ")
+                        puts "Failed: #{failures.join(", ")}"
                         exit(3)
                     end
                 end
@@ -107,7 +107,7 @@ Puppet::Application.new(:puppetrun) do
         if options[:ping]
             out = %x{ping -c 1 #{host}}
             unless $CHILD_STATUS == 0
-                $stderr.print "Could not contact %s\n" % host
+                $stderr.print "Could not contact #{host}\n"
                 next
             end
         end
@@ -117,7 +117,7 @@ Puppet::Application.new(:puppetrun) do
         port = Puppet[:puppetport]
         url = ["https://#{host}:#{port}", "production", "run", host].join('/')
 
-        print "Triggering %s\n" % host
+        print "Triggering #{host}\n"
         begin
             request = Puppet::Indirector::Request.new(:run, :save, url) # Yuck.
             run_options = {
@@ -129,17 +129,17 @@ Puppet::Application.new(:puppetrun) do
             result = run.status
         rescue => detail
             puts detail.backtrace if Puppet[:trace]
-            $stderr.puts "Host %s failed: %s\n" % [host, detail]
+            $stderr.puts "Host #{host} failed: #{detail}\n"
             exit(2)
         end
 
         case result
         when "success"; exit(0)
         when "running"
-            $stderr.puts "Host %s is already running" % host
+            $stderr.puts "Host #{host} is already running"
             exit(3)
         else
-            $stderr.puts "Host %s returned unknown answer '%s'" % [host, result]
+            $stderr.puts "Host #{host} returned unknown answer '#{result}'"
             exit(12)
         end
     end
@@ -175,12 +175,12 @@ Puppet::Application.new(:puppetrun) do
         if Puppet[:node_terminus] == "ldap" and (options[:all] or @classes)
             if options[:all]
                 @hosts = Puppet::Node.search("whatever", :fqdn => options[:fqdn]).collect { |node| node.name }
-                puts "all: %s" % @hosts.join(", ")
+                puts "all: #{@hosts.join(", ")}"
             else
                 @hosts = []
                 @classes.each do |klass|
                     list = Puppet::Node.search("whatever", :fqdn => options[:fqdn], :class => klass).collect { |node| node.name }
-                    puts "%s: %s" % [klass, list.join(", ")]
+                    puts "#{klass}: #{list.join(", ")}"
 
                     @hosts += list
                 end

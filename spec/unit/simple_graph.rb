@@ -428,7 +428,7 @@ describe Puppet::SimpleGraph do
         include Enumerable
         attr_accessor :name
         def each
-            @children.each do |c| yield c end
+            @children.each  {|c| yield c}
         end
 
         def initialize(name, ary)

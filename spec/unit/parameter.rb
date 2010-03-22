@@ -73,7 +73,7 @@ describe Puppet::Parameter do
         end
 
         it "should unmunge the value when accessing the actual value" do
-            @parameter.class.unmunge do |value| value.to_sym end
+            @parameter.class.unmunge  {|value| value.to_sym}
             @parameter.value = "foo"
             @parameter.value.should == :foo
         end

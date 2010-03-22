@@ -47,7 +47,7 @@ module Puppet
                 return nil unless user = resource[:user]
 
                 begin
-                    return File.expand_path("~%s/.ssh/authorized_keys" % user)
+                    return File.expand_path("~#{user}/.ssh/authorized_keys")
                 rescue
                     Puppet.debug "The required user is not yet present on the system"
                     return nil
@@ -63,7 +63,7 @@ module Puppet
             desc "Key options, see sshd(8) for possible values. Multiple values
                 should be specified as an array."
 
-            defaultto do :absent end
+            defaultto  {:absent}
 
             def is_to_s(value)
                 if value == :absent or value.include?(:absent)

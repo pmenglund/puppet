@@ -43,7 +43,7 @@ describe provider_class do
 
     PuppetTest.fakedata("data/providers/ssh_authorized_key/parsed").each { |file|
         it "should be able to parse example data in #{file}" do
-            puts "Parsing %s" % file
+            puts "Parsing #{file}"
             fakedataparse(file)
         end
     }

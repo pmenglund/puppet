@@ -82,7 +82,7 @@ class Puppet::Transaction
             unless relationship_graph.edge?(edge[1], edge[0])
                 relationship_graph.add_edge(*edge)
             else
-                resource.debug "Skipping automatic relationship to %s" % gen_child
+                resource.debug "Skipping automatic relationship to #{gen_child}"
             end
         end
     end
@@ -138,7 +138,7 @@ class Puppet::Transaction
 
         prepare()
 
-        Puppet.info "Applying configuration version '%s'" % catalog.version if catalog.version
+        Puppet.info "Applying configuration version '#{catalog.version}'" if catalog.version
 
         begin
             @sorted_resources.each do |resource|
@@ -196,7 +196,7 @@ class Puppet::Transaction
             made = resource.send(method)
         rescue => detail
             puts detail.backtrace if Puppet[:trace]
-            resource.err "Failed to generate additional resources using '%s': %s" % [method, detail]
+            resource.err "Failed to generate additional resources using '#{method}': #{detail}"
         end
         return [] unless made
         made = [made] unless made.is_a?(Array)
@@ -265,14 +265,14 @@ class Puppet::Transaction
 
         # Now call prefetch, passing in the resources so that the provider instances can be replaced.
         prefetchers.each do |provider, resources|
-            Puppet.debug "Prefetching %s resources for %s" % [provider.name, provider.resource_type.name]
+            Puppet.debug "Prefetching #{provider.name} resources for #{provider.resource_type.name}"
             begin
                 provider.prefetch(resources)
             rescue => detail
                 if Puppet[:trace]
                     puts detail.backtrace
                 end
-                Puppet.err "Could not prefetch %s provider '%s': %s" % [provider.resource_type.name, provider.name, detail]
+                Puppet.err "Could not prefetch #{provider.resource_type.name} provider '#{provider.name}': #{detail}"
             end
         end
     end
@@ -299,7 +299,7 @@ class Puppet::Transaction
         begin
             report = generate_report()
         rescue => detail
-            Puppet.err "Could not generate report: %s" % detail
+            Puppet.err "Could not generate report: #{detail}"
             return
         end
 
@@ -311,7 +311,7 @@ class Puppet::Transaction
             begin
                 report.save()
             rescue => detail
-                Puppet.err "Reporting failed: %s" % detail
+                Puppet.err "Reporting failed: #{detail}"
             end
         end
     end
@@ -333,7 +333,7 @@ class Puppet::Transaction
     def skip?(resource)
         skip = false
         if missing_tags?(resource)
-            resource.debug "Not tagged with %s" % tags.join(", ")
+            resource.debug "Not tagged with #{tags.join(", ")}"
         elsif ! scheduled?(resource)
             resource.debug "Not scheduled"
         elsif failed_dependencies?(resource)

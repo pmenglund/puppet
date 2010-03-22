@@ -57,7 +57,7 @@ require 'puppet/provider/parsedfile'
     end
 
     def target
-        @resource.should(:target) || File.expand_path("~%s/.ssh/authorized_keys" % user)
+        @resource.should(:target) || File.expand_path("~#{user}/.ssh/authorized_keys")
     end
 
     def user
@@ -72,7 +72,7 @@ require 'puppet/provider/parsedfile'
         if target
             dir = File.dirname(target)
             if not File.exist? dir
-                Puppet.debug("Creating directory %s which did not exist" % dir)
+                Puppet.debug("Creating directory #{dir} which did not exist")
                 Dir.mkdir(dir, dir_perm)
             end
         end

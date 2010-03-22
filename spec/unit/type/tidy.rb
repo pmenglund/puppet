@@ -21,11 +21,11 @@ describe tidy do
     end
 
     [:age, :size, :path, :matches, :type, :recurse, :rmdirs].each do |param|
-        it "should have a %s parameter" % param do
+        it "should have a #{param} parameter" do
             Puppet::Type.type(:tidy).attrclass(param).ancestors.should be_include(Puppet::Parameter)
         end
 
-        it "should have documentation for its %s param" % param do
+        it "should have documentation for its #{param} param" do
             Puppet::Type.type(:tidy).attrclass(param).doc.should be_instance_of(String)
         end
     end
@@ -73,8 +73,8 @@ describe tidy do
         convertors[:week] = convertors[:day] * 7
 
         convertors.each do |unit, multiple|
-            it "should consider a %s to be %s seconds" % [unit, multiple] do
-                tidy = Puppet::Type.type(:tidy).new :path => "/what/ever", :age => "5%s" % unit.to_s[0..0]
+            it "should consider a #{unit} to be #{multiple} seconds" do
+                tidy = Puppet::Type.type(:tidy).new :path => "/what/ever", :age => "5#{unit.to_s[0..0]}"
 
                 tidy[:age].should == 5 * multiple
             end
@@ -90,8 +90,8 @@ describe tidy do
         }
 
         convertors.each do |unit, multiple|
-            it "should consider a %s to be 1024^%s bytes" % [unit, multiple] do
-                tidy = Puppet::Type.type(:tidy).new :path => "/what/ever", :size => "5%s" % unit
+            it "should consider a #{unit} to be 1024^#{multiple} bytes" do
+                tidy = Puppet::Type.type(:tidy).new :path => "/what/ever", :size => "5#{unit}"
 
                 total = 5
                 multiple.times { total *= 1024 }

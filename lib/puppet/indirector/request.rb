@@ -54,7 +54,7 @@ class Puppet::Indirector::Request
 
     def initialize(indirection_name, method, key, options = {})
         options ||= {}
-        raise ArgumentError, "Request options must be a hash, not %s" % options.class unless options.is_a?(Hash)
+        raise ArgumentError, "Request options must be a hash, not #{options.class}" unless options.is_a?(Hash)
 
         self.indirection_name = indirection_name
         self.method = method
@@ -90,7 +90,7 @@ class Puppet::Indirector::Request
 
 
     def model
-        raise ArgumentError, "Could not find indirection '%s'" % indirection_name unless i = indirection
+        raise ArgumentError, "Could not find indirection '#{indirection_name}'" unless i = indirection
         i.model
     end
 
@@ -120,10 +120,10 @@ class Puppet::Indirector::Request
             when Symbol; value = CGI.escape(value.to_s)
             when Array; value = CGI.escape(YAML.dump(value))
             else
-                raise ArgumentError, "HTTP REST queries cannot handle values of type '%s'" % value.class
+                raise ArgumentError, "HTTP REST queries cannot handle values of type '#{value.class}'"
             end
 
-            "%s=%s" % [key, value]
+            "#{key}=#{value}"
         end.join("&")
     end
 
@@ -140,7 +140,7 @@ class Puppet::Indirector::Request
 
     def to_s
         return uri if uri
-        return "/%s/%s" % [indirection_name, key]
+        return "/#{indirection_name}/#{key}"
     end
 
     private
@@ -160,7 +160,7 @@ class Puppet::Indirector::Request
         begin
             uri = URI.parse(URI.escape(key))
         rescue => detail
-            raise ArgumentError, "Could not understand URL %s: %s" % [key, detail.to_s]
+            raise ArgumentError, "Could not understand URL #{key}: #{detail}"
         end
 
         # Just short-circuit these to full paths

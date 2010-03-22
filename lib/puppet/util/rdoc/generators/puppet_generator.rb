@@ -593,7 +593,7 @@ module Generators
                 @values["parent"] = CGI.escapeHTML(parent_class)
 
                 if parent_name
-                    lookup = parent_name + "::" + parent_class
+                    lookup = parent_name + "::#{parent_class}"
                 else
                     lookup = parent_class
                 end
@@ -839,7 +839,7 @@ module Generators
 
         def as_href(from_path)
             if @options.all_one_file
-                "#" + path
+                "##{path}"
             else
                 HTMLGenerator.gen_url(from_path, path)
             end
@@ -877,7 +877,7 @@ module Generators
             if @options.all_one_file
                 aref
             else
-                @html_class.path + "#" + aref
+                @html_class.path + "##{aref}"
             end
         end
 

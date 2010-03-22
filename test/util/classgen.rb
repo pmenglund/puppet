@@ -21,7 +21,7 @@ class TestPuppetUtilClassGen < Test::Unit::TestCase
     end
 
     def testclasses(name)
-        sub = Class.new(GenTest) do @name = "base#{name.to_s}" end
+        sub = Class.new(GenTest)  {@name = "base#{name.to_s}"}
         self.class.const_set("Base#{name.to_s}", sub)
 
         klass = Class.new(FakeBase) do @name = "gen#{name.to_s}"end
@@ -41,7 +41,7 @@ class TestPuppetUtilClassGen < Test::Unit::TestCase
         assert_equal(Baseconst::Genconst.object_id, klass.object_id)
 
         # Now make sure don't replace by default
-        newklass = Class.new(FakeBase) do @name = klass.name end
+        newklass = Class.new(FakeBase)  {@name = klass.name}
         assert_raise(Puppet::ConstantAlreadyDefined) do
             const = sub.send(:handleclassconst, newklass, klass.name, {})
         end
@@ -86,7 +86,7 @@ class TestPuppetUtilClassGen < Test::Unit::TestCase
 
         assert(!klass.set, "Class was already initialized")
 
-        assert_nothing_raised do sub.send(:initclass, klass, {}) end
+        assert_nothing_raised  {sub.send(:initclass, klass, {})}
 
         assert(klass.set, "Class was not initialized")
     end
@@ -103,7 +103,7 @@ class TestPuppetUtilClassGen < Test::Unit::TestCase
 
         assert(!klass.set, "Class was already initialized")
 
-        assert_nothing_raised do sub.send(:initclass, klass, {}) end
+        assert_nothing_raised  {sub.send(:initclass, klass, {})}
 
         assert(klass.set, "Class was not initialized")
     end

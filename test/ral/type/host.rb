@@ -20,7 +20,7 @@ class TestHost < Test::Unit::TestCase
             @hosttype.defaultprovider = @hosttype.provider(:parsed)
         end
 
-        cleanup do @hosttype.defaultprovider = nil end
+        cleanup  {@hosttype.defaultprovider = nil}
 
         if @provider.respond_to?(:default_target=)
             @default_file = @provider.default_target
@@ -46,9 +46,9 @@ class TestHost < Test::Unit::TestCase
 
                         host = Puppet::Type.type(:host).new(
                 
-                :name => "fakehost%s" % @hcount,
-                :ip => "192.168.27.%s" % @hcount,
-                :alias => "alias%s" % @hcount,
+                :name => "fakehost#{@hcount}",
+                :ip => "192.168.27.#{@hcount}",
+                :alias => "alias#{@hcount}",
         
                 :catalog => @catalog
             )

@@ -47,7 +47,7 @@ class Puppet::Node
                 merge(facts.values)
             end
         rescue => detail
-            error = Puppet::Error.new("Could not retrieve facts for %s: %s" % [name, detail])
+            error = Puppet::Error.new("Could not retrieve facts for #{name}: #{detail}")
             error.set_backtrace(detail.backtrace)
             raise error
         end
@@ -80,7 +80,7 @@ class Puppet::Node
             if parameters["hostname"] and parameters["domain"]
                 fqdn = parameters["hostname"] + "." + parameters["domain"]
             else
-                Puppet.warning "Host is missing hostname and/or domain: %s" % name
+                Puppet.warning "Host is missing hostname and/or domain: #{name}"
             end
         end
 

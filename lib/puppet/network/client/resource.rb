@@ -12,7 +12,7 @@ class Puppet::Network::Client::Resource < Puppet::Network::Client
         when Puppet::TransBucket
             # nothing
         else
-            raise Puppet::DevError, "You must pass a transportable object, not a %s" % bucket.class
+            raise Puppet::DevError, "You must pass a transportable object, not a #{bucket.class}"
         end
 
         unless @local
@@ -24,7 +24,7 @@ class Puppet::Network::Client::Resource < Puppet::Network::Client
     end
 
     def describe(type, name, retrieve = false, ignore = false)
-        Puppet.info "Describing %s[%s]" % [type.to_s.capitalize, name]
+        Puppet.info "Describing #{type.to_s.capitalize}[#{name}]"
         text = @driver.describe(type, name, retrieve, ignore, "yaml")
         @local ? text : YAML::load(Base64.decode64(text))
     end

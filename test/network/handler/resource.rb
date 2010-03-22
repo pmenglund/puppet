@@ -67,11 +67,11 @@ class TestResourceServer < Test::Unit::TestCase
             assert(object, "Could not create type")
 
             retrieve.each do |property|
-                assert(object.should(property), "Did not retrieve %s" % property)
+                assert(object.should(property), "Did not retrieve #{property}")
             end
 
             ignore.each do |property|
-                assert(! object.should(property), "Incorrectly retrieved %s" % property)
+                assert(! object.should(property), "Incorrectly retrieved #{property}")
             end
         end
     end
@@ -118,11 +118,11 @@ class TestResourceServer < Test::Unit::TestCase
             assert(object, "Could not create type")
 
             retrieve.each do |property|
-                assert(object.should(property), "Did not retrieve %s" % property)
+                assert(object.should(property), "Did not retrieve #{property}")
             end
 
             ignore.each do |property|
-                assert(! object.should(property), "Incorrectly retrieved %s" % property)
+                assert(! object.should(property), "Incorrectly retrieved #{property}")
             end
         end
     end
@@ -145,11 +145,11 @@ class TestResourceServer < Test::Unit::TestCase
 
         Puppet::Type.eachtype do |type|
             unless type.respond_to? :instances
-                Puppet.warning "%s does not respond to :instances" % type.name
+                Puppet.warning "#{type.name} does not respond to :instances"
                 next
             end
             next unless type.name == :package
-            Puppet.info "Describing each %s" % type.name
+            Puppet.info "Describing each #{type.name}"
 
             # First do a listing from the server
             bucket = nil
@@ -184,7 +184,7 @@ class TestResourceServer < Test::Unit::TestCase
             end
 
             if described.empty?
-                Puppet.notice "Got no example objects for %s" % type.name
+                Puppet.notice "Got no example objects for #{type.name}"
             end
 
             # We separate these, in case the list operation creates objects

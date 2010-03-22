@@ -22,7 +22,7 @@ class TestResources < Test::Unit::TestCase
     def mk_purger(managed = false)
         @purgenum ||= 0
         @purgenum += 1
-        obj = @purgetype.create :name => "purger%s" % @purgenum
+        obj = @purgetype.create :name => "purger#{@purgenum}"
         $purgemembers[obj[:name]] = obj
         if managed
             obj[:fake] = "testing"
@@ -118,7 +118,7 @@ class TestResources < Test::Unit::TestCase
         # Now make sure our metaparams carried over
         genned.each do |res|
             [:noop, :loglevel].each do |param|
-                assert_equal(purger[param], res[param], "metaparam %s did not carry over" % param)
+                assert_equal(purger[param], res[param], "metaparam #{param} did not carry over")
             end
         end
     end
@@ -165,11 +165,11 @@ class TestResources < Test::Unit::TestCase
         }
 
         if low
-            assert(! res.check(@user.create(:name => low)), "low user %s passed check" % low)
+            assert(! res.check(@user.create(:name => low)), "low user #{low} passed check")
         end
         if high
             res[:unless_system_user] = 50
-            assert(res.check(@user.create(:name => high)), "high user %s failed check" % high)
+            assert(res.check(@user.create(:name => high)), "high user #{high} failed check")
         end
     end
 end

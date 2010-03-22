@@ -100,7 +100,7 @@ describe Puppet::Parser::Lexer::TokenList do
     end
 
     it "should define any provided blocks as a :convert method" do
-        token = @list.add_token(:name, "whatever")  do "foo" end
+        token = @list.add_token(:name, "whatever")   {"foo"}
         token.convert.should == "foo"
     end
 

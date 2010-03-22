@@ -236,7 +236,7 @@ describe Puppet::Property do
         end
 
         it "should unmunge the returned value if :array_matching is set to :first" do
-            @property.class.unmunge do |v| v.to_sym end
+            @property.class.unmunge  {|v| v.to_sym}
             @class.array_matching = :first
             @property.should = %w{one two}
 
@@ -244,7 +244,7 @@ describe Puppet::Property do
         end
 
         it "should unmunge all the returned values if :array_matching is set to :all" do
-            @property.class.unmunge do |v| v.to_sym end
+            @property.class.unmunge  {|v| v.to_sym}
             @class.array_matching = :all
             @property.should = %w{one two}
 

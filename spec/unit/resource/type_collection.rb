@@ -91,7 +91,7 @@ describe Puppet::Resource::TypeCollection do
         end
 
         it "should have a method for adding a #{data}" do
-            Puppet::Resource::TypeCollection.new("env").should respond_to("add_" + data)
+            Puppet::Resource::TypeCollection.new("env").should respond_to("add_#{data}")
         end
 
         it "should use the name of the instance to add it" do

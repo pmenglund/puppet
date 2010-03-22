@@ -95,7 +95,7 @@ class TestReports < Test::Unit::TestCase
         Puppet.settings.use(:main, :puppetmasterd)
 
         3.times { |i|
-            log = Puppet.warning("Report test message %s" % i)
+            log = Puppet.warning("Report test message #{i}")
 
             report.newlog(log)
         }
@@ -140,11 +140,11 @@ class TestReports < Test::Unit::TestCase
 
         # Now make sure it creaets each of the rrd files
         %w{changes resources time}.each do |type|
-            file = File.join(hostdir, "%s.rrd" % type)
-            assert(FileTest.exists?(file), "Did not create rrd file for %s" % type)
+            file = File.join(hostdir, "#{type}.rrd")
+            assert(FileTest.exists?(file), "Did not create rrd file for #{type}")
 
             daily = file.sub ".rrd", "-daily.png"
-            assert(FileTest.exists?(daily), "Did not make daily graph for %s" % type)
+            assert(FileTest.exists?(daily), "Did not make daily graph for #{type}")
         end
 
     end
@@ -157,20 +157,20 @@ class TestReports < Test::Unit::TestCase
         report.extend(Puppet::Reports.report(:tagmail))
 
         passers = File.join(datadir, "reports", "tagmail_passers.conf")
-        assert(FileTest.exists?(passers), "no passers file %s" % passers)
+        assert(FileTest.exists?(passers), "no passers file #{passers}")
 
         File.readlines(passers).each do |line|
-            assert_nothing_raised("Could not parse %s" % line.inspect) do
+            assert_nothing_raised("Could not parse #{line.inspect}") do
                 report.parse(line)
             end
         end
 
         # Now make sure the failers fail
         failers = File.join(datadir, "reports", "tagmail_failers.conf")
-        assert(FileTest.exists?(failers), "no failers file %s" % failers)
+        assert(FileTest.exists?(failers), "no failers file #{failers}")
 
         File.readlines(failers).each do |line|
-            assert_raise(ArgumentError, "Parsed %s" % line.inspect) do
+            assert_raise(ArgumentError, "Parsed #{line.inspect}") do
                 report.parse(line)
             end
         end
@@ -189,8 +189,8 @@ class TestReports < Test::Unit::TestCase
             "tag: abuse@domain.com, other@domain.com" => [%w{abuse@domain.com other@domain.com}, %w{tag}, []]
 
         }.each do |line, results|
-            assert_nothing_raised("Failed to parse %s" % line.inspect) do
-                assert_equal(results, report.parse(line).shift, "line %s returned incorrect results %s" % [line.inspect, results.inspect])
+            assert_nothing_raised("Failed to parse #{line.inspect}") do
+                assert_equal(results, report.parse(line).shift, "line #{line.inspect} returned incorrect results #{results.inspect}")
             end
         end
     end
@@ -217,14 +217,14 @@ class TestReports < Test::Unit::TestCase
             [%w{abuse@domain.com}, %w{}, %w{one}] => nil
         }.each do |args, expected|
             results = nil
-            assert_nothing_raised("Could not match with %s" % args.inspect) do
+            assert_nothing_raised("Could not match with #{args.inspect}") do
                 results = report.match([args])
             end
 
             if expected
-                assert_equal([args[0], expected.join("\n")], results[0], "did get correct results for %s" % args.inspect)
+                assert_equal([args[0], expected.join("\n")], results[0], "did get correct results for #{args.inspect}")
             else
-                assert_nil(results[0], "got a report for %s" % args.inspect)
+                assert_nil(results[0], "got a report for #{args.inspect}")
             end
         end
     end
@@ -235,7 +235,7 @@ class TestReports < Test::Unit::TestCase
         summary = report.summary
 
         %w{Changes Total Resources}.each do |main|
-            assert(summary.include?(main), "Summary did not include info for %s" % main)
+            assert(summary.include?(main), "Summary did not include info for #{main}")
         end
     end
 end

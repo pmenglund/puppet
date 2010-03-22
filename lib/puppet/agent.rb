@@ -28,7 +28,7 @@ class Puppet::Agent
     # Perform a run with our client.
     def run(*args)
         if running?
-            Puppet.notice "Run of %s already in progress; skipping" % client_class
+            Puppet.notice "Run of #{client_class} already in progress; skipping"
             return
         end
         block_run = Puppet::Application.controlled_run do
@@ -40,7 +40,7 @@ class Puppet::Agent
                     raise
                 rescue Exception => detail
                     puts detail.backtrace if Puppet[:trace]
-                    Puppet.err "Could not run %s: %s" % [client_class, detail]
+                    Puppet.err "Could not run #{client_class}: #{detail}"
                 end
             end
             true
@@ -64,7 +64,7 @@ class Puppet::Agent
         return if splayed?
 
         time = rand(Integer(Puppet[:splaylimit]) + 1)
-        Puppet.info "Sleeping for %s seconds (splay is enabled)" % time
+        Puppet.info "Sleeping for #{time} seconds (splay is enabled)"
         sleep(time)
         @splayed = true
     end
@@ -99,7 +99,7 @@ class Puppet::Agent
             raise
         rescue Exception => detail
             puts detail.backtrace if Puppet[:trace]
-            Puppet.err "Could not create instance of %s: %s" % [client_class, detail]
+            Puppet.err "Could not create instance of #{client_class}: #{detail}"
             return
         end
         yield @client

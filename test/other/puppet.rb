@@ -32,7 +32,7 @@ class TestPuppetModule < Test::Unit::TestCase
             end
 
             def start
-                File.open(@file, "w") do |f| f.puts "" end
+                File.open(@file, "w")  {|f| f.puts ""}
             end
 
             def shutdown
@@ -46,7 +46,7 @@ class TestPuppetModule < Test::Unit::TestCase
         cleanup do
             ENV["PATH"] = oldpath
         end
-        newpath = oldpath + ":" + "/something/else"
+        newpath = oldpath + ":/something/else"
         assert_nothing_raised do
             Puppet[:path] = newpath
         end

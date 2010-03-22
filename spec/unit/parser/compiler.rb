@@ -11,7 +11,7 @@ class CompilerTestResource
     end
 
     def ref
-        "%s[%s]" % [type.to_s.capitalize, title]
+        "#{type.to_s.capitalize}[#{title}]"
     end
 
     def evaluated?

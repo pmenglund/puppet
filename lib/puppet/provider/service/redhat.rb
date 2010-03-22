@@ -20,7 +20,7 @@ Puppet::Type.type(:service).provide :redhat, :parent => :init, :source => :init 
         begin
             output = chkconfig(@resource[:name], :off)
         rescue Puppet::ExecutionFailure
-            raise Puppet::Error, "Could not disable %s: %s" % [self.name, output]
+            raise Puppet::Error, "Could not disable #{self.name}: #{output}"
         end
     end
 
@@ -46,12 +46,12 @@ Puppet::Type.type(:service).provide :redhat, :parent => :init, :source => :init 
         begin
             output = chkconfig(@resource[:name], :on)
         rescue Puppet::ExecutionFailure => detail
-            raise Puppet::Error, "Could not enable %s: %s" % [self.name, detail]
+            raise Puppet::Error, "Could not enable #{self.name}: #{detail}"
         end
     end
 
     def initscript
-        raise Puppet::Error, "Do not directly call the init script for '%s'; use 'service' instead" % @resource[:name]
+        raise Puppet::Error, "Do not directly call the init script for '#{@resource[:name]}'; use 'service' instead"
     end
 
     def statuscmd

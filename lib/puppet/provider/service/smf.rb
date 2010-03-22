@@ -23,12 +23,12 @@ Puppet::Type.type(:service).provide :smf, :parent => :base do
             if resource[:manifest]
                 [command(:svcs), "-l", @resource[:name]]
                 if $CHILD_STATUS.exitstatus == 1
-                    Puppet.notice "Importing %s for %s" % [ @resource[:manifest], @resource[:name] ]
+                    Puppet.notice "Importing #{@resource[:manifest]} for #{@resource[:name]}"
                     svccfg :import, resource[:manifest]
                 end
             end
         rescue Puppet::ExecutionFailure => detail
-            raise Puppet::Error.new( "Cannot config %s to enable it: %s" % [ self.service, detail ] )
+            raise Puppet::Error.new( "Cannot config #{self.service} to enable it: #{detail}" )
         end
     end
 
@@ -72,17 +72,17 @@ Puppet::Type.type(:service).provide :smf, :parent => :base do
         begin
             state = svcs("-H", "-o", "state", @resource[:name]).chomp
         rescue Puppet::ExecutionFailure
-            info "Could not get status on service %s" % self.name
+            info "Could not get status on service #{self.name}"
             return :stopped
         end
 
 
         case state
         when "online"
-            #self.warning "matched running %s" % line.inspect
+            #self.warning "matched running #{line.inspect}"
             return :running
         when "offline", "disabled", "uninitialized"
-            #self.warning "matched stopped %s" % line.inspect
+            #self.warning "matched stopped #{line.inspect}"
             return :stopped
         when "maintenance"
             return :maintenance
@@ -91,7 +91,7 @@ Puppet::Type.type(:service).provide :smf, :parent => :base do
                 "Cannot manage legacy services through SMF"
         else
             raise Puppet::Error,
-                "Unmanageable state '%s' on service %s" % [state, self.name]
+                "Unmanageable state '#{state}' on service #{self.name}"
         end
 
     end

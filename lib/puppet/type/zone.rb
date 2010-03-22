@@ -123,10 +123,10 @@ Puppet::Type.newtype(:zone) do
         def self.state_sequence(first, second)
             findex = sindex = nil
             unless findex = @parametervalues.index(state_name(first))
-                raise ArgumentError, "'%s' is not a valid zone state" % first
+                raise ArgumentError, "'#{first}' is not a valid zone state"
             end
             unless sindex = @parametervalues.index(state_name(second))
-                raise ArgumentError, "'%s' is not a valid zone state" % first
+                raise ArgumentError, "'#{first}' is not a valid zone state"
             end
             list = nil
 
@@ -172,11 +172,11 @@ Puppet::Type.newtype(:zone) do
                     end
                     provider.send(method)
                 else
-                    raise Puppet::DevError, "Cannot move %s from %s" % [direction, st[:name]]
+                    raise Puppet::DevError, "Cannot move #{direction} from #{st[:name]}"
                 end
             end
 
-            return ("zone_" + self.should.to_s).intern
+            return ("zone_#{self.should}").intern
         end
 
         # Are we moving up the property tree?
@@ -215,7 +215,7 @@ Puppet::Type.newtype(:zone) do
             begin
                 IPAddr.new(address)
             rescue ArgumentError
-                raise ArgumentError, "'%s' is an invalid IP address" % address
+                raise ArgumentError, "'#{address}' is an invalid IP address"
             end
         end
 

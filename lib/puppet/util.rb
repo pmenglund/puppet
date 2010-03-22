@@ -30,15 +30,15 @@ module Util
         if group = Puppet[:group]
             group = self.gid(group)
             unless group
-                raise Puppet::Error, "No such group %s" % Puppet[:group]
+                raise Puppet::Error, "No such group #{Puppet[:group]}"
             end
             unless Puppet::Util::SUIDManager.gid == group
                 begin
                     Puppet::Util::SUIDManager.egid = group
                     Puppet::Util::SUIDManager.gid = group
                 rescue => detail
-                    Puppet.warning "could not change to group %s: %s" % [group.inspect, detail]
-                    $stderr.puts "could not change to group %s" % group.inspect
+                    Puppet.warning "could not change to group #{group.inspect}: #{detail}"
+                    $stderr.puts "could not change to group #{group.inspect}"
 
                     # Don't exit on failed group changes, since it's
                     # not fatal
@@ -50,7 +50,7 @@ module Util
         if user = Puppet[:user]
             user = self.uid(user)
             unless user
-                raise Puppet::Error, "No such user %s" % Puppet[:user]
+                raise Puppet::Error, "No such user #{Puppet[:user]}"
             end
             unless Puppet::Util::SUIDManager.uid == user
                 begin
@@ -58,7 +58,7 @@ module Util
                     Puppet::Util::SUIDManager.uid = user
                     Puppet::Util::SUIDManager.euid = user
                 rescue => detail
-                    $stderr.puts "Could not change to user %s: %s" % [user, detail]
+                    $stderr.puts "Could not change to user #{user}: #{detail}"
                     exit(74)
                 end
             end
@@ -134,7 +134,7 @@ module Util
                 elsif FileTest.directory?(File.join(path))
                     next
                 else FileTest.exist?(File.join(path))
-                    raise "Cannot create %s: basedir %s is a file" % [dir, File.join(path)]
+                    raise "Cannot create #{dir}: basedir #{File.join(path)} is a file"
                 end
             }
             return true
@@ -172,7 +172,7 @@ module Util
         end
 
         unless level == :none or object.respond_to? level
-            raise Puppet::DevError, "Benchmarked object does not respond to %s" % level
+            raise Puppet::DevError, "Benchmarked object does not respond to #{level}"
         end
 
         # Only benchmark if our log level is high enough
@@ -204,9 +204,9 @@ module Util
     # Execute the provided command in a pipe, yielding the pipe object.
     def execpipe(command, failonfail = true)
         if respond_to? :debug
-            debug "Executing '%s'" % command
+            debug "Executing '#{command}'"
         else
-            Puppet.debug "Executing '%s'" % command
+            Puppet.debug "Executing '#{command}'"
         end
 
         output = open("| #{command} 2>&1") do |pipe|
@@ -248,9 +248,9 @@ module Util
         end
 
         if respond_to? :debug
-            debug "Executing '%s'" % str
+            debug "Executing '#{str}'"
         else
-            Puppet.debug "Executing '%s'" % str
+            Puppet.debug "Executing '#{str}'"
         end
 
         if arguments[:uid]
@@ -348,7 +348,7 @@ module Util
 
         if arguments[:failonfail]
             unless child_status == 0
-                raise ExecutionFailure, "Execution of '%s' returned %s: %s" % [str, child_status, output]
+                raise ExecutionFailure, "Execution of '#{str}' returned #{child_status}: #{output}"
             end
         end
 

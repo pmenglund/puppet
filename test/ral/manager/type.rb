@@ -10,11 +10,11 @@ class TestType < Test::Unit::TestCase
     def test_typemethods
         Puppet::Type.eachtype { |type|
             name = nil
-            assert_nothing_raised("Searching for name for %s caused failure" % type.to_s) {
+            assert_nothing_raised("Searching for name for #{type} caused failure") {
                     name = type.name
             }
 
-            assert(name, "Could not find name for %s" % type.to_s)
+            assert(name, "Could not find name for #{type}")
 
 
                         assert_equal(
@@ -22,7 +22,7 @@ class TestType < Test::Unit::TestCase
                 type,
                 Puppet::Type.type(name),
         
-                "Failed to retrieve %s by name" % name
+                "Failed to retrieve #{name} by name"
             )
 
             # Skip types with no parameters or valid properties
@@ -36,7 +36,7 @@ class TestType < Test::Unit::TestCase
                 
                     type.namevar,
         
-                    "Failed to retrieve namevar for %s" % name
+                    "Failed to retrieve namevar for #{name}"
                 )
 
 
@@ -44,7 +44,7 @@ class TestType < Test::Unit::TestCase
                 
                     type.properties,
         
-                    "Properties for %s are nil" % name
+                    "Properties for #{name} are nil"
                 )
 
 
@@ -52,7 +52,7 @@ class TestType < Test::Unit::TestCase
                 
                     type.validproperties,
         
-                    "Valid properties for %s are nil" % name
+                    "Valid properties for #{name} are nil"
                 )
             }
         }
@@ -135,7 +135,7 @@ class TestType < Test::Unit::TestCase
     def test_newtype_methods
         assert_nothing_raised {
             Puppet::Type.newtype(:mytype) do
-                newparam(:wow) do isnamevar end
+                newparam(:wow)  {isnamevar}
             end
         }
 
@@ -156,7 +156,7 @@ class TestType < Test::Unit::TestCase
         # Now make the type again, just to make sure it works on refreshing.
         assert_nothing_raised {
             Puppet::Type.newtype(:mytype) do
-                newparam(:yay) do isnamevar end
+                newparam(:yay)  {isnamevar}
             end
         }
 
@@ -175,7 +175,7 @@ class TestType < Test::Unit::TestCase
 
         assert_nothing_raised {
             Puppet::Type.newtype(:param) do
-                newparam(:rah) do isnamevar end
+                newparam(:rah)  {isnamevar}
             end
         }
         assert_equal(parammethod, Puppet::Type.method(:newparam), "newparam method got replaced by newtype")
@@ -350,7 +350,7 @@ class TestType < Test::Unit::TestCase
             next if type.name == :symlink
             next if type.name == :component
             next if type.name == :tidy
-            assert(type.respond_to?(:list), "%s does not respond to list" % type.name)
+            assert(type.respond_to?(:list), "#{type.name} does not respond to list")
         end
     end
 
@@ -364,7 +364,7 @@ class TestType < Test::Unit::TestCase
         end
 
         [:path, :owner, :recurse, :loglevel].each do |param|
-            assert(hash[param], "Hash did not include %s" % param)
+            assert(hash[param], "Hash did not include #{param}")
         end
     end
 
@@ -384,8 +384,8 @@ class TestType < Test::Unit::TestCase
         # Check that our paths are built correctly.  Just pick a random, "normal" type.
         type = Puppet::Type.type(:exec)
         mk = Proc.new do |i, hash|
-            hash[:title] = "exec%s" % i
-            hash[:command] = "/bin/echo %s" % i
+            hash[:title] = "exec#{i}"
+            hash[:command] = "/bin/echo #{i}"
             if parent = hash[:parent]
                 hash.delete(:parent)
             end
@@ -451,11 +451,11 @@ class TestType < Test::Unit::TestCase
                 assert_nil(resource.schedule, "Set the schedule tho it is set to nil")
             else
                 sched = nil
-                assert_nothing_raised("Failed when schedule was %s" % sched) do
+                assert_nothing_raised("Failed when schedule was #{sched}") do
                     sched = resource.schedule
                 end
 
-                assert(sched, "Did not find schedule %s" % sched.inspect)
+                assert(sched, "Did not find schedule #{sched.inspect}")
 
                 if should
                     assert_equal(name, sched.name, "did not get correct schedule back")

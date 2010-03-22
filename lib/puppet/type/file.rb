@@ -108,7 +108,7 @@ Puppet::Type.newtype(:file) do
             when String
                 value
             else
-                self.fail "Invalid backup type %s" % value.inspect
+                self.fail "Invalid backup type #{value.inspect}"
             end
         end
     end
@@ -276,7 +276,7 @@ Puppet::Type.newtype(:file) do
             count += 1
         end
         if count > 1
-            self.fail "You cannot specify more than one of %s" % CREATORS.collect { |p| p.to_s}.join(", ")
+            self.fail "You cannot specify more than one of #{CREATORS.collect { |p| p.to_s}.join(", ")}"
         end
 
         if !self[:source] and self[:recurse] == :remote
@@ -348,7 +348,7 @@ Puppet::Type.newtype(:file) do
         end
 
         unless catalog and filebucket = catalog.resource(:filebucket, backup) or backup == "puppet"
-            fail "Could not find filebucket %s specified in backup" % backup
+            fail "Could not find filebucket #{backup} specified in backup"
         end
 
         return default_bucket unless filebucket
@@ -569,7 +569,7 @@ Puppet::Type.newtype(:file) do
         total = self[:source].collect do |source|
             next unless result = perform_recursion(source)
             return if top = result.find { |r| r.relative_path == "." } and top.ftype != "directory"
-            result.each { |data| data.source = "%s/%s" % [source, data.relative_path] }
+            result.each { |data| data.source = "#{source}/#{data.relative_path}" }
             break result if result and ! result.empty? and sourceselect == :first
             result
         end.flatten
@@ -625,16 +625,16 @@ Puppet::Type.newtype(:file) do
         case s.ftype
         when "directory"
             if self[:force] == :true
-                debug "Removing existing directory for replacement with %s" % should
+                debug "Removing existing directory for replacement with #{should}"
                 FileUtils.rmtree(self[:path])
             else
                 notice "Not removing directory; use 'force' to override"
             end
         when "link", "file"
-            debug "Removing existing %s for replacement with %s" % [s.ftype, should]
+            debug "Removing existing #{s.ftype} for replacement with #{should}"
             File.unlink(self[:path])
         else
-            self.fail "Could not back up files of type %s" % s.ftype
+            self.fail "Could not back up files of type #{s.ftype}"
         end
         expire
     end
@@ -746,7 +746,7 @@ Puppet::Type.newtype(:file) do
                 fail_if_checksum_is_wrong(path, content) if validate
                 File.rename(path, self[:path])
             rescue => detail
-                fail "Could not rename temporary file %s to %s : %s" % [path, self[:path], detail]
+                fail "Could not rename temporary file #{path} to #{self[:path]} : #{detail}"
             ensure
                 # Make sure the created file gets removed
                 File.unlink(path) if FileTest.exists?(path)
@@ -768,7 +768,7 @@ Puppet::Type.newtype(:file) do
         newsum = parameter(:checksum).sum_file(path)
         return if [:absent, nil, checksum].include?(newsum)
 
-        self.fail "File written to disk did not match checksum; discarding changes (%s vs %s)" % [checksum, newsum]
+        self.fail "File written to disk did not match checksum; discarding changes (#{checksum} vs #{newsum})"
     end
 
     # There are some cases where all of the work does not get done on

@@ -35,7 +35,7 @@ class Puppet::Parser::AST
             # Unless we found something, look for the default.
             return default.value.safeevaluate if default
 
-            self.fail Puppet::ParseError, "No matching value for selector param '%s'" % paramvalue
+            self.fail Puppet::ParseError, "No matching value for selector param '#{paramvalue}'"
         ensure
             scope.unset_ephemeral_var
         end

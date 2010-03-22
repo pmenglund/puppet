@@ -11,7 +11,7 @@ class Puppet::SSL::CertificateAuthority::Interface
     # Actually perform the work.
     def apply(ca)
         unless subjects or method == :list
-            raise ArgumentError, "You must provide hosts or :all when using %s" % method
+            raise ArgumentError, "You must provide hosts or :all when using #{method}"
         end
 
         begin
@@ -26,7 +26,7 @@ class Puppet::SSL::CertificateAuthority::Interface
             raise
         rescue => detail
             puts detail.backtrace if Puppet[:trace]
-            Puppet.err "Could not call %s: %s" % [method, detail]
+            Puppet.err "Could not call #{method}: #{detail}"
         end
     end
 
@@ -79,7 +79,7 @@ class Puppet::SSL::CertificateAuthority::Interface
 
     # Set the method to apply.
     def method=(method)
-        raise ArgumentError, "Invalid method %s to apply" % method unless INTERFACE_METHODS.include?(method)
+        raise ArgumentError, "Invalid method #{method} to apply" unless INTERFACE_METHODS.include?(method)
         @method = method
     end
 
@@ -89,7 +89,7 @@ class Puppet::SSL::CertificateAuthority::Interface
             if value = ca.print(host)
                 puts value
             else
-                Puppet.err "Could not find certificate for %s" % host
+                Puppet.err "Could not find certificate for #{host}"
             end
         end
     end
@@ -100,7 +100,7 @@ class Puppet::SSL::CertificateAuthority::Interface
             if value = ca.fingerprint(host, @digest)
                 puts "#{host} #{value}"
             else
-                Puppet.err "Could not find certificate for %s" % host
+                Puppet.err "Could not find certificate for #{host}"
             end
         end
     end
@@ -117,7 +117,7 @@ class Puppet::SSL::CertificateAuthority::Interface
     # Set the list of hosts we're operating on.  Also supports keywords.
     def subjects=(value)
         unless value == :all or value.is_a?(Array)
-            raise ArgumentError, "Subjects must be an array or :all; not %s" % value
+            raise ArgumentError, "Subjects must be an array or :all; not #{value}"
         end
 
         if value.is_a?(Array) and value.empty?

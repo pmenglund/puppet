@@ -97,7 +97,7 @@ class TestCaseStatement < Test::Unit::TestCase
                     result = ast.evaluate(scope)
                 end
 
-                assert_equal(should, result, "Got incorrect result for %s" % value)
+                assert_equal(should, result, "Got incorrect result for #{value}")
             end
         end
     end

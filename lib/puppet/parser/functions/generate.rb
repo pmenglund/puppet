@@ -28,7 +28,7 @@ Puppet::Parser::Functions::newfunction(:generate, :type => :rvalue,
             begin
                 output = Puppet::Util.execute(args)
             rescue Puppet::ExecutionFailure => detail
-                raise Puppet::ParseError, "Failed to execute generator %s: %s" % [args[0], detail]
+                raise Puppet::ParseError, "Failed to execute generator #{args[0]}: #{detail}"
             end
             output
 end

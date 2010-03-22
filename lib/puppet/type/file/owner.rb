@@ -34,7 +34,7 @@ module Puppet
                 if value =~ /^\d+$/
                     uid = Integer(value)
                 elsif value.is_a?(String)
-                    fail "Could not find user %s" % value unless uid = uid(value)
+                    fail "Could not find user #{value}" unless uid = uid(value)
                 else
                     uid = value
                 end
@@ -79,7 +79,7 @@ module Puppet
             when String
                 newvalue
             else
-                raise Puppet::DevError, "Invalid uid type %s(%s)" % [newvalue.class, newvalue]
+                raise Puppet::DevError, "Invalid uid type #{newvalue.class}(#{newvalue})"
             end
         end
 
@@ -90,7 +90,7 @@ module Puppet
                         if tmp = validuser?(val)
                             val = tmp
                         else
-                            raise "Could not find user %s" % val
+                            raise "Could not find user #{val}"
                         end
                     else
                         val
@@ -108,7 +108,7 @@ module Puppet
             # large UIDs instead of negative ones.  This isn't a Ruby bug,
             # it's an OS X bug, since it shows up in perl, too.
             if currentvalue > Puppet[:maximum_uid].to_i
-                self.warning "Apparently using negative UID (%s) on a platform that does not consistently handle them" % currentvalue
+                self.warning "Apparently using negative UID (#{currentvalue}) on a platform that does not consistently handle them"
                 currentvalue = :silly
             end
 
@@ -128,12 +128,12 @@ module Puppet
                 break if uid = validuser?(user)
             end
 
-            raise Puppet::Error, "Could not find user(s) %s" % @should.join(",") unless uid
+            raise Puppet::Error, "Could not find user(s) #{@should.join(",")}" unless uid
 
             begin
                 File.send(method, uid, nil, @resource[:path])
             rescue => detail
-                raise Puppet::Error, "Failed to set owner to '%s': %s" % [uid, detail]
+                raise Puppet::Error, "Failed to set owner to '#{uid}': #{detail}"
             end
 
             return :file_changed

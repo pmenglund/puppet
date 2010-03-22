@@ -46,11 +46,11 @@ module Puppet
                 newvalue = tmp
             end
             if currentvalue == :absent
-                return "defined content as '%s'" % [newvalue]
+                return "defined content as '#{newvalue}'"
             elsif newvalue == :absent
-                return "undefined content from '%s'" % [currentvalue]
+                return "undefined content from '#{currentvalue}'"
             else
-                return "content changed '%s' to '%s'" % [currentvalue, newvalue]
+                return "content changed '#{currentvalue}' to '#{newvalue}'"
             end
         end
 

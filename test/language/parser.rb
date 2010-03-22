@@ -27,7 +27,7 @@ class TestParser < Test::Unit::TestCase
         textfiles { |file|
             Puppet::Node::Environment.clear
             parser = mkparser
-            Puppet.debug("parsing %s" % file) if __FILE__ == $0
+            Puppet.debug("parsing #{file}") if __FILE__ == $0
             assert_nothing_raised() {
                 parser.file = file
                 parser.parse
@@ -38,8 +38,8 @@ class TestParser < Test::Unit::TestCase
     def test_failers
         failers { |file|
             parser = mkparser
-            Puppet.debug("parsing failer %s" % file) if __FILE__ == $0
-            assert_raise(Puppet::ParseError, "Did not fail while parsing %s" % file) {
+            Puppet.debug("parsing failer #{file}") if __FILE__ == $0
+            assert_raise(Puppet::ParseError, "Did not fail while parsing #{file}") {
                 parser.file = file
                 ast = parser.parse
                 config = mkcompiler(parser)
@@ -76,7 +76,7 @@ class TestParser < Test::Unit::TestCase
     end
 
     def mkmanifest(file)
-        name = File.join(tmpdir, "file%s" % rand(100))
+        name = File.join(tmpdir, "file#{rand(100)}")
         @@tmpfiles << name
 
         File.open(file, "w") { |f|
@@ -97,7 +97,7 @@ class TestParser < Test::Unit::TestCase
         }
 
         4.times { |i|
-            path = File.join(basedir, subdir, "subfile%s" % i)
+            path = File.join(basedir, subdir, "subfile#{i}")
             mkmanifest(path)
         }
 
@@ -660,7 +660,7 @@ file { "/tmp/yayness":
         end
 
         [one, two].each do |file|
-            assert(@logs.detect { |l| l.message =~ /importing '#{file}'/}, "did not import %s" % file)
+            assert(@logs.detect { |l| l.message =~ /importing '#{file}'/}, "did not import #{file}")
         end
     end
 
@@ -683,7 +683,7 @@ file { "/tmp/yayness":
 
         parser = mkparser
         assert_nothing_raised("Globbing failed when it matched a directory") do
-            parser.import("%s/*" % dir)
+            parser.import("#{dir}/*")
         end
     end
 
@@ -727,7 +727,7 @@ file { "/tmp/yayness":
                 "one::two::three::four" => ["one::two::three", "four"],
             }.each do |name, ary|
                 result = parser.namesplit(name)
-                assert_equal(ary, result, "%s split to %s" % [name, result])
+                assert_equal(ary, result, "#{name} split to #{result}")
             end
         end
     end
@@ -743,12 +743,12 @@ file { "/tmp/yayness":
         end
         Dir.chdir(mandir) do
             files.each do |file, classes|
-                File.open("%s.pp" % file, "w") do |f|
+                File.open("#{file}.pp", "w") do |f|
                     classes.each { |klass|
                         if defs
-                            f.puts "define %s {}" % klass
+                            f.puts "define #{klass} {}"
                         else
-                            f.puts "class %s {}" % klass
+                            f.puts "class #{klass} {}"
                         end
                     }
                 end
@@ -867,6 +867,6 @@ file { "/tmp/yayness":
         assert_nothing_raised do
             result = parser.newdefine "FunTest"
         end
-        assert_equal(result, parser.find_definition("", "fUntEst"), "%s was not matched" % "fUntEst")
+        assert_equal(result, parser.find_definition("", "fUntEst"), "#{"fUntEst"} was not matched")
     end
 end

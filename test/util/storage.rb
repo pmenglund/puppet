@@ -85,13 +85,13 @@ class TestStorage < Test::Unit::TestCase
             assert_nothing_raised do
                 hash = Puppet::Util::Storage.cache(object)
             end
-            assert_equal({}, hash, "Did not get empty hash back for %s" % object)
+            assert_equal({}, hash, "Did not get empty hash back for #{object}")
 
             hash[:testing] = true
             assert_nothing_raised do
                 hash = Puppet::Util::Storage.cache(object)
             end
-            assert_equal({:testing => true}, hash, "Did not get hash back for %s" % object)
+            assert_equal({:testing => true}, hash, "Did not get hash back for #{object}")
         end
         assert_raise(ArgumentError, "was able to cache from string") do
             Puppet::Util::Storage.cache("somethingelse")

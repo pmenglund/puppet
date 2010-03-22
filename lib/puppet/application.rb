@@ -275,7 +275,7 @@ class Puppet::Application
         end
 
         option("--version", "-V") do |arg|
-            puts "%s" % Puppet.version
+            puts "#{Puppet.version}"
             exit
         end
 
@@ -382,7 +382,7 @@ class Puppet::Application
             yield
         rescue RuntimeError, NotImplementedError => detail
             puts detail.backtrace if Puppet[:trace]
-            $stderr.puts "Could not %s: %s" % [message, detail]
+            $stderr.puts "Could not #{message}: #{detail}"
             exit(code)
         end
     end

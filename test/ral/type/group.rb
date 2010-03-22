@@ -170,10 +170,10 @@ class TestGroup < Test::Unit::TestCase
 
         gobj.retrieve
         tests.each { |test|
-            if self.respond_to?("attrtest_%s" % test)
-                self.send("attrtest_%s" % test, gobj)
+            if self.respond_to?("attrtest_#{test}")
+                self.send("attrtest_#{test}", gobj)
             else
-                #$stderr.puts "Not testing attr %s of group" % test
+                #$stderr.puts "Not testing attr #{test} of group"
             end
         }
 

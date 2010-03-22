@@ -40,7 +40,7 @@ module PSON
                 (?:
                 [^*/]|        # normal chars
                 /[^*]|        # slashes that do not start a nested comment
-                \*[^/]|       # asterisks that do not end this comment
+                \*[^/]|       # asterisks that  {not} this comment
                 /(?=\*/)      # single slash before this comment's end
                 )*
                 \*/               # the End of this comment

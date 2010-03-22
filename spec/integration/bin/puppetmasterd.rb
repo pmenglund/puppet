@@ -27,7 +27,7 @@ describe "puppetmasterd" do
 
         Puppet::SSL::Host.ca_location = :none
 
-        system("rm -rf %s" % @dir)
+        system("rm -rf #{@dir}")
         Puppet.settings.clear
     }
 
@@ -35,14 +35,14 @@ describe "puppetmasterd" do
         rundir = File.join(Puppet[:vardir], "run")
         @pidfile = File.join(rundir, "testing.pid")
         args = ""
-        args += " --confdir %s" % Puppet[:confdir]
-        args += " --rundir %s" % rundir
-        args += " --pidfile %s" % @pidfile
-        args += " --vardir %s" % Puppet[:vardir]
-        args += " --certdnsnames %s" % Puppet[:certdnsnames]
-        args += " --masterport %s" % @@port
-        args += " --user %s" % Puppet::Util::SUIDManager.uid
-        args += " --group %s" % Puppet::Util::SUIDManager.gid
+        args += " --confdir #{Puppet[:confdir]}"
+        args += " --rundir #{rundir}"
+        args += " --pidfile #{@pidfile}"
+        args += " --vardir #{Puppet[:vardir]}"
+        args += " --certdnsnames #{Puppet[:certdnsnames]}"
+        args += " --masterport #{@@port}"
+        args += " --user #{Puppet::Util::SUIDManager.uid}"
+        args += " --group #{Puppet::Util::SUIDManager.gid}"
         args += " --autosign true"
     end
 
@@ -52,7 +52,7 @@ describe "puppetmasterd" do
             f.puts { "notify { testing: }" }
         end
 
-        args = arguments + " " + addl_args
+        args = arguments + " #{addl_args}"
 
         bin = File.join(File.dirname(__FILE__), "..", "..", "..", "sbin", "puppetmasterd")
         lib = File.join(File.dirname(__FILE__), "..", "..", "..", "lib")

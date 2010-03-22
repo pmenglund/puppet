@@ -19,7 +19,7 @@ class TestMailAlias < Test::Unit::TestCase
             @type.defaultprovider = @type.provider(:aliases)
         end
 
-        cleanup do @type.defaultprovider = nil end
+        cleanup  {@type.defaultprovider = nil}
 
         if @provider.respond_to?(:default_target=)
             @default_file = @provider.default_target

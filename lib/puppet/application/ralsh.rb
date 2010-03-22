@@ -46,7 +46,7 @@ Puppet::Application.new(:ralsh) do
             if setting =~ /^(\w+)=(.+)$/
                 params[$1] = $2
             else
-                raise "Invalid parameter setting %s" % setting
+                raise "Invalid parameter setting #{setting}"
             end
         end
 
@@ -98,7 +98,7 @@ Puppet::Application.new(:ralsh) do
                 end
                 ENV["EDITOR"] ||= "vi"
                 system(ENV["EDITOR"], file)
-                system("puppet -v " + file)
+                system("puppet -v #{file}")
             ensure
                 #if FileTest.exists? file
                 #    File.unlink(file)

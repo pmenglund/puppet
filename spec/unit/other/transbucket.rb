@@ -117,7 +117,7 @@ describe Puppet::TransBucket, " when generating a catalog" do
 
     it "should finalize all resources" do
         @catalog = @top.to_catalog
-        @catalog.vertices.each do |vertex| vertex.should be_finalized end
+        @catalog.vertices.each  {|vertex| vertex.should be_finalized}
     end
 
     it "should only call to_ral on each resource once" do

@@ -88,7 +88,7 @@ class Puppet::Util::Log
             raise Puppet::DevError, "Logs require a level"
         end
         unless @levels.index(hash[:level])
-            raise Puppet::DevError, "Invalid log level %s" % hash[:level]
+            raise Puppet::DevError, "Invalid log level #{hash[:level]}"
         end
         if @levels.index(hash[:level]) >= @loglevel
             return Puppet::Util::Log.new(hash)
@@ -118,7 +118,7 @@ class Puppet::Util::Log
         end
 
         unless @levels.include?(level)
-            raise Puppet::DevError, "Invalid loglevel %s" % level
+            raise Puppet::DevError, "Invalid loglevel #{level}"
         end
 
         @loglevel = @levels.index(level)
@@ -140,7 +140,7 @@ class Puppet::Util::Log
         end
 
         unless type
-            raise Puppet::DevError, "Unknown destination type %s" % dest
+            raise Puppet::DevError, "Unknown destination type #{dest}"
         end
 
         begin
@@ -240,7 +240,7 @@ class Puppet::Util::Log
     def level=(level)
         raise ArgumentError, "Puppet::Util::Log requires a log level" unless level
         @level = level.to_sym
-        raise ArgumentError, "Invalid log level %s" % @level unless self.class.validlevel?(@level)
+        raise ArgumentError, "Invalid log level #{@level}" unless self.class.validlevel?(@level)
 
         # Tag myself with my log level
         tag(level)

@@ -174,7 +174,7 @@ class Puppet::Node::Ldap < Puppet::Indirector::Ldap
     # Find information for our parent and merge it into the current info.
     def find_and_merge_parent(parent, information)
         unless parent_info = name2hash(parent)
-            raise Puppet::Error.new("Could not find parent node '%s'" % parent)
+            raise Puppet::Error.new("Could not find parent node '#{parent}'")
         end
         information[:classes] += parent_info[:classes]
         parent_info[:parameters].each do |param, value|
@@ -209,7 +209,7 @@ class Puppet::Node::Ldap < Puppet::Indirector::Ldap
         parents = [info[:name]]
         while parent
             if parents.include?(parent)
-                raise ArgumentError, "Found loop in LDAP node parents; %s appears twice" % parent
+                raise ArgumentError, "Found loop in LDAP node parents; #{parent} appears twice"
             end
             parents << parent
             parent = find_and_merge_parent(parent, info)
@@ -221,7 +221,7 @@ class Puppet::Node::Ldap < Puppet::Indirector::Ldap
     def get_classes_from_entry(entry)
         result = class_attributes.inject([]) do |array, attr|
             if values = entry.vals(attr)
-                values.each do |v| array << v end
+                values.each  {|v| array << v}
             end
             array
         end
@@ -249,7 +249,7 @@ class Puppet::Node::Ldap < Puppet::Indirector::Ldap
 
         if values.length > 1
             raise Puppet::Error,
-                "Node entry %s specifies more than one parent: %s" % [entry.dn, values.inspect]
+                "Node entry #{entry.dn} specifies more than one parent: #{values.inspect}"
         end
         return nil if values.empty?
         return values.shift

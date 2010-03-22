@@ -146,7 +146,7 @@ class TestExec < Test::Unit::TestCase
 
             cmd = Puppet::Type.type(:exec).new(
 
-                :command => "touch %s" % maker,
+                :command => "touch #{maker}",
                 :path => "/usr/bin:/bin:/usr/sbin:/sbin",
                 :subscribe => file,
 
@@ -201,7 +201,7 @@ class TestExec < Test::Unit::TestCase
 
             exec = Puppet::Type.type(:exec).new(
 
-                :command => "touch %s" % file,
+                :command => "touch #{file}",
                 :path => "/usr/bin:/bin:/usr/sbin:/sbin",
 
                 :creates => file
@@ -288,7 +288,7 @@ class TestExec < Test::Unit::TestCase
 
             cat = Puppet::Type.type(:exec).new(
 
-                :command => "cat %s %s" % [exe, oexe],
+                :command => "cat #{exe} #{oexe}",
 
                 :path => ENV["PATH"]
         )
@@ -326,18 +326,18 @@ class TestExec < Test::Unit::TestCase
 
             exec = Puppet::Type.type(:exec).new(
 
-                :command => "touch %s" % bfile,
-                :onlyif => "test -f %s" % afile,
+                :command => "touch #{bfile}",
+                :onlyif => "test -f #{afile}",
 
                 :path => ENV['PATH']
             )
         }
 
         assert_events([], exec)
-        system("touch %s" % afile)
+        system("touch #{afile}")
         assert_events([:executed_command], exec)
         assert_events([:executed_command], exec)
-        system("rm %s" % afile)
+        system("rm #{afile}")
         assert_events([], exec)
     end
 
@@ -350,8 +350,8 @@ class TestExec < Test::Unit::TestCase
 
             exec = Puppet::Type.type(:exec).new(
 
-                :command => "touch %s" % bfile,
-                :unless => "test -f %s" % afile,
+                :command => "touch #{bfile}",
+                :unless => "test -f #{afile}",
 
                 :path => ENV['PATH']
             )
@@ -360,10 +360,10 @@ class TestExec < Test::Unit::TestCase
 
         assert_events([:executed_command], comp)
         assert_events([:executed_command], comp)
-        system("touch %s" % afile)
+        system("touch #{afile}")
         assert_events([], comp)
         assert_events([], comp)
-        system("rm %s" % afile)
+        system("rm #{afile}")
         assert_events([:executed_command], comp)
         assert_events([:executed_command], comp)
     end
@@ -374,12 +374,12 @@ class TestExec < Test::Unit::TestCase
             File.umask(0022)
 
             args = {
-                :command => "touch %s" % file,
+                :command => "touch #{file}",
                 :path => "/usr/bin:/bin:/usr/sbin:/sbin",
             }
 
             if user
-                #Puppet.warning "Using user %s" % user.name
+                #Puppet.warning "Using user #{user.name}"
                 if id
                     # convert to a string, because that's what the object expects
                     args[:user] = user.uid.to_s
@@ -389,7 +389,7 @@ class TestExec < Test::Unit::TestCase
             end
 
             if group
-                #Puppet.warning "Using group %s" % group.name
+                #Puppet.warning "Using group #{group.name}"
                 if id
                     args[:group] = group.gid.to_s
                 else
@@ -474,7 +474,7 @@ class TestExec < Test::Unit::TestCase
                 :path => "/usr/bin:/bin",
                 :creates => basedir,
 
-                :command => "mkdir %s; touch %s" % [basedir, path]
+                :command => "mkdir #{basedir}; touch #{path}"
 
             )
         }
@@ -511,7 +511,7 @@ class TestExec < Test::Unit::TestCase
         Puppet::Type.type(:exec).checks.each do |check|
             klass = Puppet::Type.type(:exec).paramclass(check)
             next if klass.value_collection.values.include? :false
-            assert_raise(Puppet::Error, "Check '%s' did not fail on false" % check) do
+            assert_raise(Puppet::Error, "Check '#{check}' did not fail on false") do
                 exec[check] = false
             end
         end
@@ -718,7 +718,7 @@ and stuff"
         assert_raise(Timeout::Error) {
             exec.run("sleep 1")
         }
-        Puppet.info "%s seconds, vs a timeout of %s" % [Time.now.to_f - time.to_f, exec[:timeout]]
+        Puppet.info "#{Time.now.to_f - time.to_f} seconds, vs a timeout of #{exec[:timeout]}"
 
 
         assert_apply(exec)

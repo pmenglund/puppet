@@ -72,7 +72,7 @@ class TestUser < Test::Unit::TestCase
                 :gid => Puppet::Util::SUIDManager.gid,
                 :shell => findshell(),
         
-                :home => "/home/%s" % name
+                :home => "/home/#{name}"
             )
         }
 
@@ -221,7 +221,7 @@ class TestUser < Test::Unit::TestCase
         extra = []
         5.times do |i|
             i += 1
-            name = "pptstgr%s" % i
+            name = "pptstgr#{i}"
             groups << name
             if i < 3
                 main << name
@@ -391,7 +391,7 @@ class TestUser < Test::Unit::TestCase
 
         user = mkuser(name)
 
-        assert(! user.provider.exists?, "User %s is present" % name)
+        assert(! user.provider.exists?, "User #{name} is present")
 
         comp = mk_catalog("usercomp", user)
 
@@ -403,10 +403,10 @@ class TestUser < Test::Unit::TestCase
         tests = Puppet::Type.type(:user).validproperties
 
         tests.each { |test|
-            if self.respond_to?("attrtest_%s" % test)
-                self.send("attrtest_%s" % test, user)
+            if self.respond_to?("attrtest_#{test}")
+                self.send("attrtest_#{test}", user)
             else
-                Puppet.err "Not testing attr %s of user" % test
+                Puppet.err "Not testing attr #{test} of user"
             end
         }
 

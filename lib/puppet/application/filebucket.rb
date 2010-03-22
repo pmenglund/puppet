@@ -25,15 +25,15 @@ Puppet::Application.new(:filebucket) do
     command(:backup) do
         ARGV.each do |file|
             unless FileTest.exists?(file)
-                $stderr.puts "%s: no such file" % file
+                $stderr.puts "#{file}: no such file"
                 next
             end
             unless FileTest.readable?(file)
-                $stderr.puts "%s: cannot read file" % file
+                $stderr.puts "#{file}: cannot read file"
                 next
             end
             md5 = @client.backup(file)
-            puts "%s: %s" % [file, md5]
+            puts "#{file}: #{md5}"
         end
     end
 

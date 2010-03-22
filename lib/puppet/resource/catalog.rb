@@ -70,7 +70,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
     def add_resource(*resources)
         resources.each do |resource|
             unless resource.respond_to?(:ref)
-                raise ArgumentError, "Can only add objects that respond to :ref, not instances of %s" % resource.class
+                raise ArgumentError, "Can only add objects that respond to :ref, not instances of #{resource.class}"
             end
         end.each { |resource| fail_unless_unique(resource) }.each do |resource|
             ref = resource.ref
@@ -101,7 +101,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
         #set $1
         resource.ref =~ /^(.+)\[/
 
-        newref = "%s[%s]" % [$1 || resource.class.name, name]
+        newref = "#{$1 || resource.class.name}[#{name}]"
 
         # LAK:NOTE It's important that we directly compare the references,
         # because sometimes an alias is created before the resource is
@@ -110,7 +110,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
         return if newref == resource.ref
         if existing = @resource_table[newref]
             return if existing == resource
-            raise(ArgumentError, "Cannot alias %s to %s; resource %s already exists" % [resource.ref, name, newref])
+            raise(ArgumentError, "Cannot alias #{resource.ref} to #{name}; resource #{newref} already exists")
         end
         @resource_table[newref] = resource
         @aliases[resource.ref] ||= []
@@ -142,10 +142,10 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
             transaction.evaluate
         rescue Puppet::Error => detail
             puts detail.backtrace if Puppet[:trace]
-            Puppet.err "Could not apply complete catalog: %s" % detail
+            Puppet.err "Could not apply complete catalog: #{detail}"
         rescue => detail
             puts detail.backtrace if Puppet[:trace]
-            Puppet.err "Got an uncaught exception of type %s: %s" % [detail.class, detail]
+            Puppet.err "Got an uncaught exception of type #{detail.class}: #{detail}"
         ensure
             # Don't try to store state unless we're a host config
             # too recursive.
@@ -185,7 +185,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
     # Create a new resource and register it in the catalog.
     def create_resource(type, options)
         unless klass = Puppet::Type.type(type)
-            raise ArgumentError, "Unknown resource type %s" % type
+            raise ArgumentError, "Unknown resource type #{type}"
         end
         return unless resource = klass.new(options)
 
@@ -203,15 +203,15 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
 
     # Make sure we support the requested extraction format.
     def extraction_format=(value)
-        unless respond_to?("extract_to_%s" % value)
-            raise ArgumentError, "Invalid extraction format %s" % value
+        unless respond_to?("extract_to_#{value}")
+            raise ArgumentError, "Invalid extraction format #{value}"
         end
         @extraction_format = value
     end
 
     # Turn our catalog graph into whatever the client is expecting.
     def extract
-        send("extract_to_%s" % extraction_format)
+        send("extract_to_#{extraction_format}")
     end
 
     # Create the traditional TransBuckets and TransObjects from our catalog
@@ -244,7 +244,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
             bucket = tmp || bucket
             if child = target.to_trans
                 unless bucket
-                    raise "No bucket created for %s" % source
+                    raise "No bucket created for #{source}"
                 end
                 bucket.push child
 
@@ -337,10 +337,10 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
                 vertex.autorequire(self).each do |edge|
                     unless @relationship_graph.edge?(edge.source, edge.target) # don't let automatic relationships conflict with manual ones.
                         unless @relationship_graph.edge?(edge.target, edge.source)
-                            vertex.debug "Autorequiring %s" % [edge.source]
+                            vertex.debug "Autorequiring #{edge.source}"
                             @relationship_graph.add_edge(edge)
                         else
-                            vertex.debug "Skipping automatic relationship with %s" % (edge.source == vertex ? edge.target : edge.source)
+                            vertex.debug "Skipping automatic relationship with #{(edge.source == vertex ? edge.target : edge.source)}"
                         end
                     end
                 end
@@ -491,7 +491,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
                 f.puts classes.join("\n")
             end
         rescue => detail
-            Puppet.err "Could not create class file %s: %s" % [Puppet[:classfile], detail]
+            Puppet.err "Could not create class file #{Puppet[:classfile]}: #{detail}"
         end
     end
 
@@ -526,10 +526,10 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
         # Either it's a defined type, which are never
         # isomorphic, or it's a non-isomorphic type, so
         # we should throw an exception.
-        msg = "Duplicate definition: %s is already defined" % resource.ref
+        msg = "Duplicate definition: #{resource.ref} is already defined"
 
         if existing_resource.file and existing_resource.line
-            msg << " in file %s at line %s" % [existing_resource.file, existing_resource.line]
+            msg << " in file #{existing_resource.file} at line #{existing_resource.line}"
         end
 
         if resource.line or resource.file
@@ -591,11 +591,11 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
             next if block_given? and yield edge.target
 
             unless source = map[edge.source.ref]
-                raise Puppet::DevError, "Could not find resource %s when converting %s resources" % [edge.source.ref, message]
+                raise Puppet::DevError, "Could not find resource #{edge.source.ref} when converting #{message} resources"
             end
 
             unless target = map[edge.target.ref]
-                raise Puppet::DevError, "Could not find resource %s when converting %s resources" % [edge.target.ref, message]
+                raise Puppet::DevError, "Could not find resource #{edge.target.ref} when converting #{message} resources"
             end
 
             result.add_edge(source, target, edge.label)

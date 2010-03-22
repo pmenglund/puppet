@@ -13,7 +13,7 @@ describe zone do
     parameters = [:create_args, :install_args]
 
     parameters.each do |parameter|
-        it "should have a %s parameter" % parameter do
+        it "should have a #{parameter} parameter" do
             zone.attrclass(parameter).ancestors.should be_include(Puppet::Parameter)
         end
     end

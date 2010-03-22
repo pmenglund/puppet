@@ -11,22 +11,22 @@ class Puppet::Parser::AST
         def evaluate
             # Make sure it's a defined function
             unless @fname
-                raise Puppet::ParseError, "Unknown function %s" % @name
+                raise Puppet::ParseError, "Unknown function #{@name}"
             end
 
             # Now check that it's been used correctly
             case @ftype
             when :rvalue
                 unless Puppet::Parser::Functions.rvalue?(@name)
-                    raise Puppet::ParseError, "Function '%s' does not return a value" % @name
+                    raise Puppet::ParseError, "Function '#{@name}' does not return a value"
                 end
             when :statement
                 if Puppet::Parser::Functions.rvalue?(@name)
                     raise Puppet::ParseError,
-                        "Function '%s' must be the value of a statement" % @name
+                        "Function '#{@name}' must be the value of a statement"
                 end
             else
-                raise Puppet::DevError, "Invalid function type %s" % @ftype.inspect
+                raise Puppet::DevError, "Invalid function type #{@ftype.inspect}"
             end
 
 
@@ -34,7 +34,7 @@ class Puppet::Parser::AST
             # We don't need to evaluate the name, because it's plaintext
             args = @arguments.safeevaluate
 
-            return scope.send("function_" + @name, args)
+            return scope.send("function_#{@name}", args)
         end
 
         def initialize(hash)
