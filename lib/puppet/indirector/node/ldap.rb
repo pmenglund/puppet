@@ -247,8 +247,11 @@ class Puppet::Node::Ldap < Puppet::Indirector::Ldap
             raise Puppet::Error,
                 "Node entry #{entry.dn} specifies more than one parent: #{values.inspect}"
         end
-        return nil if values.empty?
-        return values.shift
+        if values.empty?
+            return nil
+        else
+            return values.shift
+        end
     end
 
     def get_stacked_values_from_entry(entry)

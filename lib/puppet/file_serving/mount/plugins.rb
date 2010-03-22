@@ -17,8 +17,11 @@ class Puppet::FileServing::Mount::Plugins < Puppet::FileServing::Mount
         # We currently only support one kind of search on plugins - return
         # them all.
         paths = request.environment.modules.find_all { |mod| mod.plugins? }.collect { |mod| mod.plugin_directory }
-        return nil if paths.empty?
-        return paths
+        if paths.empty?
+            return nil
+        else
+            return paths
+        end
     end
 
     def valid?

@@ -71,15 +71,14 @@ class Puppet::SSL::CertificateAuthority
     # Do we autosign?  This returns true, false, or a filename.
     def autosign?
         auto = Puppet[:autosign]
-        return false if ['false', false].include?(auto)
-        return true if ['true', true].include?(auto)
+        if ['false', false].include?(auto)
+            return false
+        else
+            return true if ['true', true].include?(auto)
+        end
 
         raise ArgumentError, "The autosign configuration '#{auto}' must be a fully qualified file" unless auto =~ /^\//
-        if FileTest.exist?(auto)
-            return auto
-        else
-            return false
-        end
+        return (FileTest.exist?(auto)) && (auto)
     end
 
     # Create an AuthStore for autosigning.
@@ -204,11 +203,7 @@ class Puppet::SSL::CertificateAuthority
 
     # Print a given host's certificate as text.
     def print(name)
-        if cert = Puppet::SSL::Certificate.find(name)
-            return cert.to_text
-        else
-            return nil
-        end
+        return ((cert = Puppet::SSL::Certificate.find(name)) && (cert.to_text))||nil
     end
 
     # Revoke a given certificate.

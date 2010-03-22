@@ -179,8 +179,11 @@ class Rights
         # then return :dunno so that upper layers have a chance to try another right
         # tailored to the given method
         def allowed?(name, ip, args = {})
-            return :dunno if acl_type == :regex and not @methods.include?(args[:method])
-            return :dunno if acl_type == :regex and @environment.size > 0 and not @environment.include?(args[:environment])
+            if acl_type == :regex and not @methods.include?(args[:method])
+                return :dunno
+            else
+                return :dunno if acl_type == :regex and @environment.size > 0 and not @environment.include?(args[:environment])
+            end
             return :dunno if acl_type == :regex and not @authentication.nil? and args[:authenticated] != @authentication
 
             begin
@@ -258,8 +261,11 @@ class Rights
         end
 
         def ==(name)
-            return self.key == namespace_to_key(name) if acl_type == :name
-            return self.name == name.gsub(/^~\s+/,'')
+            if acl_type == :name
+                return self.key == namespace_to_key(name)
+            else
+                return self.name == name.gsub(/^~\s+/,'')
+            end
         end
 
     end

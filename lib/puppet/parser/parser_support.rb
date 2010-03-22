@@ -392,11 +392,7 @@ class Puppet::Parser::Parser
 
     # See if any of the files have changed.
     def reparse?
-        if file = @files.detect { |name, file| file.changed?  }
-            return file[1].stamp
-        else
-            return false
-        end
+        return (file = @files.detect { |name, file| file.changed?  }) && (file[1].stamp)
     end
 
     def string=(string)

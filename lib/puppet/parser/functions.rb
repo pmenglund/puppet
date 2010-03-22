@@ -69,11 +69,7 @@ module Functions
 
         autoloader.load(name) unless @functions.include? name
 
-        if @functions.include? name
-            return @functions[name][:name]
-        else
-            return false
-        end
+        return (@functions.include? name) && (@functions[name][:name])
     end
 
     def self.functiondocs

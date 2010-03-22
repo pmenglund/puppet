@@ -11,11 +11,7 @@ class Puppet::Util::Metric
 
     # Return a specific value
     def [](name)
-        if value = @values.find { |v| v[0] == name }
-            return value[2]
-        else
-            return nil
-        end
+        return ((value = @values.find { |v| v[0] == name }) && (value[2]))||nil
     end
 
     def basedir

@@ -175,8 +175,7 @@ class Puppet::Resource
 
     # Find our resource.
     def resolve
-        return catalog.resource(to_s) if catalog
-        return nil
+        return ((catalog) && (catalog.resource(to_s)))||nil
     end
 
     def title=(value)
@@ -413,8 +412,11 @@ class Puppet::Resource
     end
 
     def munge_type_name(value)
-        return :main if value == :main
-        return "Class" if value == "" or value.nil? or value.to_s.downcase == "component"
+        if value == :main
+            return :main
+        else
+            return "Class" if value == "" or value.nil? or value.to_s.downcase == "component"
+        end
 
         value.to_s.split("::").collect { |s| s.capitalize }.join("::")
     end

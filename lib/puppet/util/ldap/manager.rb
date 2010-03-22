@@ -103,8 +103,11 @@ class Puppet::Util::Ldap::Manager
 
     # Create our normal search filter.
     def filter
-        return "objectclass=#{objectclasses[0]}" if objectclasses.length == 1
-        return "(&(objectclass=" + objectclasses.join(")(objectclass=") + "))"
+        if objectclasses.length == 1
+            return "objectclass=#{objectclasses[0]}"
+        else
+            return "(&(objectclass=" + objectclasses.join(")(objectclass=") + "))"
+        end
     end
 
     # Find the associated entry for a resource.  Returns a hash, minus
@@ -209,8 +212,11 @@ class Puppet::Util::Ldap::Manager
                 result << entry2provider(entry)
             end
         end
-        return nil if result.empty?
-        return result
+        if result.empty?
+            return nil
+        else
+            return result
+        end
     end
 
     # Update the ldap entry with the desired state.

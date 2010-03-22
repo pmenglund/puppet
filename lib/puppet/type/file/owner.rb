@@ -9,8 +9,11 @@ module Puppet
         @event = :file_changed
 
         def id2name(id)
-            return id.to_s if id.is_a?(Symbol)
-            return nil if id > Puppet[:maximum_uid].to_i
+            if id.is_a?(Symbol)
+                return id.to_s
+            else
+                return nil if id > Puppet[:maximum_uid].to_i
+            end
 
             begin
                 user = Etc.getpwuid(id)
@@ -52,17 +55,7 @@ module Puppet
 
         # Determine if the user is valid, and if so, return the UID
         def validuser?(value)
-            begin
-                number = Integer(value)
-                return number
-            rescue ArgumentError
-                number = nil
-            end
-            if number = uid(value)
-                return number
-            else
-                return false
-            end
+            Integer(value) rescue uid(value) || false
         end
 
         # We want to print names, not numbers

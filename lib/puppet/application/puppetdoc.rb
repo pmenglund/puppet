@@ -58,8 +58,11 @@ Puppet::Application.new(:puppetdoc) do
     end
 
     dispatch do
-        return options[:mode] if [:rdoc, :trac, :markdown].include?(options[:mode])
-        return :other
+        if [:rdoc, :trac, :markdown].include?(options[:mode])
+            return options[:mode]
+        else
+            return :other
+        end
     end
 
     command(:rdoc) do
@@ -128,11 +131,7 @@ Puppet::Application.new(:puppetdoc) do
 
     command(:other) do
         text = ""
-        if options[:references].length > 1
-            with_contents = false
-        else
-            with_contents = true
-        end
+        with_contents = !(options[:references].length > 1)
         exit_code = 0
         options[:references].sort { |a,b| a.to_s <=> b.to_s }.each do |name|
             raise "Could not find reference #{name}" unless section = Puppet::Util::Reference.reference(name)

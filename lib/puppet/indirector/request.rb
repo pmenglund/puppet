@@ -137,8 +137,11 @@ class Puppet::Indirector::Request
     end
 
     def to_s
-        return uri if uri
-        return "/#{indirection_name}/#{key}"
+        if uri
+            return uri
+        else
+            return "/#{indirection_name}/#{key}"
+        end
     end
 
     private

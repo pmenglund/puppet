@@ -45,8 +45,7 @@ class Puppet::SimpleGraph
 
         # Test whether we share an edge with a given vertex.
         def has_edge?(direction, vertex)
-            return true if vertex_adjacencies(direction, vertex).length > 0
-            return false
+            return !!(vertex_adjacencies(direction, vertex).length > 0)
         end
 
         # Create methods for returning the degree and edges.

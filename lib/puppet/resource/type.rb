@@ -20,8 +20,11 @@ class Puppet::Resource::Type
     def child_of?(klass)
         return false unless parent
 
-        return true if klass == parent_type
-        return parent_type.child_of?(klass)
+        if klass == parent_type
+            return true
+        else
+            return parent_type.child_of?(klass)
+        end
     end
 
     # Now evaluate the code associated with this class or definition.
@@ -182,11 +185,13 @@ class Puppet::Resource::Type
     def valid_parameter?(param)
         param = param.to_s
 
-        return true if param == "name"
-        return true if Puppet::Type.metaparam?(param)
+        if param == "name"
+            return true
+        else
+            return true if Puppet::Type.metaparam?(param)
+        end
         return false unless defined?(@arguments)
-        return true if arguments.include?(param)
-        return false
+        return !!(arguments.include?(param))
     end
 
     def set_arguments(arguments)

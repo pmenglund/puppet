@@ -49,8 +49,11 @@ module Puppet::Network::HTTP::API::V1
     end
 
     def pluralize(indirection)
-        return "statuses" if indirection == "status"
-        return indirection + "s"
+        if indirection == "status"
+            return "statuses"
+        else
+            return indirection + "s"
+        end
     end
 
     def plurality(indirection)

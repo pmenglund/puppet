@@ -39,8 +39,11 @@ class Puppet::Parameter::Value
         if regex?
             return true if name =~ value.to_s
         else
-            return true if name == convert(value)
-            return @aliases.include?(convert(value))
+            if name == convert(value)
+                return true
+            else
+                return @aliases.include?(convert(value))
+            end
         end
     end
 

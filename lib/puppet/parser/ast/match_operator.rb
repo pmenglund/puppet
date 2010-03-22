@@ -16,8 +16,11 @@ class Puppet::Parser::AST
         def evaluate
             lval = @lval.safeevaluate
 
-            return @operator == "=~" if rval.evaluate_match(lval)
-            return @operator == "!~"
+            if rval.evaluate_match(lval)
+                return @operator == "=~"
+            else
+                return @operator == "!~"
+            end
         end
 
         def initialize(hash)

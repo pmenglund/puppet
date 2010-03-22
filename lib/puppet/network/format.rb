@@ -106,7 +106,10 @@ class Puppet::Network::Format
 
         method = send(name)
 
-        return klass.respond_to?(method) if type == :class
-        return klass.instance_methods.include?(method)
+        if type == :class
+            return klass.respond_to?(method)
+        else
+            return klass.instance_methods.include?(method)
+        end
     end
 end

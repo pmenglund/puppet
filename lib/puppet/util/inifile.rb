@@ -56,8 +56,11 @@ module Puppet::Util::IniConfig
         # exists, return nil
         def [](key)
             entry = find_entry(key)
-            return nil if entry.nil?
-            return entry[1]
+            if entry.nil?
+                return nil
+            else
+                return entry[1]
+            end
         end
 
         # Format the section as text in the way it should be

@@ -95,8 +95,11 @@ Puppet::Application.new(:puppetd) do
     end
 
     dispatch do
-        return :fingerprint if options[:fingerprint]
-        return :onetime if options[:onetime]
+        if options[:fingerprint]
+            return :fingerprint
+        else
+            return :onetime if options[:onetime]
+        end
         return :main
     end
 

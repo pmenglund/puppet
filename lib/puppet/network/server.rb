@@ -159,7 +159,10 @@ class Puppet::Network::Server
 
     def determine_bind_address
         tmp = Puppet[:bindaddress]
-        return tmp if tmp != ""
-        return server_type.to_s == "webrick" ? "0.0.0.0" : "127.0.0.1"
+        if tmp != ""
+            return tmp
+        else
+            return server_type.to_s == "webrick" ? "0.0.0.0" : "127.0.0.1"
+        end
     end
 end

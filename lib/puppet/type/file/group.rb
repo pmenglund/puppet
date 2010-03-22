@@ -15,8 +15,11 @@ module Puppet
         end
 
         def id2name(id)
-            return id.to_s if id.is_a?(Symbol)
-            return nil if id > Puppet[:maximum_uid].to_i
+            if id.is_a?(Symbol)
+                return id.to_s
+            else
+                return nil if id > Puppet[:maximum_uid].to_i
+            end
             begin
                 group = Etc.getgrgid(id)
             rescue ArgumentError
@@ -79,17 +82,7 @@ module Puppet
 
         # Determine if the group is valid, and if so, return the GID
         def validgroup?(value)
-            begin
-                number = Integer(value)
-                return number
-            rescue ArgumentError
-                number = nil
-            end
-            if number = gid(value)
-                return number
-            else
-                return false
-            end
+            Integer(value) rescue gid(value) || false
         end
 
         # Normal users will only be able to manage certain groups.  Right now,
