@@ -37,9 +37,7 @@ class Formatter
 
     def scrub(text)
         # For text with no carriage returns, there's nothing to do.
-        if text !~ /\n/
-            return text
-        end
+        return text if text !~ /\n/
         indent = nil
 
         # If we can match an indentation, then just remove that same level of
@@ -126,9 +124,7 @@ class TypeDoc
         docs = {}
         type.allattrs.each do |name|
             kind = type.attrtype(name)
-            if attrs.include?(kind) && name != :provider
-                docs[name] = type.attrclass(name).doc
-            end
+            docs[name] = type.attrclass(name).doc if attrs.include?(kind) && name != :provider
         end
 
         docs.sort { |a,b|
@@ -149,9 +145,7 @@ class TypeDoc
         params = []
         type.allattrs.each do |name|
             kind = type.attrtype(name)
-            if attrs.include?(kind) && name != :provider
-                params << name.to_s
-            end
+            params << name.to_s if attrs.include?(kind) && name != :provider
         end
         puts @format.wrap(params.sort.join(", "), :indent => 4)
     end
@@ -202,12 +196,8 @@ Puppet::Application.new(:pi,"#{$0} [options] [type]") do
 
     setup do
         options[:types] = ARGV.dup
-        unless options[:list] || options[:types].size > 0
-            handle_help(nil)
-        end
-        if options[:list] && options[:types].size > 0
-            $stderr.puts "Warning: ignoring types when listing all types"
-        end
+        handle_help(nil) unless options[:list] || options[:types].size > 0
+        $stderr.puts "Warning: ignoring types when listing all types" if options[:list] && options[:types].size > 0
     end
 
 end

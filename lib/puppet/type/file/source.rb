@@ -72,9 +72,7 @@ module Puppet
                     self.fail "Could not understand source #{source}: #{detail}"
                 end
 
-                unless uri.scheme.nil? or %w{file puppet}.include?(uri.scheme)
-                    self.fail "Cannot use URLs of type '#{uri.scheme}' as source for fileserving"
-                end
+                self.fail "Cannot use URLs of type '#{uri.scheme}' as source for fileserving" unless uri.scheme.nil? or %w{file puppet}.include?(uri.scheme)
             end
         end
 

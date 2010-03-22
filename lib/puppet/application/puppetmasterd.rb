@@ -23,9 +23,7 @@ Puppet::Application.new(:puppetmasterd) do
             Puppet::Util::Log.newdestination(arg)
             options[:setdest] = true
         rescue => detail
-            if Puppet[:debug]
-                puts detail.backtrace
-            end
+            puts detail.backtrace if Puppet[:debug]
             $stderr.puts detail.to_s
         end
     end
@@ -84,18 +82,14 @@ Puppet::Application.new(:puppetmasterd) do
 
         xmlrpc_handlers = [:Status, :FileServer, :Master, :Report, :Filebucket]
 
-        if Puppet[:ca]
-            xmlrpc_handlers << :CA
-        end
+        xmlrpc_handlers << :CA if Puppet[:ca]
 
         # Make sure we've got a localhost ssl cert
         Puppet::SSL::Host.localhost
 
         # And now configure our server to *only* hit the CA for data, because that's
         # all it will have write access to.
-        if Puppet::SSL::CertificateAuthority.ca?
-            Puppet::SSL::Host.ca_location = :only
-        end
+        Puppet::SSL::Host.ca_location = :only if Puppet::SSL::CertificateAuthority.ca?
 
         if Process.uid == 0
             begin
@@ -139,13 +133,9 @@ Puppet::Application.new(:puppetmasterd) do
             end
         end
 
-        unless options[:setdest]
-            Puppet::Util::Log.newdestination(:syslog)
-        end
+        Puppet::Util::Log.newdestination(:syslog) unless options[:setdest]
 
-        if Puppet.settings.print_configs?
-            exit(Puppet.settings.print_configs ? 0 : 1)
-        end
+        exit(Puppet.settings.print_configs ? 0 : 1) if Puppet.settings.print_configs?
 
         Puppet.settings.use :main, :puppetmasterd, :ssl
 

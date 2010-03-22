@@ -10,16 +10,12 @@ class Puppet::Parser::AST
 
         def evaluate
             # Make sure it's a defined function
-            unless @fname
-                raise Puppet::ParseError, "Unknown function #{@name}"
-            end
+            raise Puppet::ParseError, "Unknown function #{@name}" unless @fname
 
             # Now check that it's been used correctly
             case @ftype
             when :rvalue
-                unless Puppet::Parser::Functions.rvalue?(@name)
-                    raise Puppet::ParseError, "Function '#{@name}' does not return a value"
-                end
+                raise Puppet::ParseError, "Function '#{@name}' does not return a value" unless Puppet::Parser::Functions.rvalue?(@name)
             when :statement
                 if Puppet::Parser::Functions.rvalue?(@name)
                     raise Puppet::ParseError,

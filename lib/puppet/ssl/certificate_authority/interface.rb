@@ -15,9 +15,7 @@ class Puppet::SSL::CertificateAuthority::Interface
         end
 
         begin
-            if respond_to?(method)
-                return send(method, ca)
-            end
+            return send(method, ca) if respond_to?(method)
 
             (subjects == :all ? ca.list : subjects).each do |host|
                 ca.send(method, host)
@@ -120,9 +118,7 @@ class Puppet::SSL::CertificateAuthority::Interface
             raise ArgumentError, "Subjects must be an array or :all; not #{value}"
         end
 
-        if value.is_a?(Array) and value.empty?
-            value = nil
-        end
+        value = nil if value.is_a?(Array) and value.empty?
 
         @subjects = value
     end

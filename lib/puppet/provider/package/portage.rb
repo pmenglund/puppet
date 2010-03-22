@@ -19,9 +19,7 @@ Puppet::Type.type(:package).provide :portage, :parent => Puppet::Provider::Packa
         search_format = "<category> <name> [<installedversions:LASTVERSION>] [<bestversion:LASTVERSION>] <homepage> <description>\n"
 
         begin
-            if !FileUtils.uptodate?("/var/cache/eix", %w{/usr/bin/eix /usr/portage/metadata/timestamp})
-                update_eix
-            end
+            update_eix if !FileUtils.uptodate?("/var/cache/eix", %w{/usr/bin/eix /usr/portage/metadata/timestamp})
 
             search_output = nil
             Puppet::Util::Execution.withenv :LASTVERSION => version_format do
@@ -82,9 +80,7 @@ Puppet::Type.type(:package).provide :portage, :parent => Puppet::Provider::Packa
         search_value = package_name
 
         begin
-            if !FileUtils.uptodate?("/var/cache/eix", %w{/usr/bin/eix /usr/portage/metadata/timestamp})
-                update_eix
-            end
+            update_eix if !FileUtils.uptodate?("/var/cache/eix", %w{/usr/bin/eix /usr/portage/metadata/timestamp})
 
             search_output = nil
             Puppet::Util::Execution.withenv :LASTVERSION => version_format do

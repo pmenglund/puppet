@@ -391,9 +391,7 @@ class TestType < Test::Unit::TestCase
             end
             res = type.create(hash)
             config.add_resource res
-            if parent
-                config.add_edge(parent, res)
-            end
+            config.add_edge(parent, res) if parent
             res
         end
 
@@ -437,9 +435,7 @@ class TestType < Test::Unit::TestCase
 
         {"maint" => true, nil => false, :fail => :fail}.each do |name, should|
             args = {:name => tempfile, :ensure => :file}
-            if name
-                args[:schedule] = name
-            end
+            args[:schedule] = name if name
             resource = Puppet::Type.type(:file).new(args)
             catalog.add_resource(resource)
 
@@ -457,9 +453,7 @@ class TestType < Test::Unit::TestCase
 
                 assert(sched, "Did not find schedule #{sched.inspect}")
 
-                if should
-                    assert_equal(name, sched.name, "did not get correct schedule back")
-                end
+                assert_equal(name, sched.name, "did not get correct schedule back") if should
             end
             catalog.remove_resource(resource)
         end

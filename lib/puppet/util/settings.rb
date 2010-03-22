@@ -74,9 +74,7 @@ class Puppet::Util::Settings
 
         # Don't clear the 'used' in this case, since it's a config file reparse,
         # and we want to retain this info.
-        unless exceptcli
-            @used = []
-        end
+        @used = [] unless exceptcli
 
         @cache.clear
 
@@ -287,9 +285,7 @@ class Puppet::Util::Settings
     # Figure out our name.
     def name
         unless @name
-            unless @config[:name]
-                return nil
-            end
+            return nil unless @config[:name]
             searchpath.each do |source|
                 next if source == :name
                 @sync.synchronize do
@@ -297,9 +293,7 @@ class Puppet::Util::Settings
                 end
                 break if @name
             end
-            unless @name
-                @name = convert(@config[:name].default).intern
-            end
+            @name = convert(@config[:name].default).intern unless @name
         end
         @name
     end
@@ -386,9 +380,7 @@ class Puppet::Util::Settings
     # a default or a value, so we can't actually assign it.
     def newsetting(hash)
         klass = nil
-        if hash[:section]
-            hash[:section] = hash[:section].to_sym
-        end
+        hash[:section] = hash[:section].to_sym if hash[:section]
         if type = hash[:type]
             unless klass = {:setting => Setting, :file => FileSetting, :boolean => BooleanSetting}[type]
                 raise ArgumentError, "Invalid setting type '#{type}'"
@@ -466,9 +458,7 @@ class Puppet::Util::Settings
         self.each { |name, obj|
             section = obj.section || "puppet"
             sections[section] ||= []
-            unless sectionlist.include?(section)
-                sectionlist << section
-            end
+            sectionlist << section unless sectionlist.include?(section)
             sections[section] << obj
         }
 
@@ -491,12 +481,8 @@ class Puppet::Util::Settings
             raise ArgumentError,
                 "Attempt to assign a value to unknown configuration parameter #{param.inspect}"
         end
-        if setting.respond_to?(:munge)
-            value = setting.munge(value)
-        end
-        if setting.respond_to?(:handle)
-            setting.handle(value)
-        end
+        value = setting.munge(value) if setting.respond_to?(:munge)
+        setting.handle(value) if setting.respond_to?(:handle)
         # Reset the name, so it's looked up again.
         if param == :name
             @name = nil
@@ -537,9 +523,7 @@ class Puppet::Util::Settings
             name = name.to_sym
             hash[:name] = name
             hash[:section] = section
-            if @config.include?(name)
-                raise ArgumentError, "Parameter #{name} is already defined"
-            end
+            raise ArgumentError, "Parameter #{name} is already defined" if @config.include?(name)
             tryconfig = newsetting(hash)
             if short = tryconfig.short
                 if other = @shortnames[short]
@@ -671,9 +655,7 @@ if @config.include?(:name)
                 # Look for the value.  We have to test the hash for whether
                 # it exists, because the value might be false.
                 @sync.synchronize do
-                    if @values[source].include?(param)
-                        throw :foundval, @values[source][param]
-                    end
+                    throw :foundval, @values[source][param] if @values[source].include?(param)
                 end
             end
             throw :foundval, nil
@@ -733,9 +715,7 @@ if @config.include?(:name)
 
         Puppet::Util::SUIDManager.asuser(*chown) do
             mode = obj.mode || 0640
-            if args.empty?
-                args << "w"
-            end
+            args << "w" if args.empty?
 
             args << mode
 
@@ -752,9 +732,7 @@ if @config.include?(:name)
         file = value(get_config_file_default(default).name)
         tmpfile = file + ".tmp"
         sync = Sync.new
-        unless FileTest.directory?(File.dirname(tmpfile))
-            raise Puppet::DevError, "Cannot create #{file}; directory #{File.dirname(file)} does not exist"
-        end
+        raise Puppet::DevError, "Cannot create #{file}; directory #{File.dirname(file)} does not exist" unless FileTest.directory?(File.dirname(tmpfile))
 
         sync.synchronize(Sync::EX) do
             File.open(file, ::File::CREAT|::File::RDWR, 0600) do |rf|
@@ -790,9 +768,7 @@ if @config.include?(:name)
             raise ArgumentError, "Unknown default #{default}"
         end
 
-        unless obj.is_a? FileSetting
-            raise ArgumentError, "Default #{default} is not a file"
-        end
+        raise ArgumentError, "Default #{default} is not a file" unless obj.is_a? FileSetting
 
         return obj
     end
@@ -808,9 +784,7 @@ if @config.include?(:name)
 
             if user = setting.owner and user != "root" and catalog.resource(:user, user).nil?
                 resource = Puppet::Resource.new(:user, user, :parameters => {:ensure => :present})
-                if self[:group]
-                    resource[:gid] = self[:group]
-                end
+                resource[:gid] = self[:group] if self[:group]
                 catalog.add_resource resource
             end
             if group = setting.group and ! %w{root wheel}.include?(group) and catalog.resource(:group, group).nil?
@@ -843,9 +817,7 @@ if @config.include?(:name)
                 if str =~ /^\s*(\w+)\s*=\s*([\w\d]+)\s*$/
                     param, value = $1.intern, $2
                     result[param] = value
-                    unless [:owner, :mode, :group].include?(param)
-                        raise ArgumentError, "Invalid file option '#{param}'"
-                    end
+                    raise ArgumentError, "Invalid file option '#{param}'" unless [:owner, :mode, :group].include?(param)
 
                     if param == :mode and value !~ /^\d+$/
                         raise ArgumentError, "File modes must be numbers"

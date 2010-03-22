@@ -166,9 +166,7 @@ class Puppet::Resource
         tag(self.type)
         tag(self.title) if valid_tag?(self.title)
 
-        if strict? and ! resource_type
-            raise ArgumentError, "Invalid resource type #{type}"
-        end
+        raise ArgumentError, "Invalid resource type #{type}" if strict? and ! resource_type
     end
 
     def ref
@@ -198,9 +196,7 @@ class Puppet::Resource
                 value = munge_type_name(resource_type.name)
             end
 
-            if klass.respond_to?(:canonicalize_ref)
-                value = klass.canonicalize_ref(value)
-            end
+            value = klass.canonicalize_ref(value) if klass.respond_to?(:canonicalize_ref)
         elsif type == "Class"
             value = munge_type_name(value)
         end
@@ -220,9 +216,7 @@ class Puppet::Resource
     # Produce a simple hash of our parameters.
     def to_hash
         result = @parameters.dup
-        unless result.include?(namevar)
-            result[namevar] = title
-        end
+        result[namevar] = title unless result.include?(namevar)
         result
     end
 
@@ -284,9 +278,7 @@ class Puppet::Resource
                 v = v.to_trans_ref
             elsif v.is_a?(Array)
                 v = v.collect { |av|
-                    if av.is_a?(Puppet::Resource)
-                        av = av.to_trans_ref
-                    end
+                    av = av.to_trans_ref if av.is_a?(Puppet::Resource)
                     av
                 }
             end
@@ -475,9 +467,7 @@ class Puppet::Resource
         if klass = find_hostclass(title)
             result = klass.name
 
-            if klass.respond_to?(:canonicalize_ref)
-                result = klass.canonicalize_ref(result)
-            end
+            result = klass.canonicalize_ref(result) if klass.respond_to?(:canonicalize_ref)
         end
         return munge_type_name(result || title)
     end

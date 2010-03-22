@@ -63,9 +63,7 @@ Puppet::Application.new(:filebucket) do
         # Now parse the config
         Puppet.parse_config
 
-        if Puppet.settings.print_configs?
-                exit(Puppet.settings.print_configs ? 0 : 1)
-        end
+            exit(Puppet.settings.print_configs ? 0 : 1) if Puppet.settings.print_configs?
 
         begin
             if options[:local] or options[:bucket]
@@ -77,9 +75,7 @@ Puppet::Application.new(:filebucket) do
             end
         rescue => detail
             $stderr.puts detail
-            if Puppet[:trace]
-                puts detail.backtrace
-            end
+            puts detail.backtrace if Puppet[:trace]
             exit(1)
         end
     end

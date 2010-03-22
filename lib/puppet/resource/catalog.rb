@@ -69,9 +69,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
     # * Add any aliases that make sense for the resource (e.g., name != title)
     def add_resource(*resources)
         resources.each do |resource|
-            unless resource.respond_to?(:ref)
-                raise ArgumentError, "Can only add objects that respond to :ref, not instances of #{resource.class}"
-            end
+            raise ArgumentError, "Can only add objects that respond to :ref, not instances of #{resource.class}" unless resource.respond_to?(:ref)
         end.each { |resource| fail_unless_unique(resource) }.each do |resource|
             ref = resource.ref
 
@@ -88,9 +86,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
 
             add_vertex(resource)
 
-            if @relationship_graph
-                @relationship_graph.add_vertex(resource)
-            end
+            @relationship_graph.add_vertex(resource) if @relationship_graph
 
             yield(resource) if block_given?
         end
@@ -203,9 +199,7 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
 
     # Make sure we support the requested extraction format.
     def extraction_format=(value)
-        unless respond_to?("extract_to_#{value}")
-            raise ArgumentError, "Invalid extraction format #{value}"
-        end
+        raise ArgumentError, "Invalid extraction format #{value}" unless respond_to?("extract_to_#{value}")
         @extraction_format = value
     end
 
@@ -243,16 +237,12 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
             end
             bucket = tmp || bucket
             if child = target.to_trans
-                unless bucket
-                    raise "No bucket created for #{source}"
-                end
+                raise "No bucket created for #{source}" unless bucket
                 bucket.push child
 
                 # It's important that we keep a reference to any TransBuckets we've created, so
                 # we don't create multiple buckets for children.
-                unless target.builtin?
-                    buckets[target.to_s] = child
-                end
+                buckets[target.to_s] = child unless target.builtin?
             end
         end
 
@@ -528,13 +518,9 @@ class Puppet::Resource::Catalog < Puppet::SimpleGraph
         # we should throw an exception.
         msg = "Duplicate definition: #{resource.ref} is already defined"
 
-        if existing_resource.file and existing_resource.line
-            msg << " in file #{existing_resource.file} at line #{existing_resource.line}"
-        end
+        msg << " in file #{existing_resource.file} at line #{existing_resource.line}" if existing_resource.file and existing_resource.line
 
-        if resource.line or resource.file
-            msg << "; cannot redefine"
-        end
+        msg << "; cannot redefine" if resource.line or resource.file
 
         raise DuplicateResourceError.new(msg)
     end

@@ -87,9 +87,7 @@ Puppet::Application.new(:puppetdoc) do
                 Puppet::Util::RDoc.rdoc(options[:outputdir], files)
             end
         rescue => detail
-            if Puppet[:trace]
-                puts detail.backtrace
-            end
+            puts detail.backtrace if Puppet[:trace]
             $stderr.puts "Could not generate documentation: #{detail}"
             exit_code = 1
         end
@@ -99,9 +97,7 @@ Puppet::Application.new(:puppetdoc) do
     command(:trac) do
         options[:references].each do |name|
             section = Puppet::Util::Reference.reference(name) or raise "Could not find section #{name}"
-            unless options[:mode] == :pdf
-                section.trac
-            end
+            section.trac unless options[:mode] == :pdf
         end
     end
 
@@ -152,9 +148,7 @@ Puppet::Application.new(:puppetdoc) do
             end
         end
 
-        unless with_contents # We've only got one reference
-            text += Puppet::Util::Reference.footer
-        end
+        text += Puppet::Util::Reference.footer unless with_contents # We've only got one reference
 
         # Replace the trac links, since they're invalid everywhere else
         text.gsub!(/`\w+\s+([^`]+)`:trac:/) { |m| $1 }
@@ -190,9 +184,7 @@ Puppet::Application.new(:puppetdoc) do
             end
         end
 
-        if options[:references].empty?
-            options[:references] << :type
-        end
+        options[:references] << :type if options[:references].empty?
     end
 
     def setup_rdoc(dummy_argument=:work_arround_for_ruby_GC_bug)

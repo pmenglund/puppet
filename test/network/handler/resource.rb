@@ -183,9 +183,7 @@ class TestResourceServer < Test::Unit::TestCase
                 count += 1
             end
 
-            if described.empty?
-                Puppet.notice "Got no example objects for #{type.name}"
-            end
+            Puppet.notice "Got no example objects for #{type.name}" if described.empty?
 
             # We separate these, in case the list operation creates objects
             verify_described(type, described)

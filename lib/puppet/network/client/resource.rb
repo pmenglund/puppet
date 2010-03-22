@@ -15,9 +15,7 @@ class Puppet::Network::Client::Resource < Puppet::Network::Client
             raise Puppet::DevError, "You must pass a transportable object, not a #{bucket.class}"
         end
 
-        unless @local
-            bucket = Base64.encode64(YAML::dump(bucket))
-        end
+        bucket = Base64.encode64(YAML::dump(bucket)) unless @local
         report = @driver.apply(bucket, "yaml")
 
         return report

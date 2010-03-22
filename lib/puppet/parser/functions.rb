@@ -30,15 +30,11 @@ module Functions
     def self.newfunction(name, options = {}, &block)
         name = symbolize(name)
 
-        if @functions.include? name
-            raise Puppet::DevError, "Function #{name} already defined"
-        end
+        raise Puppet::DevError, "Function #{name} already defined" if @functions.include? name
 
         # We want to use a separate, hidden module, because we don't want
         # people to be able to call them directly.
-        unless defined? FCollection
-            eval("module FCollection; end")
-        end
+        eval("module FCollection; end") unless defined? FCollection
 
         ftype = options[:type] || :statement
 
@@ -52,18 +48,14 @@ module Functions
         # Someday we'll support specifying an arity, but for now, nope
         #@functions[name] = {:arity => arity, :type => ftype}
         @functions[name] = {:type => ftype, :name => fname}
-        if options[:doc]
-            @functions[name][:doc] = options[:doc]
-        end
+        @functions[name][:doc] = options[:doc] if options[:doc]
     end
 
     # Remove a function added by newfunction
     def self.rmfunction(name)
         name = symbolize(name)
 
-        unless @functions.include? name
-            raise Puppet::DevError, "Function #{name} is not defined"
-        end
+        raise Puppet::DevError, "Function #{name} is not defined" unless @functions.include? name
 
         @functions.delete(name)
 
@@ -75,9 +67,7 @@ module Functions
     def self.function(name)
         name = symbolize(name)
 
-        unless @functions.include? name
-            autoloader.load(name)
-        end
+        autoloader.load(name) unless @functions.include? name
 
         if @functions.include? name
             return @functions[name][:name]

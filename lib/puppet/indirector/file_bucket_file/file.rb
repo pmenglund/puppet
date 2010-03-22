@@ -31,9 +31,7 @@ module Puppet::FileBucketFile
             model.new( nil, :checksum => checksum ) do |bucket_file|
                 filename = contents_path_for bucket_file
 
-                if ! ::File.exist? filename
-                    return nil
-                end
+                return nil if ! ::File.exist? filename
 
                 begin
                     contents = ::File.read filename

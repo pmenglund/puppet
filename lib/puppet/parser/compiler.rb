@@ -121,9 +121,7 @@ class Puppet::Parser::Compiler
     # creates resource objects that point back to the classes, and then the
     # resources are themselves evaluated later in the process.
     def evaluate_classes(classes, scope, lazy_evaluate = true)
-        unless scope.source
-            raise Puppet::DevError, "No source for scope passed to evaluate_classes"
-        end
+        raise Puppet::DevError, "No source for scope passed to evaluate_classes" unless scope.source
         found = []
         classes.each do |name|
             # If we can find the class, then make a resource that will evaluate it.
@@ -328,9 +326,7 @@ class Puppet::Parser::Compiler
             end
         end
 
-        unless remaining.empty?
-            raise Puppet::ParseError, "Failed to realize virtual resources #{remaining.join(', ')}"
-        end
+        raise Puppet::ParseError, "Failed to realize virtual resources #{remaining.join(', ')}" unless remaining.empty?
     end
 
     # Make sure all of our resources and such have done any last work

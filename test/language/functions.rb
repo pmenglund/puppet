@@ -494,7 +494,7 @@ class TestLangFunctions < Test::Unit::TestCase
         sh = %x{which sh}
         File.open(command, "w") do |f|
             f.puts %{#!#{sh}
-            if [ -n "$1" ]; then
+            if [ -n "$1" ];
                 echo "yay-$1"
             else
                 echo yay

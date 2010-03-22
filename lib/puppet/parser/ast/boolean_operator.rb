@@ -24,9 +24,7 @@ class Puppet::Parser::AST
         def initialize(hash)
             super
 
-            unless %w{and or}.include?(@operator)
-                raise ArgumentError, "Invalid boolean operator #{@operator}"
-            end
+            raise ArgumentError, "Invalid boolean operator #{@operator}" unless %w{and or}.include?(@operator)
         end
     end
 end

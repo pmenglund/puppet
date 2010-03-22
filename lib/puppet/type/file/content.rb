@@ -70,9 +70,7 @@ module Puppet
         # If content was specified, return that; else try to return the source content;
         # else, return nil.
         def actual_content
-            if defined?(@actual_content) and @actual_content
-                return @actual_content
-            end
+            return @actual_content if defined?(@actual_content) and @actual_content
 
             if s = resource.parameter(:source)
                 return s.content
@@ -107,9 +105,7 @@ module Puppet
                 return true
             end
 
-            if ! result and Puppet[:show_diff]
-                string_file_diff(@resource[:path], actual_content)
-            end
+            string_file_diff(@resource[:path], actual_content) if ! result and Puppet[:show_diff]
             return result
         end
 

@@ -50,9 +50,7 @@ Puppet::Application.new(:ralsh) do
             end
         end
 
-        if options[:edit] and @host
-            raise "You cannot edit a remote host"
-        end
+        raise "You cannot edit a remote host" if options[:edit] and @host
 
         properties = typeobj.properties.collect { |s| s.name }
 
@@ -64,9 +62,7 @@ Puppet::Application.new(:ralsh) do
                     trans.delete(param)
                 end
 
-                unless properties.include?(param) or @extra_params.include?(param)
-                    trans.delete(param)
-                end
+                trans.delete(param) unless properties.include?(param) or @extra_params.include?(param)
             end
             trans.to_manifest
         }

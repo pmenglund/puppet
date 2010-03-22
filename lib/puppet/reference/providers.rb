@@ -8,9 +8,7 @@ providers = Puppet::Util::Reference.newreference :providers, :title => "Provider
     end
     types.sort! { |a,b| a.name.to_s <=> b.name.to_s }
 
-    unless ARGV.empty?
-        types.reject! { |type| ! ARGV.include?(type.name.to_s) }
-    end
+    types.reject! { |type| ! ARGV.include?(type.name.to_s) } unless ARGV.empty?
 
     ret = "Details about this host:\n\n"
 

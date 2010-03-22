@@ -94,9 +94,7 @@ class Puppet::Resource::Type
         end
 
         array_class = Puppet::Parser::AST::ASTArray
-        unless self.code.is_a?(array_class)
-            self.code = array_class.new(:children => [self.code])
-        end
+        self.code = array_class.new(:children => [self.code]) unless self.code.is_a?(array_class)
 
         if other.code.is_a?(array_class)
             code.children += other.code.children
@@ -113,9 +111,7 @@ class Puppet::Resource::Type
         resource_type = type == :hostclass ? :class : :node
 
         # Make sure our parent class has been evaluated, if we have one.
-        if parent and ! scope.catalog.resource(resource_type, parent)
-            parent_type.mk_plain_resource(scope)
-        end
+        parent_type.mk_plain_resource(scope) if parent and ! scope.catalog.resource(resource_type, parent)
 
         # Do nothing if the resource already exists; this makes sure we don't
         # get multiple copies of the class resource, which helps provide the
@@ -142,9 +138,7 @@ class Puppet::Resource::Type
     def parent_type
         return nil unless parent
 
-        unless @parent_type ||= resource_type_collection.send(type, parent)
-            fail Puppet::ParseError, "Could not find parent resource type '#{parent}'"
-        end
+        fail Puppet::ParseError, "Could not find parent resource type '#{parent}'" unless @parent_type ||= resource_type_collection.send(type, parent)
 
         @parent_type
     end

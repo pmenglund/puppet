@@ -13,9 +13,7 @@ class Puppet::Parser::AST
         # evaluate ourselves, and match
         def evaluate_match(value, options = {})
             obj = self.safeevaluate
-            if ! options[:sensitive] && obj.respond_to?(:downcase)
-                obj = obj.downcase
-            end
+            obj = obj.downcase if ! options[:sensitive] && obj.respond_to?(:downcase)
             value = value.downcase if not options[:sensitive] and value.respond_to?(:downcase)
             # "" == undef for case/selector/if
             (obj == "" and value == :undef) or obj == value
@@ -162,9 +160,7 @@ class Puppet::Parser::AST
         def evaluate(scope)
             object = evaluate_container(scope)
 
-            unless object.is_a?(Hash) or object.is_a?(Array)
-                raise Puppet::ParseError, "#{variable} is not an hash or array when accessing it with #{accesskey}"
-            end
+            raise Puppet::ParseError, "#{variable} is not an hash or array when accessing it with #{accesskey}" unless object.is_a?(Hash) or object.is_a?(Array)
 
             return object[evaluate_key(scope)]
         end

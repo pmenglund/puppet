@@ -112,9 +112,7 @@ class Puppet::Parser::Parser
         end
         except = Puppet::ParseError.new(message)
         except.line = @lexer.line
-        if @lexer.file
-            except.file = @lexer.file
-        end
+        except.file = @lexer.file if @lexer.file
 
         raise except
     end
@@ -128,9 +126,7 @@ class Puppet::Parser::Parser
             unless file =~ /\.pp$/
                 file = file + ".pp"
             end
-            unless FileTest.exist?(file)
-                raise Puppet::Error, "Could not find file #{file}"
-            end
+            raise Puppet::Error, "Could not find file #{file}" unless FileTest.exist?(file)
         end
         raise Puppet::AlreadyImportedError, "Import loop detected" if known_resource_types.watching_file?(file)
 
@@ -181,9 +177,7 @@ class Puppet::Parser::Parser
 
     # Import our files.
     def import(file)
-        if Puppet[:ignoreimport]
-            return AST::ASTArray.new(:children => [])
-        end
+        return AST::ASTArray.new(:children => []) if Puppet[:ignoreimport]
         # use a path relative to the file doing the importing
         if @lexer.file
             dir = @lexer.file.sub(%r{[^/]+$},'').sub(/\/$/, '')
@@ -345,9 +339,7 @@ class Puppet::Parser::Parser
 
         except = Puppet::ParseError.new(error)
         except.line = @lexer.line
-        if @lexer.file
-            except.file = @lexer.file
-        end
+        except.file = @lexer.file if @lexer.file
 
         raise except
     end
@@ -355,9 +347,7 @@ class Puppet::Parser::Parser
     # how should I do error handling here?
     def parse(string = nil)
         return parse_ruby_file if self.file =~ /\.rb$/
-        if string
-            self.string = string
-        end
+        self.string = string if string
         begin
             @yydebug = false
             main = yyparse(@lexer,:scan)

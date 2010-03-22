@@ -18,9 +18,7 @@ module PuppetTest
         # and thus whether this test is considered not runnable.
         def runnable?
             @messages ||= []
-            if superclass.respond_to?(:runnable?) and ! superclass.runnable?
-                return false
-            end
+            return false if superclass.respond_to?(:runnable?) and ! superclass.runnable?
             return false unless @messages.empty?
             return true unless defined? @confines
             @confines.find_all do |message, result|

@@ -17,9 +17,7 @@ class Puppet::Node
     attr_reader :time, :parameters
 
     def initialize(name, options = {})
-        unless name
-            raise ArgumentError, "Node names cannot be nil"
-        end
+        raise ArgumentError, "Node names cannot be nil" unless name
         @name = name
 
         if classes = options[:classes]
@@ -65,15 +63,11 @@ class Puppet::Node
     # Calculate the list of names we might use for looking
     # up our node.  This is only used for AST nodes.
     def names
-        if Puppet.settings[:strict_hostname_checking]
-            return [name]
-        end
+        return [name] if Puppet.settings[:strict_hostname_checking]
 
         names = []
 
-        if name.include?(".")
-            names += split_name(name)
-        end
+        names += split_name(name) if name.include?(".")
 
         # First, get the fqdn
         unless fqdn = parameters["fqdn"]
@@ -86,9 +80,7 @@ class Puppet::Node
 
         # Now that we (might) have the fqdn, add each piece to the name
         # list to search, in order of longest to shortest.
-        if fqdn
-            names += split_name(fqdn)
-        end
+        names += split_name(fqdn) if fqdn
 
         # And make sure the node name is first, since that's the most
         # likely usage.

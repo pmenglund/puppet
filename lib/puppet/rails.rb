@@ -33,9 +33,7 @@ module Puppet::Rails
             Puppet.info "Connecting to #{args[:adapter]} database: #{args[:database]}"
             ActiveRecord::Base.establish_connection(args)
         rescue => detail
-            if Puppet[:trace]
-                puts detail.backtrace
-            end
+            puts detail.backtrace if Puppet[:trace]
             raise Puppet::Error, "Could not connect to database: #{detail}"
         end
     end
@@ -77,9 +75,7 @@ module Puppet::Rails
     # Set up our database connection.  It'd be nice to have a "use" system
     # that could make callbacks.
     def self.init
-        unless Puppet.features.rails?
-            raise Puppet::DevError, "No activerecord, cannot init Puppet::Rails"
-        end
+        raise Puppet::DevError, "No activerecord, cannot init Puppet::Rails" unless Puppet.features.rails?
 
         connect()
 
@@ -88,9 +84,7 @@ module Puppet::Rails
             Puppet::Rails::Schema.init
         end
 
-        if Puppet[:dbmigrate]
-            migrate()
-        end
+        migrate() if Puppet[:dbmigrate]
     end
 
     # Migrate to the latest db schema.
@@ -104,40 +98,30 @@ module Puppet::Rails
             end
         }
 
-        unless dbdir
-            raise Puppet::Error, "Could not find Puppet::Rails database dir"
-        end
+        raise Puppet::Error, "Could not find Puppet::Rails database dir" unless dbdir
 
-        unless ActiveRecord::Base.connection.tables.include?("resources")
-            raise Puppet::Error, "Database has problems, can't migrate."
-        end
+        raise Puppet::Error, "Database has problems, can't migrate." unless ActiveRecord::Base.connection.tables.include?("resources")
 
         Puppet.notice "Migrating"
 
         begin
             ActiveRecord::Migrator.migrate(dbdir)
         rescue => detail
-            if Puppet[:trace]
-                puts detail.backtrace
-            end
+            puts detail.backtrace if Puppet[:trace]
             raise Puppet::Error, "Could not migrate database: #{detail}"
         end
     end
 
     # Tear down the database.  Mostly only used during testing.
     def self.teardown
-        unless Puppet.features.rails?
-            raise Puppet::DevError, "No activerecord, cannot init Puppet::Rails"
-        end
+        raise Puppet::DevError, "No activerecord, cannot init Puppet::Rails" unless Puppet.features.rails?
 
         Puppet.settings.use(:puppetmasterd, :rails)
 
         begin
             ActiveRecord::Base.establish_connection(database_arguments())
         rescue => detail
-            if Puppet[:trace]
-                puts detail.backtrace
-            end
+            puts detail.backtrace if Puppet[:trace]
             raise Puppet::Error, "Could not connect to database: #{detail}"
         end
 
@@ -147,7 +131,5 @@ module Puppet::Rails
     end
 end
 
-if Puppet.features.rails?
-    require 'puppet/rails/host'
-end
+require 'puppet/rails/host' if Puppet.features.rails?
 

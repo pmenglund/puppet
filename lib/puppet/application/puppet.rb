@@ -51,9 +51,7 @@ Puppet::Application.new(:puppet) do
 
         begin
             catalog = Puppet::Resource::Catalog.convert_from(Puppet::Resource::Catalog.default_format,text)
-            unless catalog.is_a?(Puppet::Resource::Catalog)
-                catalog = Puppet::Resource::Catalog.pson_create(catalog)
-            end
+            catalog = Puppet::Resource::Catalog.pson_create(catalog) unless catalog.is_a?(Puppet::Resource::Catalog)
         rescue => detail
             raise Puppet::Error, "Could not deserialize catalog from pson: #{detail}"
         end
@@ -136,7 +134,7 @@ Puppet::Application.new(:puppet) do
             configurer.execute_postrun_command
 
             status = 0
-            if not Puppet[:noop] and options[:detailed_exitcodes] then
+            if not Puppet[:noop] and options[:detailed_exitcodes]
                 transaction.generate_report
                 exit(transaction.report.exit_status)
             else
@@ -154,18 +152,12 @@ Puppet::Application.new(:puppet) do
     end
 
     setup do
-        if Puppet.settings.print_configs?
-            exit(Puppet.settings.print_configs ? 0 : 1)
-        end
+        exit(Puppet.settings.print_configs ? 0 : 1) if Puppet.settings.print_configs?
 
         # If noop is set, then also enable diffs
-        if Puppet[:noop]
-            Puppet[:show_diff] = true
-        end
+        Puppet[:show_diff] = true if Puppet[:noop]
 
-        unless options[:logset]
-            Puppet::Util::Log.newdestination(:console)
-        end
+        Puppet::Util::Log.newdestination(:console) unless options[:logset]
         client = nil
         server = nil
 

@@ -29,7 +29,7 @@ class Autotest::Rspec < Autotest
     def consolidate_failures(failed)
         filters = Hash.new { |h,k| h[k] = [] }
         failed.each do |spec, failed_trace|
-            if f = test_files_for(failed).find { |f| failed_trace =~ Regexp.new(f) } then
+            if f = test_files_for(failed).find { |f| failed_trace =~ Regexp.new(f) }
                 filters[f] << spec
                 break
             end
