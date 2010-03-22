@@ -199,7 +199,7 @@ class Puppet::Parser::Parser
         # scopes set up. Warn the user if they use a variable reference
         raise "Got no file" unless file
         pat = file
-        if pat.index("$")
+        if pat.index('$')
             Puppet.warning(
                "The import of #{pat} contains a variable reference;" +
                " variables are not interpolated for imports " +
