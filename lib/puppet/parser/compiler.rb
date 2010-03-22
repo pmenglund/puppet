@@ -10,392 +10,392 @@ require 'puppet/resource/type_collection_helper'
 # Maintain a graph of scopes, along with a bunch of data
 # about the individual catalog we're compiling.
 class Puppet::Parser::Compiler
-    include Puppet::Util
-    include Puppet::Util::Errors
-    include Puppet::Resource::TypeCollectionHelper
+  include Puppet::Util
+  include Puppet::Util::Errors
+  include Puppet::Resource::TypeCollectionHelper
 
-    def self.compile(node)
-        new(node).compile.to_resource
-    rescue => detail
-        puts detail.backtrace if Puppet[:trace]
-        raise Puppet::Error, "#{detail} on node #{node.name}"
+  def self.compile(node)
+    new(node).compile.to_resource
+  rescue => detail
+    puts detail.backtrace if Puppet[:trace]
+    raise Puppet::Error, "#{detail} on node #{node.name}"
+  end
+
+  attr_reader :node, :facts, :collections, :catalog, :node_scope, :resources
+
+  # Add a collection to the global list.
+  def add_collection(coll)
+    @collections << coll
+  end
+
+  # Store a resource override.
+  def add_override(override)
+    # If possible, merge the override in immediately.
+    if resource = @catalog.resource(override.ref)
+      resource.merge(override)
+    else
+      # Otherwise, store the override for later; these
+      # get evaluated in Resource#finish.
+      @resource_overrides[override.ref] << override
+    end
+  end
+
+  # Store a resource in our resource table.
+  def add_resource(scope, resource)
+    @resources << resource
+
+    # Note that this will fail if the resource is not unique.
+    @catalog.add_resource(resource)
+
+    # And in the resource graph.  At some point, this might supercede
+    # the global resource table, but the table is a lot faster
+    # so it makes sense to maintain for now.
+    if resource.type.to_s.downcase == "class" and main = @catalog.resource(:class, :main)
+      @catalog.add_edge(main, resource)
+    else
+      @catalog.add_edge(scope.resource, resource)
+    end
+  end
+
+  # Do we use nodes found in the code, vs. the external node sources?
+  def ast_nodes?
+    known_resource_types.nodes?
+  end
+
+  # Store the fact that we've evaluated a class
+  def add_class(name)
+    @catalog.add_class(name) unless name == ""
+  end
+
+
+  # Return a list of all of the defined classes.
+  def classlist
+    return @catalog.classes
+  end
+
+  # Compiler our catalog.  This mostly revolves around finding and evaluating classes.
+  # This is the main entry into our catalog.
+  def compile
+    # Set the client's parameters into the top scope.
+    set_node_parameters
+
+    evaluate_main
+
+    evaluate_ast_node
+
+    evaluate_node_classes
+
+    evaluate_generators
+
+    finish
+
+    fail_on_unevaluated
+
+    return @catalog
+  end
+
+  # LAK:FIXME There are no tests for this.
+  def delete_collection(coll)
+    @collections.delete(coll) if @collections.include?(coll)
+  end
+
+  # Return the node's environment.
+  def environment
+    unless defined?(@environment)
+      @environment = ((node.environment and node.environment != "") && (node.environment))||nil
+    end
+    @environment
+  end
+
+  # Evaluate all of the classes specified by the node.
+  def evaluate_node_classes
+    evaluate_classes(@node.classes, topscope)
+  end
+
+  # Evaluate each specified class in turn.  If there are any classes we can't
+  # find, just tag the catalog and move on.  This method really just
+  # creates resource objects that point back to the classes, and then the
+  # resources are themselves evaluated later in the process.
+  def evaluate_classes(classes, scope, lazy_evaluate = true)
+    raise Puppet::DevError, "No source for scope passed to evaluate_classes" unless scope.source
+    found = []
+    classes.each do |name|
+      # If we can find the class, then make a resource that will evaluate it.
+      if klass = scope.find_hostclass(name)
+        found << name and next if scope.class_scope(klass)
+
+        resource = klass.mk_plain_resource(scope).instantiate(scope).evaluate
+
+        # If they've disabled lazy evaluation (which the :include function does),
+        # then evaluate our resource immediately.
+      ###      resource.evaluate unless lazy_evaluate
+        found << name
+      else
+        Puppet.info "Could not find class #{name} for #{node.name}"
+        @catalog.tag(name)
+      end
+    end
+    found
+  end
+
+  # Return a resource by either its ref or its type and title.
+  def findresource(*args)
+    @catalog.resource(*args)
+  end
+
+  def initialize(node, options = {})
+    @node = node
+
+    options.each do |param, value|
+      begin
+        send(param.to_s + "=", value)
+      rescue NoMethodError
+        raise ArgumentError, "Compiler objects do not accept #{param}"
+      end
     end
 
-    attr_reader :node, :facts, :collections, :catalog, :node_scope, :resources
+    initvars
+    init_main
+  end
 
-    # Add a collection to the global list.
-    def add_collection(coll)
-        @collections << coll
+  # Create a new scope, with either a specified parent scope or
+  # using the top scope.
+  def newscope(parent, options = {})
+    parent ||= topscope
+    options[:compiler] = self
+    scope = Puppet::Parser::Scope.new(options)
+    scope.parent = parent
+    scope
+  end
+
+  # Return any overrides for the given resource.
+  def resource_overrides(resource)
+    @resource_overrides[resource.ref]
+  end
+
+  # The top scope is usually the top-level scope, but if we're using AST nodes,
+  # then it is instead the node's scope.
+  def topscope
+    node_scope || @topscope
+  end
+
+  private
+
+  # If ast nodes are enabled, then see if we can find and evaluate one.
+  def evaluate_ast_node
+    return unless ast_nodes?
+
+    # Now see if we can find the node.
+    astnode = nil
+    @node.names.each do |name|
+      break if astnode = known_resource_types.node(name.to_s.downcase)
     end
 
-    # Store a resource override.
-    def add_override(override)
-        # If possible, merge the override in immediately.
-        if resource = @catalog.resource(override.ref)
-            resource.merge(override)
+    unless (astnode ||= known_resource_types.node("default"))
+      raise Puppet::ParseError, "Could not find default node or by name with '#{node.names.join(", ")}'"
+    end
+
+    # Create a resource to model this node, and then add it to the list
+    # of resources.
+    resource = astnode.mk_plain_resource(topscope)
+
+    resource.evaluate
+
+    # Now set the node scope appropriately, so that :topscope can
+    # behave differently.
+    @node_scope = topscope.class_scope(astnode)
+  end
+
+  # Evaluate our collections and return true if anything returned an object.
+  # The 'true' is used to continue a loop, so it's important.
+  def evaluate_collections
+    return false if @collections.empty?
+
+    found_something = false
+    exceptwrap do
+      # We have to iterate over a dup of the array because
+      # collections can delete themselves from the list, which
+      # changes its length and causes some collections to get missed.
+      @collections.dup.each do |collection|
+        found_something = true if collection.evaluate
+      end
+    end
+
+    return found_something
+  end
+
+  # Make sure all of our resources have been evaluated into native resources.
+  # We return true if any resources have, so that we know to continue the
+  # evaluate_generators loop.
+  def evaluate_definitions
+    exceptwrap do
+      if ary = unevaluated_resources
+        evaluated = false
+        ary.each do |resource|
+          if not resource.virtual?
+            resource.evaluate
+            evaluated = true
+          end
+        end
+        # If we evaluated, let the loop know.
+        return evaluated
+      else
+        return false
+      end
+    end
+  end
+
+  # Iterate over collections and resources until we're sure that the whole
+  # compile is evaluated.  This is necessary because both collections
+  # and defined resources can generate new resources, which themselves could
+  # be defined resources.
+  def evaluate_generators
+    count = 0
+    loop do
+      done = true
+
+      # Call collections first, then definitions.
+      done = false if evaluate_collections
+      done = false if evaluate_definitions
+      break if done
+
+      count += 1
+
+      if count > 1000
+        raise Puppet::ParseError, "Somehow looped more than 1000 times while evaluating host catalog"
+      end
+    end
+  end
+
+  # Find and evaluate our main object, if possible.
+  def evaluate_main
+    @main = known_resource_types.find_hostclass([""], "") || known_resource_types.add(Puppet::Resource::Type.new(:hostclass, ""))
+    @topscope.source = @main
+    @main_resource = Puppet::Parser::Resource.new("class", :main, :scope => @topscope, :source => @main)
+    @topscope.resource = @main_resource
+
+    @resources << @main_resource
+    @catalog.add_resource(@main_resource)
+
+    @main_resource.evaluate
+  end
+
+  # Make sure the entire catalog is evaluated.
+  def fail_on_unevaluated
+    fail_on_unevaluated_overrides
+    fail_on_unevaluated_resource_collections
+  end
+
+  # If there are any resource overrides remaining, then we could
+  # not find the resource they were supposed to override, so we
+  # want to throw an exception.
+  def fail_on_unevaluated_overrides
+    remaining = []
+    @resource_overrides.each do |name, overrides|
+      remaining += overrides
+    end
+
+    unless remaining.empty?
+      fail Puppet::ParseError,
+        "Could not find resource(s) %s for overriding" % remaining.collect { |o|
+          o.ref
+        }.join(", ")
+    end
+  end
+
+  # Make sure we don't have any remaining collections that specifically
+  # look for resources, because we want to consider those to be
+  # parse errors.
+  def fail_on_unevaluated_resource_collections
+    remaining = []
+    @collections.each do |coll|
+      # We're only interested in the 'resource' collections,
+      # which result from direct calls of 'realize'.  Anything
+      # else is allowed not to return resources.
+      # Collect all of them, so we have a useful error.
+      if r = coll.resources
+        if r.is_a?(Array)
+          remaining += r
         else
-            # Otherwise, store the override for later; these
-            # get evaluated in Resource#finish.
-            @resource_overrides[override.ref] << override
+          remaining << r
         end
+      end
     end
 
-    # Store a resource in our resource table.
-    def add_resource(scope, resource)
-        @resources << resource
+    raise Puppet::ParseError, "Failed to realize virtual resources #{remaining.join(', ')}" unless remaining.empty?
+  end
 
-        # Note that this will fail if the resource is not unique.
-        @catalog.add_resource(resource)
-
-        # And in the resource graph.  At some point, this might supercede
-        # the global resource table, but the table is a lot faster
-        # so it makes sense to maintain for now.
-        if resource.type.to_s.downcase == "class" and main = @catalog.resource(:class, :main)
-            @catalog.add_edge(main, resource)
-        else
-            @catalog.add_edge(scope.resource, resource)
-        end
-    end
-
-    # Do we use nodes found in the code, vs. the external node sources?
-    def ast_nodes?
-        known_resource_types.nodes?
-    end
-
-    # Store the fact that we've evaluated a class
-    def add_class(name)
-        @catalog.add_class(name) unless name == ""
-    end
-
-
-    # Return a list of all of the defined classes.
-    def classlist
-        return @catalog.classes
-    end
-
-    # Compiler our catalog.  This mostly revolves around finding and evaluating classes.
-    # This is the main entry into our catalog.
-    def compile
-        # Set the client's parameters into the top scope.
-        set_node_parameters
-
-        evaluate_main
-
-        evaluate_ast_node
-
-        evaluate_node_classes
-
-        evaluate_generators
-
-        finish
-
-        fail_on_unevaluated
-
-        return @catalog
-    end
-
-    # LAK:FIXME There are no tests for this.
-    def delete_collection(coll)
-        @collections.delete(coll) if @collections.include?(coll)
-    end
-
-    # Return the node's environment.
-    def environment
-        unless defined?(@environment)
-            @environment = ((node.environment and node.environment != "") && (node.environment))||nil
-        end
-        @environment
-    end
-
-    # Evaluate all of the classes specified by the node.
-    def evaluate_node_classes
-        evaluate_classes(@node.classes, topscope)
-    end
-
-    # Evaluate each specified class in turn.  If there are any classes we can't
-    # find, just tag the catalog and move on.  This method really just
-    # creates resource objects that point back to the classes, and then the
-    # resources are themselves evaluated later in the process.
-    def evaluate_classes(classes, scope, lazy_evaluate = true)
-        raise Puppet::DevError, "No source for scope passed to evaluate_classes" unless scope.source
-        found = []
-        classes.each do |name|
-            # If we can find the class, then make a resource that will evaluate it.
-            if klass = scope.find_hostclass(name)
-                found << name and next if scope.class_scope(klass)
-
-                resource = klass.mk_plain_resource(scope).instantiate(scope).evaluate
-
-                # If they've disabled lazy evaluation (which the :include function does),
-                # then evaluate our resource immediately.
-            ###      resource.evaluate unless lazy_evaluate
-                found << name
-            else
-                Puppet.info "Could not find class #{name} for #{node.name}"
-                @catalog.tag(name)
-            end
-        end
-        found
-    end
-
-    # Return a resource by either its ref or its type and title.
-    def findresource(*args)
-        @catalog.resource(*args)
-    end
-
-    def initialize(node, options = {})
-        @node = node
-
-        options.each do |param, value|
-            begin
-                send(param.to_s + "=", value)
-            rescue NoMethodError
-                raise ArgumentError, "Compiler objects do not accept #{param}"
-            end
+  # Make sure all of our resources and such have done any last work
+  # necessary.
+  def finish
+    resources.each do |resource|
+      # Add in any resource overrides.
+      if overrides = resource_overrides(resource)
+        overrides.each do |over|
+          resource.merge(over)
         end
 
-        initvars
-        init_main
+        # Remove the overrides, so that the configuration knows there
+        # are none left.
+        overrides.clear
+      end
+
+      resource.finish if resource.respond_to?(:finish)
+    end
+  end
+
+  # Initialize the top-level scope, class, and resource.
+  def init_main
+    # Create our initial scope and a resource that will evaluate main.
+    @topscope = Puppet::Parser::Scope.new(:compiler => self)
+  end
+
+  # Set up all of our internal variables.
+  def initvars
+    # The list of objects that will available for export.
+    @exported_resources = {}
+
+    # The list of overrides.  This is used to cache overrides on objects
+    # that don't exist yet.  We store an array of each override.
+    @resource_overrides = Hash.new do |overs, ref|
+      overs[ref] = []
     end
 
-    # Create a new scope, with either a specified parent scope or
-    # using the top scope.
-    def newscope(parent, options = {})
-        parent ||= topscope
-        options[:compiler] = self
-        scope = Puppet::Parser::Scope.new(options)
-        scope.parent = parent
-        scope
+    # The list of collections that have been created.  This is a global list,
+    # but they each refer back to the scope that created them.
+    @collections = []
+
+    # For maintaining the relationship between scopes and their resources.
+    @catalog = Puppet::Resource::Catalog.new(@node.name)
+    @catalog.version = known_resource_types.version
+
+    # local resource array to maintain resource ordering
+    @resources = []
+
+    # Make sure any external node classes are in our class list
+    @catalog.add_class(*@node.classes)
+  end
+
+  # Set the node's parameters into the top-scope as variables.
+  def set_node_parameters
+    node.parameters.each do |param, value|
+      @topscope.setvar(param, value)
     end
 
-    # Return any overrides for the given resource.
-    def resource_overrides(resource)
-        @resource_overrides[resource.ref]
+    # These might be nil.
+    catalog.client_version = node.parameters["clientversion"]
+    catalog.server_version = node.parameters["serverversion"]
+  end
+
+  # Return an array of all of the unevaluated resources.  These will be definitions,
+  # which need to get evaluated into native resources.
+  def unevaluated_resources
+    ary = resources.reject { |resource| resource.builtin? or resource.evaluated?  }
+
+    if ary.empty?
+      return nil
+    else
+      return ary
     end
-
-    # The top scope is usually the top-level scope, but if we're using AST nodes,
-    # then it is instead the node's scope.
-    def topscope
-        node_scope || @topscope
-    end
-
-    private
-
-    # If ast nodes are enabled, then see if we can find and evaluate one.
-    def evaluate_ast_node
-        return unless ast_nodes?
-
-        # Now see if we can find the node.
-        astnode = nil
-        @node.names.each do |name|
-            break if astnode = known_resource_types.node(name.to_s.downcase)
-        end
-
-        unless (astnode ||= known_resource_types.node("default"))
-            raise Puppet::ParseError, "Could not find default node or by name with '#{node.names.join(", ")}'"
-        end
-
-        # Create a resource to model this node, and then add it to the list
-        # of resources.
-        resource = astnode.mk_plain_resource(topscope)
-
-        resource.evaluate
-
-        # Now set the node scope appropriately, so that :topscope can
-        # behave differently.
-        @node_scope = topscope.class_scope(astnode)
-    end
-
-    # Evaluate our collections and return true if anything returned an object.
-    # The 'true' is used to continue a loop, so it's important.
-    def evaluate_collections
-        return false if @collections.empty?
-
-        found_something = false
-        exceptwrap do
-            # We have to iterate over a dup of the array because
-            # collections can delete themselves from the list, which
-            # changes its length and causes some collections to get missed.
-            @collections.dup.each do |collection|
-                found_something = true if collection.evaluate
-            end
-        end
-
-        return found_something
-    end
-
-    # Make sure all of our resources have been evaluated into native resources.
-    # We return true if any resources have, so that we know to continue the
-    # evaluate_generators loop.
-    def evaluate_definitions
-        exceptwrap do
-            if ary = unevaluated_resources
-                evaluated = false
-                ary.each do |resource|
-                    if not resource.virtual?
-                        resource.evaluate
-                        evaluated = true
-                    end
-                end
-                # If we evaluated, let the loop know.
-                return evaluated
-            else
-                return false
-            end
-        end
-    end
-
-    # Iterate over collections and resources until we're sure that the whole
-    # compile is evaluated.  This is necessary because both collections
-    # and defined resources can generate new resources, which themselves could
-    # be defined resources.
-    def evaluate_generators
-        count = 0
-        loop do
-            done = true
-
-            # Call collections first, then definitions.
-            done = false if evaluate_collections
-            done = false if evaluate_definitions
-            break if done
-
-            count += 1
-
-            if count > 1000
-                raise Puppet::ParseError, "Somehow looped more than 1000 times while evaluating host catalog"
-            end
-        end
-    end
-
-    # Find and evaluate our main object, if possible.
-    def evaluate_main
-        @main = known_resource_types.find_hostclass([""], "") || known_resource_types.add(Puppet::Resource::Type.new(:hostclass, ""))
-        @topscope.source = @main
-        @main_resource = Puppet::Parser::Resource.new("class", :main, :scope => @topscope, :source => @main)
-        @topscope.resource = @main_resource
-
-        @resources << @main_resource
-        @catalog.add_resource(@main_resource)
-
-        @main_resource.evaluate
-    end
-
-    # Make sure the entire catalog is evaluated.
-    def fail_on_unevaluated
-        fail_on_unevaluated_overrides
-        fail_on_unevaluated_resource_collections
-    end
-
-    # If there are any resource overrides remaining, then we could
-    # not find the resource they were supposed to override, so we
-    # want to throw an exception.
-    def fail_on_unevaluated_overrides
-        remaining = []
-        @resource_overrides.each do |name, overrides|
-            remaining += overrides
-        end
-
-        unless remaining.empty?
-            fail Puppet::ParseError,
-                "Could not find resource(s) %s for overriding" % remaining.collect { |o|
-                    o.ref
-                }.join(", ")
-        end
-    end
-
-    # Make sure we don't have any remaining collections that specifically
-    # look for resources, because we want to consider those to be
-    # parse errors.
-    def fail_on_unevaluated_resource_collections
-        remaining = []
-        @collections.each do |coll|
-            # We're only interested in the 'resource' collections,
-            # which result from direct calls of 'realize'.  Anything
-            # else is allowed not to return resources.
-            # Collect all of them, so we have a useful error.
-            if r = coll.resources
-                if r.is_a?(Array)
-                    remaining += r
-                else
-                    remaining << r
-                end
-            end
-        end
-
-        raise Puppet::ParseError, "Failed to realize virtual resources #{remaining.join(', ')}" unless remaining.empty?
-    end
-
-    # Make sure all of our resources and such have done any last work
-    # necessary.
-    def finish
-        resources.each do |resource|
-            # Add in any resource overrides.
-            if overrides = resource_overrides(resource)
-                overrides.each do |over|
-                    resource.merge(over)
-                end
-
-                # Remove the overrides, so that the configuration knows there
-                # are none left.
-                overrides.clear
-            end
-
-            resource.finish if resource.respond_to?(:finish)
-        end
-    end
-
-    # Initialize the top-level scope, class, and resource.
-    def init_main
-        # Create our initial scope and a resource that will evaluate main.
-        @topscope = Puppet::Parser::Scope.new(:compiler => self)
-    end
-
-    # Set up all of our internal variables.
-    def initvars
-        # The list of objects that will available for export.
-        @exported_resources = {}
-
-        # The list of overrides.  This is used to cache overrides on objects
-        # that don't exist yet.  We store an array of each override.
-        @resource_overrides = Hash.new do |overs, ref|
-            overs[ref] = []
-        end
-
-        # The list of collections that have been created.  This is a global list,
-        # but they each refer back to the scope that created them.
-        @collections = []
-
-        # For maintaining the relationship between scopes and their resources.
-        @catalog = Puppet::Resource::Catalog.new(@node.name)
-        @catalog.version = known_resource_types.version
-
-        # local resource array to maintain resource ordering
-        @resources = []
-
-        # Make sure any external node classes are in our class list
-        @catalog.add_class(*@node.classes)
-    end
-
-    # Set the node's parameters into the top-scope as variables.
-    def set_node_parameters
-        node.parameters.each do |param, value|
-            @topscope.setvar(param, value)
-        end
-
-        # These might be nil.
-        catalog.client_version = node.parameters["clientversion"]
-        catalog.server_version = node.parameters["serverversion"]
-    end
-
-    # Return an array of all of the unevaluated resources.  These will be definitions,
-    # which need to get evaluated into native resources.
-    def unevaluated_resources
-        ary = resources.reject { |resource| resource.builtin? or resource.evaluated?  }
-
-        if ary.empty?
-            return nil
-        else
-            return ary
-        end
-    end
+  end
 end

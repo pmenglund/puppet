@@ -5,16 +5,16 @@ Dir.chdir(File.dirname(__FILE__)) { (s = lambda { |f| File.exist?(f) ? require(f
 zone = Puppet::Type.type(:zone)
 
 describe zone do
-    before do
-        @provider = stub 'provider'
-        @resource = stub 'resource', :resource => nil, :provider => @provider, :line => nil, :file => nil
-    end
+  before do
+    @provider = stub 'provider'
+    @resource = stub 'resource', :resource => nil, :provider => @provider, :line => nil, :file => nil
+  end
 
-    parameters = [:create_args, :install_args]
+  parameters = [:create_args, :install_args]
 
-    parameters.each do |parameter|
-        it "should have a #{parameter} parameter" do
-            zone.attrclass(parameter).ancestors.should be_include(Puppet::Parameter)
-        end
+  parameters.each do |parameter|
+    it "should have a #{parameter} parameter" do
+      zone.attrclass(parameter).ancestors.should be_include(Puppet::Parameter)
     end
+  end
 end

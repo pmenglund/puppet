@@ -7,12 +7,12 @@ $LOAD_PATH.unshift("#{dir}/../test/lib")  # Add the old test dir, so that we can
 
 # include any gems in vendor/gems
 Dir["#{dir}/../vendor/gems/**"].each do |path|
-    libpath = File.join(path, "lib")
-    if File.directory?(libpath)
-        $LOAD_PATH.unshift(libpath)
-    else
-        $LOAD_PATH.unshift(path)
-    end
+  libpath = File.join(path, "lib")
+  if File.directory?(libpath)
+    $LOAD_PATH.unshift(libpath)
+  else
+    $LOAD_PATH.unshift(path)
+  end
 end
 
 require 'puppettest'
@@ -29,31 +29,31 @@ end
 Dir["#{dir}/monkey_patches/*.rb"].map { |file| require file }
 
 Spec::Runner.configure do |config|
-    config.mock_with :mocha
+  config.mock_with :mocha
 
 #  config.prepend_before :all do
 #      setup_mocks_for_rspec
 #      setup if respond_to? :setup
 #  end
 #
-    config.prepend_after :each do
-        Puppet.settings.clear
-        Puppet::Node::Environment.clear
+  config.prepend_after :each do
+    Puppet.settings.clear
+    Puppet::Node::Environment.clear
 
-        if defined?($tmpfiles)
-            $tmpfiles.each do |file|
-                unless file.include?("/tmp") or file.include?("/var/folders")
-                    puts "Not deleting tmpfile #{file} outside of /tmp or /var/folders"
-                    next
-                end
-                if FileTest.exist?(file)
-                    system("chmod -R 755 #{file}")
-                    system("rm -rf #{file}")
-                end
-            end
-            $tmpfiles.clear
+    if defined?($tmpfiles)
+      $tmpfiles.each do |file|
+        unless file.include?("/tmp") or file.include?("/var/folders")
+          puts "Not deleting tmpfile #{file} outside of /tmp or /var/folders"
+          next
         end
+        if FileTest.exist?(file)
+          system("chmod -R 755 #{file}")
+          system("rm -rf #{file}")
+        end
+      end
+      $tmpfiles.clear
     end
+  end
 end
 
 # Set the confdir and vardir to gibberish so that tests
@@ -64,5 +64,5 @@ Puppet[:vardir] = "/dev/null"
 # We need this because the RAL uses 'should' as a method.  This
 # allows us the same behaviour but with a different method name.
 class Object
-    alias :must :should
+  alias :must :should
 end

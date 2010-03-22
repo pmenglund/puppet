@@ -9,29 +9,29 @@ require 'puppet/file_serving'
 # in file-serving indirections.  This is necessary because
 # the terminus varies based on the URI asked for.
 module Puppet::FileServing::IndirectionHooks
-    PROTOCOL_MAP = {"puppet" => :rest, "file" => :file}
+  PROTOCOL_MAP = {"puppet" => :rest, "file" => :file}
 
-    # Pick an appropriate terminus based on the protocol.
-    def select_terminus(request)
-        # We rely on the request's parsing of the URI.
+  # Pick an appropriate terminus based on the protocol.
+  def select_terminus(request)
+    # We rely on the request's parsing of the URI.
 
-        # Short-circuit to :file if it's a fully-qualified path or specifies a 'file' protocol.
-        if request.key =~ /^#{::File::SEPARATOR}/
-            return PROTOCOL_MAP["file"]
-        else
-            return PROTOCOL_MAP["file"] if request.protocol == "file"
-        end
-
-        # We're heading over the wire the protocol is 'puppet' and we've got a server name or we're not named 'puppet'
-        if request.protocol == "puppet" and (request.server or Puppet.settings[:name] != "puppet")
-            return PROTOCOL_MAP["puppet"]
-        end
-
-        if request.protocol and PROTOCOL_MAP[request.protocol].nil?
-            raise(ArgumentError, "URI protocol '#{request.protocol}' is not currently supported for file serving")
-        end
-
-        # If we're still here, we're using the file_server or modules.
-        return :file_server
+    # Short-circuit to :file if it's a fully-qualified path or specifies a 'file' protocol.
+    if request.key =~ /^#{::File::SEPARATOR}/
+      return PROTOCOL_MAP["file"]
+    else
+      return PROTOCOL_MAP["file"] if request.protocol == "file"
     end
+
+    # We're heading over the wire the protocol is 'puppet' and we've got a server name or we're not named 'puppet'
+    if request.protocol == "puppet" and (request.server or Puppet.settings[:name] != "puppet")
+      return PROTOCOL_MAP["puppet"]
+    end
+
+    if request.protocol and PROTOCOL_MAP[request.protocol].nil?
+      raise(ArgumentError, "URI protocol '#{request.protocol}' is not currently supported for file serving")
+    end
+
+    # If we're still here, we're using the file_server or modules.
+    return :file_server
+  end
 end

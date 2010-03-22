@@ -4,20 +4,20 @@ require 'puppet/parser/ast/branch'
 # An object that returns a boolean which is the boolean not
 # of the given value.
 class Puppet::Parser::AST
-    class Minus < AST::Branch
-        attr_accessor :value
+  class Minus < AST::Branch
+    attr_accessor :value
 
-        def each
-            yield @value
-        end
-
-        def evaluate
-            val = @value.safeevaluate
-            val = Puppet::Parser::Scope.number?(val)
-            if val == nil
-                raise ArgumentError, "minus operand #{val} is not a number"
-            end
-            return -val
-        end
+    def each
+      yield @value
     end
+
+    def evaluate
+      val = @value.safeevaluate
+      val = Puppet::Parser::Scope.number?(val)
+      if val == nil
+        raise ArgumentError, "minus operand #{val} is not a number"
+      end
+      return -val
+    end
+  end
 end

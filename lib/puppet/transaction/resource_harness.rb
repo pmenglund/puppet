@@ -1,92 +1,92 @@
 require 'puppet/resource/status'
 
 class Puppet::Transaction::ResourceHarness
-    extend Forwardable
-    def_delegators :@transaction, :relationship_graph
+  extend Forwardable
+  def_delegators :@transaction, :relationship_graph
 
-    attr_reader :transaction
+  attr_reader :transaction
 
-    def allow_changes?(resource)
-        return true unless resource.purging? and resource.deleting?
-        return true unless deps = relationship_graph.dependents(resource) and ! deps.empty? and deps.detect { |d| ! d.deleting? }
+  def allow_changes?(resource)
+    return true unless resource.purging? and resource.deleting?
+    return true unless deps = relationship_graph.dependents(resource) and ! deps.empty? and deps.detect { |d| ! d.deleting? }
 
-        deplabel = deps.collect { |r| r.ref }.join(",")
-        plurality = deps.length > 1 ? "":"s"
-        resource.warning "#{deplabel} still depend#{plurality} on me -- not purging"
-        return false
+    deplabel = deps.collect { |r| r.ref }.join(",")
+    plurality = deps.length > 1 ? "":"s"
+    resource.warning "#{deplabel} still depend#{plurality} on me -- not purging"
+    return false
+  end
+
+  def apply_changes(status, changes)
+    changes.each do |change|
+      status << change.apply
+    end
+    status.changed = true
+  end
+
+  def changes_to_perform(status, resource)
+    current = resource.retrieve
+
+    resource.cache :checked, Time.now
+
+    if param = resource.parameter(:ensure)
+      if absent_and_not_being_created?(current, param)
+        return []
+      else
+        return [Puppet::Transaction::Change.new(param, current[:ensure])] unless ensure_is_insync?(current, param)
+      end
+      return [] if ensure_should_be_absent?(current, param)
     end
 
-    def apply_changes(status, changes)
-        changes.each do |change|
-            status << change.apply
-        end
-        status.changed = true
+    resource.properties.reject { |p| p.name == :ensure }.reject do |param|
+      param.should.nil?
+    end.reject do |param|
+      param_is_insync?(current, param)
+    end.collect do |param|
+      Puppet::Transaction::Change.new(param, current[param.name])
     end
+  end
 
-    def changes_to_perform(status, resource)
-        current = resource.retrieve
+  def evaluate(resource)
+    start = Time.now
+    status = Puppet::Resource::Status.new(resource)
 
-        resource.cache :checked, Time.now
-
-        if param = resource.parameter(:ensure)
-            if absent_and_not_being_created?(current, param)
-                return []
-            else
-                return [Puppet::Transaction::Change.new(param, current[:ensure])] unless ensure_is_insync?(current, param)
-            end
-            return [] if ensure_should_be_absent?(current, param)
-        end
-
-        resource.properties.reject { |p| p.name == :ensure }.reject do |param|
-            param.should.nil?
-        end.reject do |param|
-            param_is_insync?(current, param)
-        end.collect do |param|
-            Puppet::Transaction::Change.new(param, current[param.name])
-        end
+    if changes = changes_to_perform(status, resource) and ! changes.empty?
+      status.out_of_sync = true
+      status.change_count = changes.length
+      apply_changes(status, changes)
+      resource.cache(:synced, Time.now)
+      resource.flush if resource.respond_to?(:flush)
     end
+    return status
+  rescue => detail
+    resource.fail "Could not create resource status: #{detail}" unless status
+    puts detail.backtrace if Puppet[:trace]
+    resource.err "Could not evaluate: #{detail}"
+    status.failed = true
+    return status
+  ensure
+    (status.evaluation_time = Time.now - start) if status
+  end
 
-    def evaluate(resource)
-        start = Time.now
-        status = Puppet::Resource::Status.new(resource)
+  def initialize(transaction)
+    @transaction = transaction
+  end
 
-        if changes = changes_to_perform(status, resource) and ! changes.empty?
-            status.out_of_sync = true
-            status.change_count = changes.length
-            apply_changes(status, changes)
-            resource.cache(:synced, Time.now)
-            resource.flush if resource.respond_to?(:flush)
-        end
-        return status
-    rescue => detail
-        resource.fail "Could not create resource status: #{detail}" unless status
-        puts detail.backtrace if Puppet[:trace]
-        resource.err "Could not evaluate: #{detail}"
-        status.failed = true
-        return status
-    ensure
-        (status.evaluation_time = Time.now - start) if status
-    end
+  private
 
-    def initialize(transaction)
-        @transaction = transaction
-    end
+  def absent_and_not_being_created?(current, param)
+    current[:ensure] == :absent and param.should.nil?
+  end
 
-    private
+  def ensure_is_insync?(current, param)
+    param.insync?(current[:ensure])
+  end
 
-    def absent_and_not_being_created?(current, param)
-        current[:ensure] == :absent and param.should.nil?
-    end
+  def ensure_should_be_absent?(current, param)
+    param.should == :absent
+  end
 
-    def ensure_is_insync?(current, param)
-        param.insync?(current[:ensure])
-    end
-
-    def ensure_should_be_absent?(current, param)
-        param.should == :absent
-    end
-
-    def param_is_insync?(current, param)
-        param.insync?(current[param.name])
-    end
+  def param_is_insync?(current, param)
+    param.insync?(current[param.name])
+  end
 end

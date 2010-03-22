@@ -3,35 +3,35 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe Puppet::Type.type(:group) do
-    before do
-        ENV["PATH"] += File::PATH_SEPARATOR + "/usr/sbin" unless ENV["PATH"].split(File::PATH_SEPARATOR).include?("/usr/sbin")
-        @class = Puppet::Type.type(:group)
+  before do
+    ENV["PATH"] += File::PATH_SEPARATOR + "/usr/sbin" unless ENV["PATH"].split(File::PATH_SEPARATOR).include?("/usr/sbin")
+    @class = Puppet::Type.type(:group)
+  end
+
+  it "should have a default provider" do
+    @class.defaultprovider.should_not be_nil
+  end
+
+  it "should have a default provider inheriting from Puppet::Provider" do
+    @class.defaultprovider.ancestors.should be_include(Puppet::Provider)
+  end
+
+  describe "when validating attributes" do
+    [:name, :allowdupe].each do |param|
+      it "should have a #{param} parameter" do
+        @class.attrtype(param).should == :param
+      end
     end
 
-    it "should have a default provider" do
-        @class.defaultprovider.should_not be_nil
+    [:ensure, :gid].each do |param|
+      it "should have a #{param} property" do
+        @class.attrtype(param).should == :property
+      end
     end
+  end
 
-    it "should have a default provider inheriting from Puppet::Provider" do
-        @class.defaultprovider.ancestors.should be_include(Puppet::Provider)
-    end
-
-    describe "when validating attributes" do
-        [:name, :allowdupe].each do |param|
-            it "should have a #{param} parameter" do
-                @class.attrtype(param).should == :param
-            end
-        end
-
-        [:ensure, :gid].each do |param|
-            it "should have a #{param} property" do
-                @class.attrtype(param).should == :property
-            end
-        end
-    end
-
-    # #1407 - we need to declare the allowdupe param as boolean.
-    it "should have a boolean method for determining if duplicates are allowed" do
-        @class.new(:name => "foo").methods.should be_include("allowdupe?")
-    end
+  # #1407 - we need to declare the allowdupe param as boolean.
+  it "should have a boolean method for determining if duplicates are allowed" do
+    @class.new(:name => "foo").methods.should be_include("allowdupe?")
+  end
 end

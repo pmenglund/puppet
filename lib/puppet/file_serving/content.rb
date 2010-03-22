@@ -11,39 +11,39 @@ require 'puppet/file_serving/indirection_hooks'
 # It only reads the file when its content is specifically
 # asked for.
 class Puppet::FileServing::Content < Puppet::FileServing::Base
-    extend Puppet::Indirector
-    indirects :file_content, :extend => Puppet::FileServing::IndirectionHooks
+  extend Puppet::Indirector
+  indirects :file_content, :extend => Puppet::FileServing::IndirectionHooks
 
-    attr_writer :content
+  attr_writer :content
 
-    def self.supported_formats
-        [:raw]
+  def self.supported_formats
+    [:raw]
+  end
+
+  def self.from_raw(content)
+    instance = new("/this/is/a/fake/path")
+    instance.content = content
+    instance
+  end
+
+  # Collect our data.
+  def collect
+    return if stat.ftype == "directory"
+    content
+  end
+
+  # Read the content of our file in.
+  def content
+    unless @content
+      # This stat can raise an exception, too.
+      raise(ArgumentError, "Cannot read the contents of links unless following links") if stat.ftype == "symlink"
+
+      @content = ::File.read(full_path)
     end
+    @content
+  end
 
-    def self.from_raw(content)
-        instance = new("/this/is/a/fake/path")
-        instance.content = content
-        instance
-    end
-
-    # Collect our data.
-    def collect
-        return if stat.ftype == "directory"
-        content
-    end
-
-    # Read the content of our file in.
-    def content
-        unless @content
-            # This stat can raise an exception, too.
-            raise(ArgumentError, "Cannot read the contents of links unless following links") if stat.ftype == "symlink"
-
-            @content = ::File.read(full_path)
-        end
-        @content
-    end
-
-    def to_raw
-        content
-    end
+  def to_raw
+    content
+  end
 end

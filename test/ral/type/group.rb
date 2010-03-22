@@ -6,183 +6,183 @@ require 'puppettest'
 require 'etc'
 
 class TestGroup < Test::Unit::TestCase
-    include PuppetTest
+  include PuppetTest
 
-    p = Puppet::Type.type(:group).provide :fake, :parent => PuppetTest::FakeProvider do
-        @name = :fake
-        apimethods :ensure, :gid
+  p = Puppet::Type.type(:group).provide :fake, :parent => PuppetTest::FakeProvider do
+    @name = :fake
+    apimethods :ensure, :gid
 
-        def create
-            @ensure = :present
-        end
-
-        def delete
-            @ensure = :absent
-        end
-
-        def exists?
-            if @ensure == :present
-                true
-            else
-                false
-            end
-        end
+    def create
+      @ensure = :present
     end
 
-    FakeGroupProvider = p
-
-    @@fakeproviders[:group] = p
-
-    def setup
-        super
-        Puppet::Type.type(:group).defaultprovider = FakeGroupProvider
+    def delete
+      @ensure = :absent
     end
 
-    def teardown
-        Puppet::Type.type(:group).defaultprovider = nil
-        super
+    def exists?
+      if @ensure == :present
+        true
+      else
+        false
+      end
     end
+  end
 
-    def mkgroup(name, hash = {})
-        group = nil
-        hash[:name] = name
-        assert_nothing_raised {
-            group = Puppet::Type.type(:group).new(hash)
-        }
+  FakeGroupProvider = p
 
-        return group
-    end
+  @@fakeproviders[:group] = p
 
-    def groupnames
-        %x{groups}.chomp.split(/ /)
-    end
+  def setup
+    super
+    Puppet::Type.type(:group).defaultprovider = FakeGroupProvider
+  end
 
-    def groupids
-        Process.groups
-    end
+  def teardown
+    Puppet::Type.type(:group).defaultprovider = nil
+    super
+  end
 
-    def attrtest_ensure(group)
-        group[:ensure] = :absent
+  def mkgroup(name, hash = {})
+    group = nil
+    hash[:name] = name
+    assert_nothing_raised {
+      group = Puppet::Type.type(:group).new(hash)
+    }
 
-        comp = mk_catalog("ensuretest", group)
-        assert_apply(comp)
-        assert_equal(:absent, group.provider.ensure,  "Group is still present")
-        group[:ensure] = :present
-        assert_events([:group_created], comp)
-        assert_equal(:present, group.provider.ensure,  "Group is absent")
-        group[:ensure] = :absent
-        trans = assert_events([:group_removed], comp)
-        assert_equal(:absent, group.provider.ensure,  "Group is present")
+    return group
+  end
 
-        assert_rollback_events(trans, [:group_created], "group")
-        assert_equal(:present, group.provider.ensure,  "Group is absent")
-    end
+  def groupnames
+    %x{groups}.chomp.split(/ /)
+  end
 
-    # This is a bit odd, since we're not actually doing anything on the machine.
-    # Just make sure we can set the gid and that it will work correctly.
-    def attrtest_gid(group)
+  def groupids
+    Process.groups
+  end
 
-        # Check the validation.
-        assert_nothing_raised {
-            group[:gid] = "15"
-        }
+  def attrtest_ensure(group)
+    group[:ensure] = :absent
 
+    comp = mk_catalog("ensuretest", group)
+    assert_apply(comp)
+    assert_equal(:absent, group.provider.ensure,  "Group is still present")
+    group[:ensure] = :present
+    assert_events([:group_created], comp)
+    assert_equal(:present, group.provider.ensure,  "Group is absent")
+    group[:ensure] = :absent
+    trans = assert_events([:group_removed], comp)
+    assert_equal(:absent, group.provider.ensure,  "Group is present")
 
-            assert_equal(
-                15, group.should(:gid),
+    assert_rollback_events(trans, [:group_created], "group")
+    assert_equal(:present, group.provider.ensure,  "Group is absent")
+  end
 
-                    "Did not convert gid to number")
+  # This is a bit odd, since we're not actually doing anything on the machine.
+  # Just make sure we can set the gid and that it will work correctly.
+  def attrtest_gid(group)
 
-        comp = mk_catalog(group)
-        trans = assert_events([:group_modified], comp, "group")
-        assert_equal(15, group.provider.gid, "GID was not changed")
-
-        assert_nothing_raised {
-            group[:gid] = 16
-        }
-
-
-            assert_equal(
-                16, group.should(:gid),
-
-                    "Did not keep gid as number")
-
-        # Now switch to 16
-        trans = assert_events([:group_modified], comp, "group")
-        assert_equal(16, group.provider.gid, "GID was not changed")
-
-        # And then rollback
-        assert_rollback_events(trans, [:group_modified], "group")
-        assert_equal(15, group.provider.gid, "GID was not changed")
-    end
-
-    def test_owngroups
-        groupnames.each { |group|
-            gobj = nil
-            comp = nil
-            assert_nothing_raised {
-
-                gobj = Puppet::Type.type(:group).new(
-
-                    :name => group,
-
-                    :check => [:gid]
-                )
-            }
-
-            # Set a fake gid
-            gobj.provider.gid = rand(100)
-
-            current_values = nil
-            assert_nothing_raised {
-                current_values = gobj.retrieve
-            }
-
-            assert(current_values[gobj.property(:gid)],
-                "Failed to retrieve gid")
-        }
-    end
-
-    def test_mkgroup
-        gobj = nil
-        name = "pptestgr"
-
-        assert_nothing_raised {
-
-            gobj = Puppet::Type.type(:group).new(
-
-                :name => name,
-
-                :gid => 123
-            )
-        }
-        gobj.finish
-
-        trans = assert_events([:group_created], gobj, "group")
+    # Check the validation.
+    assert_nothing_raised {
+      group[:gid] = "15"
+    }
 
 
-            assert(
-                gobj.provider.exists?,
+      assert_equal(
+        15, group.should(:gid),
 
-                "Did not create group")
+          "Did not convert gid to number")
 
-        tests = Puppet::Type.type(:group).validproperties
+    comp = mk_catalog(group)
+    trans = assert_events([:group_modified], comp, "group")
+    assert_equal(15, group.provider.gid, "GID was not changed")
 
-        gobj.retrieve
-        tests.each { |test|
-            if self.respond_to?("attrtest_#{test}")
-                self.send("attrtest_#{test}", gobj)
-            else
-                #$stderr.puts "Not testing attr #{test} of group"
-            end
-        }
-
-        assert_rollback_events(trans, [:group_removed], "group")
+    assert_nothing_raised {
+      group[:gid] = 16
+    }
 
 
-            assert(
-                ! gobj.provider.exists?,
+      assert_equal(
+        16, group.should(:gid),
 
-                "Did not delete group")
-    end
+          "Did not keep gid as number")
+
+    # Now switch to 16
+    trans = assert_events([:group_modified], comp, "group")
+    assert_equal(16, group.provider.gid, "GID was not changed")
+
+    # And then rollback
+    assert_rollback_events(trans, [:group_modified], "group")
+    assert_equal(15, group.provider.gid, "GID was not changed")
+  end
+
+  def test_owngroups
+    groupnames.each { |group|
+      gobj = nil
+      comp = nil
+      assert_nothing_raised {
+
+        gobj = Puppet::Type.type(:group).new(
+
+          :name => group,
+
+          :check => [:gid]
+        )
+      }
+
+      # Set a fake gid
+      gobj.provider.gid = rand(100)
+
+      current_values = nil
+      assert_nothing_raised {
+        current_values = gobj.retrieve
+      }
+
+      assert(current_values[gobj.property(:gid)],
+        "Failed to retrieve gid")
+    }
+  end
+
+  def test_mkgroup
+    gobj = nil
+    name = "pptestgr"
+
+    assert_nothing_raised {
+
+      gobj = Puppet::Type.type(:group).new(
+
+        :name => name,
+
+        :gid => 123
+      )
+    }
+    gobj.finish
+
+    trans = assert_events([:group_created], gobj, "group")
+
+
+      assert(
+        gobj.provider.exists?,
+
+        "Did not create group")
+
+    tests = Puppet::Type.type(:group).validproperties
+
+    gobj.retrieve
+    tests.each { |test|
+      if self.respond_to?("attrtest_#{test}")
+        self.send("attrtest_#{test}", gobj)
+      else
+        #$stderr.puts "Not testing attr #{test} of group"
+      end
+    }
+
+    assert_rollback_events(trans, [:group_removed], "group")
+
+
+      assert(
+        ! gobj.provider.exists?,
+
+        "Did not delete group")
+  end
 end
