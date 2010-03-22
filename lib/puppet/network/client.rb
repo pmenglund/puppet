@@ -149,7 +149,7 @@ class Puppet::Network::Client
         else
             self.stopping = true
             Puppet::Util::Storage.store if self.respond_to? :running? and self.running?
-            rmpidfile()
+            rmpidfile
         end
     end
 

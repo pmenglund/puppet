@@ -134,7 +134,7 @@ class Puppet::Transaction
         # Start logging.
         Puppet::Util::Log.newdestination(@report)
 
-        prepare()
+        prepare
 
         Puppet.info "Applying configuration version '#{catalog.version}'" if catalog.version
 
@@ -274,11 +274,11 @@ class Puppet::Transaction
     # Prepare to evaluate the resources in a transaction.
     def prepare
         # Now add any dynamically generated resources
-        generate()
+        generate
 
         # Then prefetch.  It's important that we generate and then prefetch,
         # so that any generated resources also get prefetched.
-        prefetch()
+        prefetch
 
         # This will throw an error if there are cycles in the graph.
         @sorted_resources = relationship_graph.topsort
@@ -291,7 +291,7 @@ class Puppet::Transaction
     # Send off the transaction report.
     def send_report
         begin
-            report = generate_report()
+            report = generate_report
         rescue => detail
             Puppet.err "Could not generate report: #{detail}"
             return
@@ -301,7 +301,7 @@ class Puppet::Transaction
 
         if Puppet[:report]
             begin
-                report.save()
+                report.save
             rescue => detail
                 Puppet.err "Reporting failed: #{detail}"
             end

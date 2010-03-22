@@ -31,13 +31,13 @@ class TestResourceServer < Test::Unit::TestCase
 
     def test_describe_file
         # Make a file to describe
-        file = tempfile()
+        file = tempfile
         str = "yayness\n"
 
         server = nil
 
         assert_nothing_raised do
-            server = Puppet::Network::Handler.resource.new()
+            server = Puppet::Network::Handler.resource.new
         end
 
         [   [nil],
@@ -78,12 +78,12 @@ class TestResourceServer < Test::Unit::TestCase
 
     def test_describe_directory
         # Make a file to describe
-        file = tempfile()
+        file = tempfile
 
         server = nil
 
         assert_nothing_raised do
-            server = Puppet::Network::Handler.resource.new()
+            server = Puppet::Network::Handler.resource.new
         end
 
         [   [nil],
@@ -135,7 +135,7 @@ class TestResourceServer < Test::Unit::TestCase
         #Puppet.err Puppet::Type::ParsedType::Port.path
         server = nil
         assert_nothing_raised do
-            server = Puppet::Network::Handler.resource.new()
+            server = Puppet::Network::Handler.resource.new
         end
 
         require 'etc'
@@ -196,7 +196,7 @@ class TestResourceServer < Test::Unit::TestCase
             server = Puppet::Network::Handler.resource.new(:Local => false)
         end
 
-        file = tempfile()
+        file = tempfile
         str = "yayness\n"
 
         File.open(file, "w") { |f| f.print str }

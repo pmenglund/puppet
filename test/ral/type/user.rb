@@ -70,7 +70,7 @@ class TestUser < Test::Unit::TestCase
                 :name => name,
                 :comment => "Puppet Testing User",
                 :gid => Puppet::Util::SUIDManager.gid,
-                :shell => findshell(),
+                :shell => findshell,
         
                 :home => "/home/#{name}"
             )
@@ -324,7 +324,7 @@ class TestUser < Test::Unit::TestCase
     end
 
     def test_autorequire
-        file = tempfile()
+        file = tempfile
         comp = nil
         user = nil
         group =nil
@@ -358,11 +358,11 @@ class TestUser < Test::Unit::TestCase
         }
 
         rels = nil
-        assert_nothing_raised() { rels = user.autorequire }
+        assert_nothing_raised { rels = user.autorequire }
 
         assert(rels.detect { |r| r.source == group }, "User did not require group")
         assert(rels.detect { |r| r.source == ogroup }, "User did not require other groups")
-        assert_nothing_raised() { rels = home.autorequire }
+        assert_nothing_raised { rels = home.autorequire }
         assert(rels.detect { |r| r.source == user }, "Homedir did not require user")
     end
 

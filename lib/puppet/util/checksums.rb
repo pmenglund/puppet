@@ -26,7 +26,7 @@ module Puppet::Util::Checksums
     def md5_file(filename, lite = false)
         require 'digest/md5'
 
-        digest = Digest::MD5.new()
+        digest = Digest::MD5.new
         return checksum_file(digest, filename,  lite)
     end
 
@@ -55,7 +55,7 @@ module Puppet::Util::Checksums
     def sha1_file(filename, lite = false)
         require 'digest/sha1'
 
-        digest = Digest::SHA1.new()
+        digest = Digest::SHA1.new
         return checksum_file(digest, filename, lite)
     end
 

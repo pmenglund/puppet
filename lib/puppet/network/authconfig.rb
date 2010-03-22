@@ -6,7 +6,7 @@ module Puppet
     class Network::AuthConfig < Puppet::Util::LoadedFile
 
         def self.main
-            @main = self.new() unless defined?(@main)
+            @main = self.new unless defined?(@main)
             @main
         end
 
@@ -24,7 +24,7 @@ module Puppet
             namespace   = request.handler.intern
             method      = request.method.intern
 
-            read()
+            read
 
             if @rights.include?(name)
                 return @rights[name].allowed?(request.name, request.ip)
@@ -50,7 +50,7 @@ module Puppet
             @configstamp = @configstatted = nil
             @configtimeout = 60
 
-            read() if parsenow
+            read if parsenow
         end
 
         # Read the configuration file.
@@ -76,7 +76,7 @@ module Puppet
                 end
             end
 
-            parse()
+            parse
 
             @configstamp = File.stat(@file).ctime
             @configstatted = Time.now

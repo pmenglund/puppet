@@ -296,7 +296,7 @@ class Puppet::Application
     end
 
     def run_command
-        if command = get_command() and respond_to?(command)
+        if command = get_command and respond_to?(command)
             send(command)
         else
             main

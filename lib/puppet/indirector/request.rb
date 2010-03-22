@@ -21,7 +21,7 @@ class Puppet::Indirector::Request
     end
 
     def environment
-        @environment = Puppet::Node::Environment.new() unless @environment
+        @environment = Puppet::Node::Environment.new unless @environment
         @environment
     end
 

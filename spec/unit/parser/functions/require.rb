@@ -9,7 +9,7 @@ describe "the require function" do
         @compiler = stub 'compiler', :catalog => @catalog
 
         @resource = stub 'resource', :set_parameter => nil, :metaparam_compatibility_mode? => false, :[] => nil
-        @scope = Puppet::Parser::Scope.new()
+        @scope = Puppet::Parser::Scope.new
         @scope.stubs(:resource).returns @resource
         @scope.stubs(:findresource)
         @scope.stubs(:compiler).returns(@compiler)

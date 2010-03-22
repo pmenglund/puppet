@@ -172,7 +172,7 @@ class TestLangFunctions < Test::Unit::TestCase
 
     # Now make sure we can fully qualify files, and specify just one
     def test_singletemplates
-        template = tempfile()
+        template = tempfile
 
         File.open(template, "w") do |f|
             f.puts "template <%= @yay.nil?() ? raise('yay undefined') : @yay %>"
@@ -214,7 +214,7 @@ class TestLangFunctions < Test::Unit::TestCase
 
     # Make sure that legacy template variable access works as expected.
     def test_legacyvariables
-        template = tempfile()
+        template = tempfile
 
         File.open(template, "w") do |f|
             f.puts "template <%= deprecated %>"
@@ -256,7 +256,7 @@ class TestLangFunctions < Test::Unit::TestCase
 
     # Make sure that problems with kernel method visibility still exist.
     def test_kernel_module_shadows_deprecated_var_lookup
-        template = tempfile()
+        template = tempfile
         File.open(template, "w").puts("<%= binding %>")
 
         func = nil
@@ -282,7 +282,7 @@ class TestLangFunctions < Test::Unit::TestCase
     end
 
     def test_tempatefunction_cannot_see_scopes
-        template = tempfile()
+        template = tempfile
 
         File.open(template, "w") do |f|
             f.puts "<%= lookupvar('myvar') %>"
@@ -311,13 +311,13 @@ class TestLangFunctions < Test::Unit::TestCase
     end
 
     def test_template_reparses
-        template = tempfile()
+        template = tempfile
 
         File.open(template, "w") do |f|
             f.puts "original text"
         end
 
-        file = tempfile()
+        file = tempfile
 
         Puppet[:code] = %{file { "#{file}": content => template("#{template}") }}
         Puppet[:environment] = "yay"
@@ -354,7 +354,7 @@ class TestLangFunctions < Test::Unit::TestCase
     end
 
     def test_template_defined_vars
-        template = tempfile()
+        template = tempfile
 
         File.open(template, "w") do |f|
             f.puts "template <%= @yayness %>"
@@ -399,7 +399,7 @@ class TestLangFunctions < Test::Unit::TestCase
         #assert_equal(false, Puppet::Parser::Functions.function(:autofunc),
         #    "Got told autofunc already exists")
 
-        dir = tempfile()
+        dir = tempfile
         $LOAD_PATH << dir
         newpath = File.join(dir, "puppet", "parser", "functions")
         FileUtils.mkdir_p(newpath)

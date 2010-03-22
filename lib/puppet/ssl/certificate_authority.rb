@@ -136,7 +136,7 @@ class Puppet::SSL::CertificateAuthority
         @certificate = sign(host.name, :ca, request)
 
         # And make sure we initialize our CRL.
-        crl()
+        crl
     end
 
     def initialize
@@ -146,7 +146,7 @@ class Puppet::SSL::CertificateAuthority
 
         @host = Puppet::SSL::Host.new(Puppet::SSL::Host.ca_name)
 
-        setup()
+        setup
     end
 
     # Retrieve (or create, if necessary) our inventory manager.

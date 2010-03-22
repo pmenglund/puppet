@@ -69,7 +69,7 @@ class Puppet::Parser::Resource < Puppet::Resource
     # Retrieve the associated definition and evaluate it.
     def evaluate
         if klass = resource_type and ! builtin_type?
-            finish()
+            finish
             #
             # But this "fixes" it in place! -- not the right
             # solution, but enought to restore functionality
@@ -102,10 +102,10 @@ class Puppet::Parser::Resource < Puppet::Resource
     def finish
         return if finished?
         @finished = true
-        add_defaults()
-        add_metaparams()
-        add_scope_tags()
-        validate()
+        add_defaults
+        add_metaparams
+        add_scope_tags
+        validate
     end
 
     # Has this resource already been finished?

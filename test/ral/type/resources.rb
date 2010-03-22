@@ -67,7 +67,7 @@ class TestResources < Test::Unit::TestCase
         end
         purger.catalog = Puppet::Resource::Catalog.new
         assert(purger, "did not get purger manager")
-        add_purge_lister()
+        add_purge_lister
 
         assert_equal($purgemembers.values.sort, @purgetype.instances.sort)
 
@@ -130,7 +130,7 @@ class TestResources < Test::Unit::TestCase
 
         assert_nothing_raised {
             assert(res.check("A String"), "String failed check")
-            assert(res.check(Puppet::Type.type(:file).new(:path => tempfile())), "File failed check")
+            assert(res.check(Puppet::Type.type(:file).new(:path => tempfile)), "File failed check")
             assert(res.check(Puppet::Type.type(:user).new(:name => "yayness")), "User failed check in package")
         }
 

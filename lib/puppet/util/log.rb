@@ -125,7 +125,7 @@ class Puppet::Util::Log
             if type.instance_method(:initialize).arity == 1
                 @destinations[dest] = type.new(dest)
             else
-                @destinations[dest] = type.new()
+                @destinations[dest] = type.new
             end
         rescue => detail
             puts detail.backtrace if Puppet[:debug]

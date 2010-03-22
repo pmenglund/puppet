@@ -26,13 +26,13 @@ class TestResourceClient < Test::Unit::TestCase
     end
 
     def test_resources
-        file = tempfile()
+        file = tempfile
         text = "yayness\n"
         File.open(file, "w") { |f| f.print text }
 
-        mkresourceserver()
+        mkresourceserver
 
-        client = mkclient()
+        client = mkclient
 
         # Test describing
         tresource = client.describe("file", file)

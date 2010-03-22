@@ -20,7 +20,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def mktestfile
-        tmpfile = tempfile()
+        tmpfile = tempfile
         File.open(tmpfile, "w") { |f| f.puts rand(100) }
         @@tmpfiles.push tmpfile
         mkfile(:name => tmpfile)
@@ -50,7 +50,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_owner
-        file = mktestfile()
+        file = mktestfile
 
         users = {}
         count = 0
@@ -82,10 +82,10 @@ class TestFile < Test::Unit::TestCase
         us[uid] = name
         users.each { |uid, name|
             assert_apply(file)
-            assert_nothing_raised() {
+            assert_nothing_raised {
                 file[:owner] = name
             }
-            assert_nothing_raised() {
+            assert_nothing_raised {
                 file.retrieve
             }
             assert_apply(file)
@@ -93,9 +93,9 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_group
-        file = mktestfile()
+        file = mktestfile
         [%x{groups}.chomp.split(/ /), Process.groups].flatten.each { |group|
-            assert_nothing_raised() {
+            assert_nothing_raised {
                 file[:group] = group
             }
             assert(file.property(:group))
@@ -111,9 +111,9 @@ class TestFile < Test::Unit::TestCase
 
     if Puppet::Util::SUIDManager.uid == 0
         def test_createasuser
-            dir = tmpdir()
+            dir = tmpdir
 
-            user = nonrootuser()
+            user = nonrootuser
             path = File.join(tmpdir, "createusertesting")
             @@tmpfiles << path
 
@@ -136,7 +136,7 @@ class TestFile < Test::Unit::TestCase
         end
 
         def test_nofollowlinks
-            basedir = tempfile()
+            basedir = tempfile
             Dir.mkdir(basedir)
             file = File.join(basedir, "file")
             link = File.join(basedir, "link")
@@ -145,7 +145,7 @@ class TestFile < Test::Unit::TestCase
             File.symlink(file, link)
 
             # First test 'user'
-            user = nonrootuser()
+            user = nonrootuser
 
             inituser = File.lstat(link).uid
             File.lchown(inituser, nil, link)
@@ -205,7 +205,7 @@ class TestFile < Test::Unit::TestCase
         end
 
         def test_ownerasroot
-            file = mktestfile()
+            file = mktestfile
 
             users = {}
             count = 0
@@ -234,18 +234,18 @@ class TestFile < Test::Unit::TestCase
             end
 
             users.each { |uid, name|
-                assert_nothing_raised() {
+                assert_nothing_raised {
                     file[:owner] = name
                 }
                 changes = []
-                assert_nothing_raised() {
+                assert_nothing_raised {
                     changes << file.evaluate
                 }
                 assert(changes.length > 0)
                 assert_apply(file)
                 currentvalue = file.retrieve
                 assert(file.insync?(currentvalue))
-                assert_nothing_raised() {
+                assert_nothing_raised {
                     file[:owner] = uid
                 }
                 assert_apply(file)
@@ -266,10 +266,10 @@ class TestFile < Test::Unit::TestCase
         end
 
         def test_groupasroot
-            file = mktestfile()
+            file = mktestfile
             [%x{groups}.chomp.split(/ /), Process.groups].flatten.each { |group|
                 next unless Puppet::Util.gid(group) # grr.
-                assert_nothing_raised() {
+                assert_nothing_raised {
                     file[:group] = group
                 }
                 assert(file.property(:group))
@@ -277,7 +277,7 @@ class TestFile < Test::Unit::TestCase
                 assert_apply(file)
                 currentvalue = file.retrieve
                 assert(file.insync?(currentvalue))
-                assert_nothing_raised() {
+                assert_nothing_raised {
                     file.delete(:group)
                 }
             }
@@ -285,7 +285,7 @@ class TestFile < Test::Unit::TestCase
 
         if Facter.value(:operatingsystem) == "Darwin"
             def test_sillyowner
-                file = tempfile()
+                file = tempfile
                 File.open(file, "w") { |f| f.puts "" }
                 File.chown(-2, nil, file)
 
@@ -309,9 +309,9 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_create
-        %w{a b c d}.collect { |name| tempfile() + name.to_s }.each { |path|
+        %w{a b c d}.collect { |name| tempfile + name.to_s }.each { |path|
             file =nil
-            assert_nothing_raised() {
+            assert_nothing_raised {
 
                             file = Puppet::Type.type(:file).new(
                 
@@ -329,11 +329,11 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_create_dir
-        basedir = tempfile()
+        basedir = tempfile
         Dir.mkdir(basedir)
         %w{a b c d}.collect { |name| "#{basedir}/#{name}"}.each { |path|
             file = nil
-            assert_nothing_raised() {
+            assert_nothing_raised {
 
                             file = Puppet::Type.type(:file).new(
                 
@@ -356,7 +356,7 @@ class TestFile < Test::Unit::TestCase
         # Set it to something else initially
         File.chmod(0775, file.title)
         [0644,0755,0777,0641].each { |mode|
-            assert_nothing_raised() {
+            assert_nothing_raised {
                 file[:mode] = mode
             }
             assert_events([:file_changed], file)
@@ -364,7 +364,7 @@ class TestFile < Test::Unit::TestCase
 
             assert(file.insync?(file.retrieve))
 
-            assert_nothing_raised() {
+            assert_nothing_raised {
                 file.delete(:mode)
             }
         }
@@ -422,7 +422,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_recursion
-        basedir = tempfile()
+        basedir = tempfile
         subdir = File.join(basedir, "subdir")
         tmpfile = File.join(basedir,"testing")
         FileUtils.mkdir_p(subdir)
@@ -480,7 +480,7 @@ class TestFile < Test::Unit::TestCase
 
                         file = Puppet::Type.type(:file).new(
                 
-                :name => tmpdir(),
+                :name => tmpdir,
         
                 :check => :type
             )
@@ -497,7 +497,7 @@ class TestFile < Test::Unit::TestCase
 
                         file = Puppet::Type.type(:file).new(
                 
-                :name => tempfile(),
+                :name => tempfile,
         
                 :ensure => "file"
             )
@@ -520,7 +520,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_path
-        dir = tempfile()
+        dir = tempfile
 
         path = File.join(dir, "subdir")
 
@@ -557,7 +557,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_autorequire
-        basedir = tempfile()
+        basedir = tempfile
         subfile = File.join(basedir, "subfile")
 
 
@@ -586,7 +586,7 @@ class TestFile < Test::Unit::TestCase
 
     # Unfortunately, I know this fails
     def disabled_test_recursivemkdir
-        path = tempfile()
+        path = tempfile
         subpath = File.join(path, "this", "is", "a", "dir")
         file = nil
         assert_nothing_raised {
@@ -610,7 +610,7 @@ class TestFile < Test::Unit::TestCase
 
     # Make sure that content updates the checksum on the same run
     def test_checksumchange_for_content
-        dest = tempfile()
+        dest = tempfile
         File.open(dest, "w") { |f| f.puts "yayness" }
 
         file = nil
@@ -635,7 +635,7 @@ class TestFile < Test::Unit::TestCase
 
     # Make sure that content updates the checksum on the same run
     def test_checksumchange_for_ensure
-        dest = tempfile()
+        dest = tempfile
 
         file = nil
         assert_nothing_raised {
@@ -657,7 +657,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_nameandpath
-        path = tempfile()
+        path = tempfile
 
         file = nil
         assert_nothing_raised {
@@ -683,7 +683,7 @@ class TestFile < Test::Unit::TestCase
 
                         file = Puppet::Type.type(:file).new(
                 
-                :path => tempfile(),
+                :path => tempfile,
         
                 :group => "fakegroup"
             )
@@ -693,7 +693,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_modecreation
-        path = tempfile()
+        path = tempfile
 
                     file = Puppet::Type.type(:file).new(
                 
@@ -714,7 +714,7 @@ class TestFile < Test::Unit::TestCase
     # If both 'ensure' and 'content' are used, make sure that all of the other
     # properties are handled correctly.
     def test_contentwithmode
-        path = tempfile()
+        path = tempfile
 
         file = nil
         assert_nothing_raised {
@@ -736,8 +736,8 @@ class TestFile < Test::Unit::TestCase
     def test_backupmodes
         File.umask(0022)
 
-        file = tempfile()
-        newfile = tempfile()
+        file = tempfile
+        newfile = tempfile
 
         File.open(file, "w", 0411) { |f| f.puts "yayness" }
 
@@ -762,7 +762,7 @@ class TestFile < Test::Unit::TestCase
             "File mode is wrong for backupfile")
 
         name = "bucket"
-        bpath = tempfile()
+        bpath = tempfile
         Dir.mkdir(bpath)
         bucket = Puppet::Type.type(:filebucket).new(:title => name, :path => bpath)
         catalog.add_resource(bucket)
@@ -779,8 +779,8 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_replacefilewithlink
-        path = tempfile()
-        link = tempfile()
+        path = tempfile
+        link = tempfile
 
         File.open(path, "w") { |f| f.puts "yay" }
         File.open(link, "w") { |f| f.puts "a file" }
@@ -805,7 +805,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_file_with_spaces
-        dir = tempfile()
+        dir = tempfile
         Dir.mkdir(dir)
         source = File.join(dir, "file spaces")
         dest = File.join(dir, "another space")
@@ -827,8 +827,8 @@ class TestFile < Test::Unit::TestCase
 
     # Testing #274.  Make sure target can be used without 'ensure'.
     def test_target_without_ensure
-        source = tempfile()
-        dest = tempfile()
+        source = tempfile
+        dest = tempfile
         File.open(source, "w") { |f| f.puts "funtest" }
 
         obj = nil
@@ -840,7 +840,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_autorequire_owner_and_group
-        file = tempfile()
+        file = tempfile
         comp = nil
         user = nil
         group =nil
@@ -894,7 +894,7 @@ class TestFile < Test::Unit::TestCase
     # Testing #364.
     def test_writing_in_directories_with_no_write_access
         # Make a directory that our user does not have access to
-        dir = tempfile()
+        dir = tempfile
         Dir.mkdir(dir)
 
         # Get a fake user
@@ -931,7 +931,7 @@ class TestFile < Test::Unit::TestCase
 
     # #366
     def test_replace_aliases
-        file = Puppet::Type.newfile :path => tempfile()
+        file = Puppet::Type.newfile :path => tempfile
         file[:replace] = :yes
         assert_equal(:true, file[:replace], ":replace did not alias :true to :yes")
         file[:replace] = :no
@@ -939,7 +939,7 @@ class TestFile < Test::Unit::TestCase
     end
 
     def test_pathbuilder
-        dir = tempfile()
+        dir = tempfile
         Dir.mkdir(dir)
         file = File.join(dir, "file")
         File.open(file, "w") { |f| f.puts "" }
@@ -957,7 +957,7 @@ class TestFile < Test::Unit::TestCase
 
     # Testing #403
     def test_removal_with_content_set
-        path = tempfile()
+        path = tempfile
         File.open(path, "w") { |f| f.puts "yay" }
         file = Puppet::Type.newfile(:name => path, :ensure => :absent, :content => "foo", :backup => false)
 
@@ -967,9 +967,9 @@ class TestFile < Test::Unit::TestCase
 
     # Testing #438
     def test_creating_properties_conflict
-        file = tempfile()
-        first = tempfile()
-        second = tempfile()
+        file = tempfile
+        first = tempfile
+        second = tempfile
         params = [:content, :source, :target]
         params.each do |param|
             assert_nothing_raised("#{param} conflicted with ensure") do
@@ -987,14 +987,14 @@ class TestFile < Test::Unit::TestCase
     # Testing #508
     if Process.uid == 0
     def test_files_replace_with_right_attrs
-        source = tempfile()
+        source = tempfile
         File.open(source, "w") { |f|
             f.puts "some text"
         }
         File.chmod(0755, source)
         user = nonrootuser
         group = nonrootgroup
-        path = tempfile()
+        path = tempfile
         good = {:uid => user.uid, :gid => group.gid, :mode => 0640}
 
         run = Proc.new do |obj, msg|

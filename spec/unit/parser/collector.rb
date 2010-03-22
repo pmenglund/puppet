@@ -333,7 +333,7 @@ describe Puppet::Parser::Collector, "when collecting exported resources" do
     end
 
     it "should convert all found resources into parser resources" do
-        stub_rails()
+        stub_rails
         Puppet::Rails::Host.stubs(:find_by_name).returns(nil)
 
         one = stub 'one', :restype => "Mytype", :title => "one", :virtual? => true, :exported? => true, :ref => "one"
@@ -354,7 +354,7 @@ describe Puppet::Parser::Collector, "when collecting exported resources" do
     end
 
     it "should override all exported collected resources if collector has an override" do
-        stub_rails()
+        stub_rails
         Puppet::Rails::Host.stubs(:find_by_name).returns(nil)
 
         one = stub 'one', :restype => "Mytype", :title => "one", :virtual? => true, :exported? => true, :ref => "one"
@@ -383,7 +383,7 @@ describe Puppet::Parser::Collector, "when collecting exported resources" do
     end
 
     it "should store converted resources in the compile's resource list" do
-        stub_rails()
+        stub_rails
         Puppet::Rails::Host.stubs(:find_by_name).returns(nil)
 
         one = stub 'one', :restype => "Mytype", :title => "one", :virtual? => true, :exported? => true, :ref => "one"
@@ -405,7 +405,7 @@ describe Puppet::Parser::Collector, "when collecting exported resources" do
 
     # This way one host doesn't store another host's resources as exported.
     it "should mark resources collected from the database as not exported" do
-        stub_rails()
+        stub_rails
         Puppet::Rails::Host.stubs(:find_by_name).returns(nil)
 
         one = stub 'one', :restype => "Mytype", :title => "one", :virtual? => true, :exported? => true, :ref => "one"
@@ -426,7 +426,7 @@ describe Puppet::Parser::Collector, "when collecting exported resources" do
     end
 
     it "should fail if an equivalent resource already exists in the compile" do
-        stub_rails()
+        stub_rails
         Puppet::Rails::Host.stubs(:find_by_name).returns(nil)
 
         rails = stub 'one', :restype => "Mytype", :title => "one", :virtual? => true, :exported? => true, :id => 1, :ref => "yay"
@@ -445,7 +445,7 @@ describe Puppet::Parser::Collector, "when collecting exported resources" do
     end
 
     it "should ignore exported resources that match already-collected resources" do
-        stub_rails()
+        stub_rails
         Puppet::Rails::Host.stubs(:find_by_name).returns(nil)
 
         rails = stub 'one', :restype => "Mytype", :title => "one", :virtual? => true, :exported? => true, :id => 1, :ref => "yay"

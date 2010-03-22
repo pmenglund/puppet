@@ -318,7 +318,7 @@ class Puppet::Util::Settings
 
         # Create a timer so that this file will get checked automatically
         # and reparsed if necessary.
-        set_filetimeout_timer()
+        set_filetimeout_timer
 
         @sync.synchronize do
             unsafe_parse(self[:config])
@@ -353,7 +353,7 @@ class Puppet::Util::Settings
         settings_with_hooks.each do |setting|
             each_source(env) do |source|
                 if value = @values[source][setting.name]
-                    # We still have to use value() to retrieve the value, since
+                    # We still have to use value to retrieve the value, since
                     # we want the fully interpolated value, not $vardir/lib or whatever.
                     # This results in extra work, but so few of the settings
                     # will have associated hooks that it ends up being less work this
@@ -429,7 +429,7 @@ class Puppet::Util::Settings
         if file and file.changed?
             Puppet.notice "Reparsing #{file.file}"
             parse
-            reuse()
+            reuse
         end
     end
 
@@ -544,7 +544,7 @@ class Puppet::Util::Settings
     # Create a timer to check whether the file should be reparsed.
     def set_filetimeout_timer
         return unless timeout = self[:filetimeout] and timeout = Integer(timeout) and timeout > 0
-        timer = EventLoop::Timer.new(:interval => timeout, :tolerance => 1, :start? => true) { self.reparse() }
+        timer = EventLoop::Timer.new(:interval => timeout, :tolerance => 1, :start? => true) { self.reparse }
     end
 
     # Convert the settings we manage into a catalog full of resources that model those settings.
@@ -676,7 +676,7 @@ if @config.include?(:name)
         return nil unless @config.include?(param)
 
         # Yay, recursion.
-        #self.reparse() unless [:config, :filetimeout].include?(param)
+        #self.reparse unless [:config, :filetimeout].include?(param)
 
         # Check the cache first.  It needs to be a per-environment
         # cache so that we don't spread values from one env

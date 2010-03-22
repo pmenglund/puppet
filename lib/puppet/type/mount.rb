@@ -12,7 +12,7 @@ module Puppet
             :methods => [:remount]
 
         # Use the normal parent class, because we actually want to
-        # call code when sync() is called.
+        # call code when sync is called.
         newproperty(:ensure) do
             desc "Control what to do with this mount. Set this attribute to
                 ``present`` to make sure the filesystem is in the filesystem table
@@ -22,7 +22,7 @@ module Puppet
 
             newvalue(:present) do
                 if provider.mounted?
-                    syncothers()
+                    syncothers
                     provider.unmount
                     return :mount_unmounted
                 else
@@ -43,7 +43,7 @@ module Puppet
                 current_value = self.retrieve
                 provider.create if current_value.nil? or current_value == :absent
 
-                syncothers()
+                syncothers
 
                 # The fs can be already mounted if it was absent but mounted
                 provider.mount unless provider.mounted?

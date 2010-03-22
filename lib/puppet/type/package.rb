@@ -313,6 +313,6 @@ module Puppet
                 props
             end
         end
-    end # Puppet::Type.type(:package)
+    end
 end
 

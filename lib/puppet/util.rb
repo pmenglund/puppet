@@ -301,8 +301,8 @@ module Util
             rescue => detail
                 puts detail.to_s
                 exit!(1)
-            end # begin; rescue
-        end # if child_pid
+            end
+        end
 
         # read output in if required
         if ! arguments[:squelch]

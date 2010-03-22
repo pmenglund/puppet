@@ -117,7 +117,7 @@ class TestGroup < Test::Unit::TestCase
     end
 
     def test_owngroups
-        groupnames().each { |group|
+        groupnames.each { |group|
             gobj = nil
             comp = nil
             assert_nothing_raised {

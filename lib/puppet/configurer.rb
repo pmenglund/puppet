@@ -80,11 +80,11 @@ class Puppet::Configurer
 
     # Prepare for catalog retrieval.  Downloads everything necessary, etc.
     def prepare
-        dostorage()
+        dostorage
 
-        download_plugins()
+        download_plugins
 
-        download_fact_plugins()
+        download_fact_plugins
 
         execute_prerun_command
     end
@@ -97,7 +97,7 @@ class Puppet::Configurer
         # This is a bit complicated.  We need the serialized and escaped facts,
         # and we need to know which format they're encoded in.  Thus, we
         # get a hash with both of these pieces of information.
-        fact_options = facts_for_uploading()
+        fact_options = facts_for_uploading
 
         # First try it with no cache, then with the cache.
         result = nil
@@ -149,7 +149,7 @@ class Puppet::Configurer
     # which accepts :tags and :ignoreschedules.
     def run(options = {})
         begin
-            prepare()
+            prepare
         rescue SystemExit,NoMemoryError
             raise
         rescue Exception => detail
@@ -157,7 +157,7 @@ class Puppet::Configurer
             Puppet.err "Failed to prepare catalog: #{detail}"
         end
 
-        report = initialize_report()
+        report = initialize_report
         Puppet::Util::Log.newdestination(report)
 
         if catalog = options[:catalog]
@@ -193,7 +193,7 @@ class Puppet::Configurer
     def send_report(report, trans = nil)
         trans.add_metrics_to_report(report) if trans
         puts report.summary if Puppet[:summarize]
-        report.save() if Puppet[:report]
+        report.save if Puppet[:report]
     rescue => detail
         puts detail.backtrace if Puppet[:trace]
         Puppet.err "Could not send report: #{detail}"

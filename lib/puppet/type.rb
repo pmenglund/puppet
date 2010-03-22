@@ -36,7 +36,7 @@ class Type
 
     def self.states
         warnonce "The states method is deprecated; use properties"
-        properties()
+        properties
     end
 
     # All parameters, in the appropriate order.  The namevar comes first, then
@@ -451,8 +451,8 @@ class Type
 
     # iterate across the existing properties
     def eachproperty
-        # properties() is a private method
-        properties().each { |property|
+        # properties is a private method
+        properties.each { |property|
             yield property
         }
     end
@@ -732,7 +732,7 @@ class Type
         # is the first property, which is important for skipping 'retrieve' on
         # all the properties if the resource is absent.
         ensure_state = false
-        return properties().inject({}) do | prophash, property|
+        return properties.inject({}) do | prophash, property|
             if property.name == :ensure
                 ensure_state = property.retrieve
                 prophash[property] = ensure_state
@@ -1331,7 +1331,7 @@ class Type
     # Find the default provider.
     def self.defaultprovider
         unless @defaultprovider
-            suitable = suitableprovider()
+            suitable = suitableprovider
 
             # Find which providers are a default for this system.
             defaults = suitable.find_all { |provider| provider.default? }
@@ -1452,7 +1452,7 @@ class Type
 
             # We need to add documentation for each provider.
             def self.doc
-                @doc + "  Available providers are:\n\n" + parenttype().providers.sort { |a,b|
+                @doc + "  Available providers are:\n\n" + parenttype.providers.sort { |a,b|
                     a.to_s <=> b.to_s
                 }.collect { |i|
                     "* **#{i}**: #{parenttype().provider(i).doc}"
@@ -1728,7 +1728,7 @@ class Type
 
 
     # instance methods related to instance intrinsics
-    # e.g., initialize() and name()
+    # e.g., initialize and name
 
     public
 
@@ -1909,7 +1909,7 @@ class Type
     def to_trans(ret = true)
         trans = TransObject.new(self.title, self.class.name)
 
-        values = retrieve()
+        values = retrieve
         values.each do |name, value|
             trans[name.name] = value
         end
@@ -1942,7 +1942,7 @@ class Type
         end
     end
 
-end # Puppet::Type
+end
 end
 
 require 'puppet/provider'

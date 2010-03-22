@@ -34,7 +34,7 @@ class TestSelector < Test::Unit::TestCase
 
         %w{MYPARAM myparam}.each do |str|
             param = nameobj(str)
-            params = maker.call()
+            params = maker.call
             sel = AST::Selector.new(:param => param, :values => params.values)
             result = nil
             assert_nothing_raised { result = sel.evaluate(scope) }
@@ -46,7 +46,7 @@ class TestSelector < Test::Unit::TestCase
 
         %w{MYPARAM myparam}.each do |str|
             param = nameobj(str)
-            params = maker.call()
+            params = maker.call
 
             # Delete the upper value, since we don't want it to match
             # and it introduces a hash-ordering bug in testing.

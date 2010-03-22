@@ -14,7 +14,7 @@ Puppet::Type.type(:package).provide :openbsd, :parent => Puppet::Provider::Packa
         packages = []
 
         begin
-            execpipe(listcmd()) do |process|
+            execpipe(listcmd) do |process|
                 # our regex for matching pkg_info output
                 regex = %r{^(\S+)-([^-\s]+)\s+(.+)}
                 fields = [:name, :ensure, :description]

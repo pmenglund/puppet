@@ -246,7 +246,7 @@ class TestType < Test::Unit::TestCase
         file = nil
         fileclass = Puppet::Type.type(:file)
 
-        path = tempfile()
+        path = tempfile
         assert_nothing_raised do
 
                         file = fileclass.create(
@@ -309,7 +309,7 @@ class TestType < Test::Unit::TestCase
 
         # Now do files, since they are. This should fail.
         file1 = file2 = nil
-        path = tempfile()
+        path = tempfile
 
                     file1 = Puppet::Type.type(:file).new(
                 
@@ -332,7 +332,7 @@ class TestType < Test::Unit::TestCase
     end
 
     def test_tags
-        obj = Puppet::Type.type(:file).new(:path => tempfile())
+        obj = Puppet::Type.type(:file).new(:path => tempfile)
 
         tags = ["some", "test", "tags"]
 
@@ -355,7 +355,7 @@ class TestType < Test::Unit::TestCase
     end
 
     def test_to_hash
-        file = Puppet::Type.newfile :path => tempfile(), :owner => "luke",
+        file = Puppet::Type.newfile :path => tempfile, :owner => "luke",
             :recurse => true, :loglevel => "warning"
 
         hash = nil
@@ -369,7 +369,7 @@ class TestType < Test::Unit::TestCase
     end
 
     def test_ref
-        path = tempfile()
+        path = tempfile
         Puppet::Type.type(:exec) # uggh, the methods need to load the types
         file = Puppet::Type.newfile(:path => path)
         assert_equal("File[#{path}]", file.ref)

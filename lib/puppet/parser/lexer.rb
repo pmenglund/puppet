@@ -354,7 +354,7 @@ class Puppet::Parser::Lexer
     def initialize
         @find = 0
         @regex = 0
-        initvars()
+        initvars
     end
 
     def initvars
@@ -382,7 +382,7 @@ class Puppet::Parser::Lexer
     def munge_token(token, value)
         @line += 1 if token.incr_line
 
-        skip() if token.skip_text
+        skip if token.skip_text
 
         return if token.skip and not token.accumulate?
 
@@ -428,7 +428,7 @@ class Puppet::Parser::Lexer
         lex_error "Invalid or empty string" unless @scanner
 
         # Skip any initial whitespace.
-        skip()
+        skip
 
         until token_queue.empty? and @scanner.eos? do
             yielded = false
@@ -446,7 +446,7 @@ class Puppet::Parser::Lexer
             final_token, token_value = munge_token(matched_token, value)
 
             unless final_token
-                skip()
+                skip
                 next
             end
 
@@ -482,7 +482,7 @@ class Puppet::Parser::Lexer
                 end
             end
             @previous_token = final_token
-            skip()
+            skip
         end
         @scanner = nil
 
