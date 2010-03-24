@@ -205,21 +205,6 @@ Puppet::Type.newtype(:zone) do
             with the interface, separated by a colon, e.g.: bge0:192.168.0.1.
             For multiple interfaces, specify them in an array."
 
-        validate do |value|
-            unless value =~ /:/
-                raise ArgumentError,
-                    "IP addresses must specify the interface and the address, separated by a colon."
-            end
-
-            interface, address = value.split(':')
-
-            begin
-                IPAddr.new(address)
-            rescue ArgumentError
-                raise ArgumentError, "'%s' is an invalid IP address" % address
-            end
-        end
-
         # Add an interface.
         def add(str)
             interface, ip = ipsplit(str)
@@ -243,6 +228,19 @@ end
             # specify that braces are required, but they're apparently only
             # required if you're specifying multiple values.
             "remove net address=#{ip}"
+        end
+    end
+
+    newproperty(:iptype, :parent => ZoneConfigProperty) do
+        desc "The IP stack type of the zone. Can either be 'shared' or 'exclusive'."
+
+        defaultto :shared
+
+	newvalue :shared
+	newvalue :exclusive
+
+        def configtext
+            "set ip-type=#{self.should}"
         end
     end
 
@@ -378,6 +376,25 @@ end
         else
             nil
         end
+    end
+
+    validate do
+        value = self[:ip]
+	if self[:iptype] == :exclusive
+	    self.fail "ip must only contain interface name" if value =~ /:/
+	elsif value
+	    self.fail "ip must contain interface name and ip address separated by a \":\"" unless value =~ /:/
+	    interface, address = value.split(':')
+	    begin
+                IPAddr.new(address)
+            rescue ArgumentError
+                self.fail "'%s' is an invalid IP address" % address
+            end
+	end
+
+	unless self[:path]
+	    self.fail "zone path is required"
+	end
     end
 
     def retrieve
