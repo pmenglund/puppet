@@ -227,6 +227,7 @@ Puppet::Type.type(:zone).provide(:solaris) do
         if dir = config["inherit-pkg-dir"]
             result[:inherit] = dir.collect { |dirs| dirs[:dir] }
         end
+        result[:iptype] = config[:"ip-type"]
         if net = config["net"]
             result[:ip] = net.collect { |params| "%s:%s" % [params[:physical], params[:address]] }
         end
