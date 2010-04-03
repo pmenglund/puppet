@@ -42,11 +42,20 @@ describe zone do
 	    :iptype => :exclusive) }.should raise_error
     end
 
-    it "should be valid when :iptype is :shared" do
+    it "should be invalid when :ip has two \":\" and iptype is :exclusive" do
+        lambda { zone.new(:name => "dummy", :ip => "if:1.2.3.4:2.3.4.5",
+	    :iptype => :exclusive) }.should raise_error
+    end
+
+    it "should be valid when :iptype is :shared and using interface and ip" do
         zone.new(:name => "dummy", :path => "/dummy", :ip => "if:1.2.3.4")
     end
 
-    it "should be valid when :iptype is :exclusive" do
+    it "should be valid when :iptype is :shared and using interface, ip and default route" do
+        zone.new(:name => "dummy", :path => "/dummy", :ip => "if:1.2.3.4:2.3.4.5")
+    end
+
+    it "should be valid when :iptype is :exclusive and using interface" do
         zone.new(:name => "dummy", :path => "/dummy", :ip => "if",
 	    :iptype => :exclusive)
     end
