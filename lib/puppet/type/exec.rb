@@ -272,6 +272,10 @@ module Puppet
             defaultto 300
         end
 
+        newparam(:project) do
+            desc "Executes the command using the supplied task on Solaris."
+        end
+
         newcheck(:refreshonly) do
             desc "The command should only be run as a
                 refresh mechanism for when a dependent object is changed.  It only
@@ -425,6 +429,10 @@ module Puppet
 
         validate do
             validatecmd(self[:command])
+
+            if self[:project] && Facter.value(:operatingsystem) != "Solaris"
+                self.fail "project is only valid on Solaris"
+            end
         end
 
         # FIXME exec should autorequire any exec that 'creates' our cwd
@@ -562,6 +570,9 @@ module Puppet
             if check
                 debug "Executing check '#{command}'"
             else
+                if self[:project]
+                    command = "/usr/bin/newtask -p #{self[:project]} " + command
+                end
                 debug "Executing '#{command}'"
             end
             begin
